@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
+}
+//
+group = 'org.openjfx'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+javafx {
+    version '20'
+    modules =['javafx.controls','javafx.fxml']
+}
+
+application {
+    // Define the main class for your application
+    mainClass.set('org.openjfx.Main')  // Replace with your actual main class
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}
