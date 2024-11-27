@@ -11,11 +11,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        Button btn = new Button("Say 'Hello World'");
-        btn.setOnAction(event -> System.out.println("Hello World"));
 
         StackPane root = new StackPane();
-        root.getChildren().add(btn);
 
         Scene scene = new Scene(root, 300, 250);
 
