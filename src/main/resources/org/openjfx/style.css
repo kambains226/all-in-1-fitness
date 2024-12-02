@@ -1,0 +1,26 @@
+/*style.css*/
+
+/* attributes for the login page */
+.login{
+    -fx-alignment: center;
+
+    -fx-height :50%;
+}
+.login .label{
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+    -fx-font-size : 1.4em;
+    -fx-label-padding: 10% 0 10% ;
+}
+.login .text-field{
+    -fx-max-width :80;
+    -fx-padding: 1330%;
+    -fx-min-width: 200;
+    -fx-font-size : 1.4em;
+}
+.login .button{
+    -fx-max-width :80;
+    -fx-padding: 1330%;
+    -fx-min-width: 200;
+}
+
