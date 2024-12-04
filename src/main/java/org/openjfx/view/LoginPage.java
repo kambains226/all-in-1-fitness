@@ -18,7 +18,7 @@ import java.io.*;
 import java.util.Arrays;
 //extends vbox  to allign elements vertically
 public class LoginPage extends VBox{
-
+    public boolean login = false;
     public String memberPath = "/org/openjfx/data/members.txt";
     public LoginPage() {
         // create the user name and password
@@ -39,19 +39,11 @@ public class LoginPage extends VBox{
     }
     //checks if the user entered valid information
     private void loginCheck(String username, String password) {
-        File file = new File(getClass().getResourceAsStream(memberPath));
-        File parent = file.getParentFile();
+        File file = new File("src/main/resources"+memberPath);
 
 
 
 
-//        if(!file.exists()){
-//            System.out.println("File does not exist");
-//            CreateFile(file);
-//        }
-//        else{
-//            System.out.println("File already exists");
-//        }
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(memberPath)))) {
             // gets the member file in the resource folder
 
@@ -61,7 +53,7 @@ public class LoginPage extends VBox{
                 String[] lineSplit =line.split(" ");
                 if(lineSplit[0].equals(username)  && lineSplit[1].equals(password)){
                    System.out.println("signed in");
-                   login();
+                   logintrue();
                 }
                 else{
                     System.out.println("not signed in");
@@ -77,18 +69,19 @@ public class LoginPage extends VBox{
         catch (Exception e)
         {
             CreateFile(file);
-            e.printStackTrace();
         }
 
     }
     //sends the user to the home page of the website
-    private void login() {
-
+    public void logintrue() {
+        // goes to the home page
+        this.login = true;
     }
     private void CreateFile(File newFile) {
         System.out.println(newFile.getPath());
 
         try{
+
             if(newFile.createNewFile()){
                 System.out.println("file created"+newFile.getName());
             }
@@ -97,8 +90,10 @@ public class LoginPage extends VBox{
             }
         }
         catch (IOException e){
-            e.printStackTrace();
+            System.out.println(e);
         }
-        System.out.println("created");
+        catch (Exception e){
+            System.out.println(e);
+        }
     }
 }

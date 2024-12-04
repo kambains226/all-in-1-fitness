@@ -17,11 +17,17 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-//        StackPane root = new StackPane();
+        StackPane root = new StackPane();
 
         //login in page
         LoginPage login = new LoginPage();
         Scene scene = new Scene(login, 300, 250);
+
+        if(login.login){
+            System.out.println("Login Successful");
+            scene = new Scene(root,559,555);
+        }
+
         // links the scene with the css file
         scene.getStylesheets().add(getClass().getResource("/org/openjfx/style.css").toExternalForm());
 //creates a title with name
