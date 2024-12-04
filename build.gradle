@@ -17,7 +17,7 @@ javafx {
 
 application {
     // Define the main class for your application
-    mainClass.set('org.openjfx.Main')  // Replace with your actual main class
+    mainClass.set('org.openjfx.Main')
 }
 
 dependencies {
