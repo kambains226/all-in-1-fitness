@@ -18,7 +18,7 @@ import java.io.*;
 import java.util.Arrays;
 //extends vbox  to allign elements vertically
 public class LoginPage extends VBox{
-    public boolean login = false;
+    public Runnable login ;
     public String memberPath = "/org/openjfx/data/members.txt";
     public LoginPage() {
         // create the user name and password
@@ -51,9 +51,8 @@ public class LoginPage extends VBox{
             String line;
             while((line = reader.readLine()) !=null){
                 String[] lineSplit =line.split(" ");
-                if(lineSplit[0].equals(username)  && lineSplit[1].equals(password)){
-                   System.out.println("signed in");
-                   logintrue();
+                if(lineSplit[0].equals(username.trim())  && lineSplit[1].equals(password.trim())){
+                   login.run();
                 }
                 else{
                     System.out.println("not signed in");
@@ -73,9 +72,10 @@ public class LoginPage extends VBox{
 
     }
     //sends the user to the home page of the website
-    public void logintrue() {
+    public void SetLoginSuccess(Runnable loginSuccess) {
+
         // goes to the home page
-        this.login = true;
+        this.login = loginSuccess;
     }
     private void CreateFile(File newFile) {
         System.out.println(newFile.getPath());

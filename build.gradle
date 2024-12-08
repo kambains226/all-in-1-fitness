@@ -9,6 +9,9 @@ version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven {
+        url 'https://nexus.gluonhq.com/nexus/content/repositories/releases/'
+    }
 }
 javafx {
     version '20'
@@ -16,13 +19,13 @@ javafx {
 }
 
 application {
-    // Define the main class for your application
     mainClass.set('org.openjfx.Main')
 }
 
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation 'com.gluonhq:charm-glisten:6.2.1'
 }
 
 test {
