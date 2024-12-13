@@ -1,17 +1,21 @@
 package  org.openjfx.view;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javafx.scene.Parent;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Button;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import java.awt.*;
+import javafx.fxml.FXMLLoader;
 
 import java.io.*;
 
@@ -31,9 +35,34 @@ public class LoginPage extends VBox{
         //log in button to submit
         Button submit = new Button ("SUBMIT");
         submit.setOnAction(event -> loginCheck(username.getText(),password.getText()));
+        // user clicks so they can create an account
+        Hyperlink signUp = new Hyperlink("Sign Up");
+
+        signUp.setOnAction(event -> {
+            try{
+
+               FXMLLoader load = new FXMLLoader(getClass().getResource("/org/openjfx/signup.fxml"));
+               Parent signupRoot = load.load();
+               Scene scene = new Scene(signupRoot);
+
+               Stage signupStage = new Stage();
+
+               signupStage.setScene(scene);
+               signupStage.show();
+
+
+
+            }
+            catch(IOException e){
+                System.out.println("a");
+            }
+        });
+
         //adds the components to the VBox layout.
-        this.getChildren().addAll(labe,username,password,submit);
+        this.getChildren().addAll(labe,username,password,submit,signUp);
         this.getStyleClass().add("login"); // acts as a container by putting the elements insid the login class
+
+        //
 
 
     }
@@ -95,5 +124,8 @@ public class LoginPage extends VBox{
         catch (Exception e){
             System.out.println(e);
         }
+    }
+    private void SignUp(){
+
     }
 }

@@ -3,13 +3,11 @@
 /* attributes for the login page */
 .login{
     -fx-alignment: center;
-
-    -fx-height :50%;
 }
 .login .label{
     -fx-font-weight: bold;
     -fx-alignment: center;
-    -fx-font-size : 1.4em;
+    -fx-font-size : 1.2em;
     -fx-label-padding: 10% 0 10% ;
 }
 .login .text-field{
@@ -24,3 +22,40 @@
     -fx-min-width: 200;
 }
 
+.login-container {
+    -fx-alignment: center;
+}
+.login-heading{
+    -fx-text-alignment: center;
+    -fx-end-margin: 500;
+}
+.login-grid{
+    -fx-padding: -50;
+}
+.hyperlink{
+    -fx-text-alignment: center;
+    -fx-end-margin: 580px;
+}
+/*sign in page*/
+.sign {
+    -fx-alignment: center;
+}
+.sign-grid{
+    -fx-padding:-90 ;
+
+}
+.sign .text-field{
+    -fx-padding: 1330% 0 1330% 0;
+    -fx-max-width: 80;
+    -fx-min-width: 200;
+    -fx-font-size:1.5em;
+
+}
+.sign .button{
+    -fx-padding: 1330%;
+    -fx-max-width: 80;
+    -fx-min-width: 200;
+
+}
+.sign-label{
+}
