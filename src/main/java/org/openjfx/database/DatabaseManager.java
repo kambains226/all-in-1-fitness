@@ -1,5 +1,8 @@
 package org.openjfx.database;
+import javafx.scene.control.TextField;
+
 import java.sql.*;
+import javafx.scene.control.TextField;
 
 
 //sqllite documentation https://www.sqlite.org/docs.html
@@ -26,8 +29,6 @@ public class DatabaseManager {
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT unique,
                 password TEXT,
-                firstname TEXT ,
-                surname TEXT ,
                 email TEXT ,
                 dob DATE,
                 membership TEXT , 
@@ -46,27 +47,56 @@ public class DatabaseManager {
             System.out.println(e);
         }
     }
-//    public void insertUser(String username,String password,String firstname, String surname,String dob,String joinDate){
+    public static void insertUser(String username,String password,String dob,String email,String joinDate){
+
+        //add the users information to the database
+        System.out.println("Inserting2 user");
+        String sql = "INSERT INTO login(username,password,dob,email,join_date) VALUES(?,?,?,?,?)";
+
+        try(Connection conn= connect();
+            PreparedStatement pstmt = conn.prepareStatement(sql))
+        {
+            System.out.println("Inserting user");
+            pstmt.setString(1,username);
+            pstmt.setString(2,password);
+            pstmt.setString(3,dob);
+            pstmt.setString(4,email);
+            pstmt.setString(5,joinDate);
+
+
+            pstmt.execute();
+        }
+        catch(SQLException e){
+            System.out.println(e);
+        }
+    }
+
+    public static String check(TextField username){
+
+        String sql = "SELECT * FROM login WHERE username=?";
+
+        try(Connection conn=connect();
+            PreparedStatement pstmt = conn.prepareStatement(sql))
+        {
+            pstmt.setString(1,username.getText());
+            // gets the result of the query
+            ResultSet rs = pstmt.executeQuery();
+            while(rs.next()){
+                int id = rs.getInt("id");
+                String user = rs.getString("username");
+                String password = rs.getString("password");
+                String dob = rs.getString("dob");
+                return  password;
+            }
+
+        }
+        catch(SQLException e)
+        {
+            System.out.println(e);
+        }
+        return null;
+    }
 //
-//        //add the users information to the database
-//        String sql = "INSERT INTO login(username,password,firstname,surname,email,join_date) VALUES(?,?,?)";
-//
-//        try(Connection conn= connect();
-//            PreparedStatement pstmt = conn.prepareStatement(sql))
-//        {
-//            pstmt.setString(2,username);
-//            pstmt.setString(3,password);
-//            pstmt.setString(4,firstname);
-//            pstmt.setString(5,surname);
-//            pstmt.setString(6,dob);
-//            pstmt.setString(7,email);
-//            pstmt.setString(9,joinDate);
-//
-//        }
-//        catch(SQLException e){
-//            System.out.println(e);
-//        }
-//    }
     public static void main(String[] args){
         intialize();
     }

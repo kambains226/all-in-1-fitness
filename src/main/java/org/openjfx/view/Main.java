@@ -28,8 +28,6 @@ public class Main extends Application {
             primaryStage.setResizable(false);
             primaryStage.setScene(scene);
             primaryStage.show();
-            test x =new test();
-            x.testx();
         }
         catch (IOException e) {
             System.err.println(e);

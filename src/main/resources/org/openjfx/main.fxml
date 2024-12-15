@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.controllers.MainController">
+   <children>
+      <MenuBar layoutX="6.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="Home">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu fx:id="tracker" mnemonicParsing="false" text="Tracker">
+            <items>
+              <MenuItem mnemonicParsing="false" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="BMI">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Calculator" />
+                  <MenuItem mnemonicParsing="false" text="Progress" />
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="Account" />
+        </menus>
+      </MenuBar>
+      <SplitPane dividerPositions="0.5" layoutX="14.0" layoutY="25.0" orientation="VERTICAL" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
+        <items>
+            <SplitPane dividerPositions="0.5" prefHeight="181.0" prefWidth="598.0">
+              <items>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                     <children>
+                        <Label fx:id="userLabel" layoutX="264.0" layoutY="82.0" prefHeight="181.0" prefWidth="598.0" text="Hello Bob ! " textOverrun="CLIP" AnchorPane.leftAnchor="28.0" AnchorPane.topAnchor="20.0" />
+                     </children>
+                  </AnchorPane>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                     <children>
+                        <AnchorPane prefHeight="181.0" prefWidth="296.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <AnchorPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <AnchorPane />
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </AnchorPane>
+              </items>
+            </SplitPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+               <children>
+                  <LineChart fx:id="weightChart" layoutX="43.0" layoutY="-97.0" maxHeight="-Infinity" mouseTransparent="true" prefHeight="181.0" prefWidth="598.0" title="Progress tracking " AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <xAxis>
+                      <CategoryAxis fx:id="months" label="Months" side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                      <NumberAxis fx:id="progress" label="Progress (%)" side="LEFT" upperBound="150.0" />
+                    </yAxis>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </LineChart>
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </children>
+</AnchorPane>

@@ -42,9 +42,9 @@
               </rowConstraints>
                <children>
                   <Label layoutX="-40.0" layoutY="45.0" prefHeight="17.0" prefWidth="114.0" text="Username:" GridPane.rowIndex="1" />
-                  <TextField maxWidth="206.0" prefHeight="50.0" prefWidth="206.0" promptText="Enter your Username" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <TextField fx:id="username" maxWidth="206.0" prefHeight="50.0" prefWidth="206.0" promptText="Enter your Username" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <Label prefHeight="17.0" prefWidth="114.0" text="Password:" GridPane.rowIndex="2" />
-                  <PasswordField maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="30.0" prefWidth="176.0" promptText="Enter your Password" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <PasswordField fx:id="password" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="30.0" prefWidth="176.0" promptText="Enter your Password" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <Button fx:id="loginbtn" alignment="BOTTOM_CENTER" maxWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="176.0" text="Log in" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                </children>
                <VBox.margin>

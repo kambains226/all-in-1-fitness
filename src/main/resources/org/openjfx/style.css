@@ -39,7 +39,12 @@
 /*sign in page*/
 .sign {
     -fx-alignment: center;
-}
+}.sign .label{
+     -fx-font-weight: bold;
+     -fx-alignment: center;
+     -fx-font-size : 1.4em;
+     -fx-label-padding: 10% 0 10% ;
+ }
 .sign-grid{
     -fx-padding:-90 ;
 
@@ -57,5 +62,10 @@
     -fx-min-width: 200;
 
 }
-.sign-label{
+.error{
+    -fx-background-color:#cf5765;
+}
+.sign.feedback
+{
+    -fx-font-size: 0.6em;
 }
