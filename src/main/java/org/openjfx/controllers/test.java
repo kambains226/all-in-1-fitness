@@ -13,4 +13,21 @@ public class test {
 
     }
 
+    public class TrackerController {
+
+
+
+        public void initialize(){
+            System.out.println("test");
+        }
+        public void load(){
+            System.out.println("load");
+        }
+    }
+
+    public class TrackerController2 {
+        public void initialize() {
+            System.out.println("Initializing Tracker");
+        }
+    }
 }

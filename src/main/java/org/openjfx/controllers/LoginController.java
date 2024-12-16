@@ -45,7 +45,9 @@ public class LoginController extends BaseController {
 
         if (usernameValid && passwordValid) {
             if(LoginCheck()){
-                switchScene("/org/openjfx/mainScene.fxml");
+                System.out.println("Login Successful");
+                switchScene("/org/openjfx/layout.fxml");
+                System.out.println("Login Successful");
                 password.getScene().getWindow().hide();
             }
         }
