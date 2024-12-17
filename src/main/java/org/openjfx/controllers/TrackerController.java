@@ -14,22 +14,14 @@ import javafx.beans.property.SimpleStringProperty;
 public class TrackerController
 {
     @FXML
-    private Button breakbtn;
-    @FXML
-    private Button lunchbtn;
-    @FXML
-    private Button dinnerbtn;
-    @FXML
-    private Button snacksbtn;
+    private Button foodbtn;
+
     @FXML
     private VBox content;
 
      public void initialize(){
         System.out.println("te");
-        breakbtn.setOnAction(event -> {editMeal("Breakfeast");});
-        lunchbtn.setOnAction(event -> {editMeal("Lunch");});
-        dinnerbtn.setOnAction(event -> {editMeal("Dinner");});
-        snacksbtn.setOnAction(event -> {editMeal("Snacks");});
+        foodbtn.setOnAction(event -> {editMeal();});
 
 
 
@@ -38,13 +30,19 @@ public class TrackerController
 
          //chatgpt advice used to create this
          ObservableList<Food> foods = FXCollections.observableArrayList(
-                 new Food("chicken" ,340,70,10,10,10,11)
+                 new Food("chicken" ,340,70,10,10,10)
          );
-         String[] columnNames =Food.getColumnNames();
-         for (int i=0; i < columnNames.length;i++){
-             TableColumn <Food, ?> column = new TableColumn<>(columnNames[i]);
 
-             column.setCellValueFactory(new PropertyValueFactory<>(columnNames[i]));
+         //hardcoded string as its not an integer so cant be added with them
+         TableColumn<Food, String> nameCol = new TableColumn<>("Name");
+         nameCol.setCellValueFactory(data -> data.getValue().NameProperty());
+         tableView.getColumns().add(nameCol); //adds the name to the table
+         String[] columnNames =Food.getColumnNames();
+         //loops through column names and adds them to the table
+         for (String columnName : columnNames) {
+             TableColumn <Food, Number > column = new TableColumn<>(columnName);
+
+             column.setCellValueFactory(data -> data.getValue().getMacro(columnName));
 
              tableView.getColumns().add(column);
          }
@@ -54,8 +52,8 @@ public class TrackerController
          //coverts the restult to string from the inputbox
          content.getChildren().add(tableView);
     }
-    private void editMeal(String meal){
-        PopUpController.showPopup(meal);
+    private void editMeal(){
+        PopUpController.showPopup();
 
      }
 

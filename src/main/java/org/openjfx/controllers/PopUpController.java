@@ -21,27 +21,25 @@ public class PopUpController {
 //    private Button closeButton;
 
 
-    public  static void showPopup(String meal){
+    public  static void showPopup(){
      //creates the dialog for the user to enter the information
         try {
             Dialog<String> dialog = new Dialog<>();
-            dialog.setTitle(meal+" Input");
+            dialog.setTitle(" Input your food");
 
             ButtonType submit = new ButtonType("Submit", ButtonBar.ButtonData.OK_DONE);
             dialog.getDialogPane().getButtonTypes().addAll(submit, ButtonType.CANCEL);
 
             Label label = new Label("Enter Your food");
             TextField input = new TextField();
-            input.setPromptText("Enter what you have eaten");
 
-            Label macrosLabel= new Label("Macros: ");
 
 
 
             VBox content = new VBox();
 
 
-            content.getChildren().addAll(label, input,macrosLabel);
+            content.getChildren().addAll(label, input);
             //adds the input to the content
             dialog.getDialogPane().setContent(content); //adds the vbox layout to the content
 

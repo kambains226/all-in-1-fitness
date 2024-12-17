@@ -23,6 +23,7 @@ public class DatabaseManager {
             return conn;
 
     }
+    //creates the table
     public static void intialize(){
         String createLogin = """
                CREATE TABLE IF NOT EXISTS login (
@@ -36,10 +37,22 @@ public class DatabaseManager {
                
                ); 
                 """;
+        String createFood = """
+               CREATE TABLE IF NOT EXISTS food (
+               id INTEGER PRIMARY KEY AUTOINCREMENT,
+               name TEXT,
+               calories INTEGER,
+               protein INTEGER,
+               carbs INTEGER,
+               fats INTEGER,
+               sugar INTEGER,
+               track_date DATE
+               ); 
+                """;
         //membership will be used to decided if it is a trainer or a member
         try(Connection conn = connect()){
             Statement stmt = connect().createStatement();
-            stmt.execute(createLogin);
+            stmt.execute(createFood);
             System.out.println("Table created");
         }
         catch(SQLException e)
