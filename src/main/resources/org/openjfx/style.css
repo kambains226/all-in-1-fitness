@@ -69,3 +69,6 @@
 {
     -fx-font-size: 0.6em;
 }
+.Hbox{
+    -fx-alignment: center;
+}
