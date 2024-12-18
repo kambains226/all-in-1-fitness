@@ -83,6 +83,30 @@ public class DatabaseManager {
             System.out.println(e);
         }
     }
+    public static void insert(String name, int[] values){
+
+        //add the users information to the database
+        System.out.println("Inserting2 user");
+        String sql = "INSERT INTO login(username,password,dob,email,join_date) VALUES(?,?,?,?,?)";
+
+        try(Connection conn= connect();
+            PreparedStatement pstmt = conn.prepareStatement(sql))
+        {
+            System.out.println("Inserting user");
+            pstmt.setString(1,username);
+            pstmt.setString(2,password);
+            pstmt.setString(3,dob);
+            pstmt.setString(4,email);
+            pstmt.setString(5,joinDate);
+
+
+            pstmt.execute();
+        }
+        catch(SQLException e){
+            System.out.println(e);
+        }
+    }
+
 
     public static String check(TextField username){
 
