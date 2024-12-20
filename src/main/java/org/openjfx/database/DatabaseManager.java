@@ -2,7 +2,6 @@ package org.openjfx.database;
 import javafx.scene.control.TextField;
 
 import java.sql.*;
-import javafx.scene.control.TextField;
 
 
 //sqllite documentation https://www.sqlite.org/docs.html
@@ -83,21 +82,24 @@ public class DatabaseManager {
             System.out.println(e);
         }
     }
-    public static void insert(String name, int[] values){
+    // make a function which can be used to with an array
+    public static void insertFood(String name, int cals, int protein, int carbs, int fats, int sugar, String track_date){
 
         //add the users information to the database
         System.out.println("Inserting2 user");
-        String sql = "INSERT INTO login(username,password,dob,email,join_date) VALUES(?,?,?,?,?)";
+        String sql = "INSERT INTO login(username,password,dob,email,join_date) VALUES(?,?,?,?,?,?,?)";
 
         try(Connection conn= connect();
             PreparedStatement pstmt = conn.prepareStatement(sql))
         {
-            System.out.println("Inserting user");
-            pstmt.setString(1,username);
-            pstmt.setString(2,password);
-            pstmt.setString(3,dob);
-            pstmt.setString(4,email);
-            pstmt.setString(5,joinDate);
+            System.out.println("Inserting food");
+            pstmt.setString(1,name);
+            pstmt.setInt(2,cals);
+            pstmt.setInt(3,protein);
+            pstmt.setInt(4,carbs);
+            pstmt.setInt(5,fats);
+            pstmt.setInt(6,sugar);
+            pstmt.setString(7,track_date);
 
 
             pstmt.execute();
@@ -106,6 +108,30 @@ public class DatabaseManager {
             System.out.println(e);
         }
     }
+   //used so i can use this insert function for to insert any table i want
+//    public static void insert(String name, int[] values){
+//
+//        //add the users information to the database
+//        System.out.println("Inserting2 user");
+//        String sql = "INSERT INTO login(username,password,dob,email,join_date) VALUES(?,?,?,?,?)";
+//
+//        try(Connection conn= connect();
+//            PreparedStatement pstmt = conn.prepareStatement(sql))
+//        {
+//            System.out.println("Inserting user");
+//            pstmt.setString(1,username);
+//            pstmt.setString(2,password);
+//            pstmt.setString(3,dob);
+//            pstmt.setString(4,email);
+//            pstmt.setString(5,joinDate);
+//
+//
+//            pstmt.execute();
+//        }
+//        catch(SQLException e){
+//            System.out.println(e);
+//        }
+//    }
 
 
     public static String check(TextField username){
