@@ -1,7 +1,9 @@
 package org.openjfx.database;
 import javafx.scene.control.TextField;
-
+import org.openjfx.models.Food;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 //sqllite documentation https://www.sqlite.org/docs.html
@@ -83,23 +85,25 @@ public class DatabaseManager {
         }
     }
     // make a function which can be used to with an array
-    public static void insertFood(String name, int cals, int protein, int carbs, int fats, int sugar, String track_date){
+    public static void insertFood(String [] foodAttributes){
 
+
+        //going to need to crate a select funciton
         //add the users information to the database
-        System.out.println("Inserting2 user");
-        String sql = "INSERT INTO login(username,password,dob,email,join_date) VALUES(?,?,?,?,?,?,?)";
+        System.out.println(foodAttributes.length);
+        String sql = "INSERT INTO food(name,calories,protein,carbs,fats,sugar,track_date) VALUES(?,?,?,?,?,?,?)";
 
         try(Connection conn= connect();
             PreparedStatement pstmt = conn.prepareStatement(sql))
         {
             System.out.println("Inserting food");
-            pstmt.setString(1,name);
-            pstmt.setInt(2,cals);
-            pstmt.setInt(3,protein);
-            pstmt.setInt(4,carbs);
-            pstmt.setInt(5,fats);
-            pstmt.setInt(6,sugar);
-            pstmt.setString(7,track_date);
+            pstmt.setString(1,foodAttributes[0]);
+            pstmt.setInt(2, Integer.parseInt(foodAttributes[1]));
+            pstmt.setInt(3,Integer.parseInt(foodAttributes[2]));
+            pstmt.setInt(4,Integer.parseInt(foodAttributes[3]));
+            pstmt.setInt(5,Integer.parseInt(foodAttributes[4]));
+            pstmt.setInt(6,Integer.parseInt(foodAttributes[5]));
+            pstmt.setString(7,foodAttributes[6]);
 
 
             pstmt.execute();
@@ -132,8 +136,47 @@ public class DatabaseManager {
 //            System.out.println(e);
 //        }
 //    }
+    public static  ArrayList<Food> Select(String column,String column_value){
+        String sql = "SELECT * FROM food WHERE "+ column+" = ?" ;
+        ArrayList <Food>foodView = new ArrayList<>();//stores all the inseted food into an array of food
+        try(Connection conn = connect();
+            PreparedStatement pstm  =conn.prepareStatement(sql)
+        ){
+            pstm.setString(1,column_value);
+            ResultSet rs = pstm.executeQuery();
+
+            System.out.println(rs.getMetaData().getColumnCount());
+            System.out.println(rs.getRow()+"abc");
+
+            int x = 0;
+            while(rs.next()){
+                String[] test = new String[rs.getMetaData().getColumnCount()];
+                //need to make the data get looped through
+
+                    for (int i =0; i <rs.getMetaData().getColumnCount(); i++){
+                        System.out.println(rs.getString(i+1));
+                        String data = rs.getString(i+1);
+                        test[i] =data;
+                    }
+                System.out.println(Arrays.toString(test));
+                foodView.add(new Food(test[1],Integer.parseInt(test[2]),Integer.parseInt(test[3]),Integer.parseInt(test[4]),Integer.parseInt(test[5]),Integer.parseInt(test[6])));
+
+                    x++;
+                System.out.println(foodView.size());
 
 
+
+            }
+        }
+        catch(SQLException e){
+            System.out.println(e);
+        }
+        for (Food food : foodView){
+            System.out.println("food");
+            System.out.println(food.getMacros());
+        }
+        return foodView;
+    }
     public static String check(TextField username){
 
         String sql = "SELECT * FROM login WHERE username=?";
