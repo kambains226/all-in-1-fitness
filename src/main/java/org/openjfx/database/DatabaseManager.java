@@ -145,8 +145,6 @@ public class DatabaseManager {
             pstm.setString(1,column_value);
             ResultSet rs = pstm.executeQuery();
 
-            System.out.println(rs.getMetaData().getColumnCount());
-            System.out.println(rs.getRow()+"abc");
 
             int x = 0;
             while(rs.next()){
@@ -154,15 +152,12 @@ public class DatabaseManager {
                 //need to make the data get looped through
 
                     for (int i =0; i <rs.getMetaData().getColumnCount(); i++){
-                        System.out.println(rs.getString(i+1));
                         String data = rs.getString(i+1);
                         test[i] =data;
                     }
-                System.out.println(Arrays.toString(test));
                 foodView.add(new Food(test[1],Integer.parseInt(test[2]),Integer.parseInt(test[3]),Integer.parseInt(test[4]),Integer.parseInt(test[5]),Integer.parseInt(test[6])));
 
                     x++;
-                System.out.println(foodView.size());
 
 
 
@@ -170,10 +165,6 @@ public class DatabaseManager {
         }
         catch(SQLException e){
             System.out.println(e);
-        }
-        for (Food food : foodView){
-            System.out.println("food");
-            System.out.println(food.getMacros());
         }
         return foodView;
     }

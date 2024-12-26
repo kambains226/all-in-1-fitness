@@ -1,2 +1,4 @@
 - insert data to table from databas matching date selected
 - data only inserted to table if all data is inputed
+-could change hte table to a grid method which includes a delete button
+                             //not displaying multiple data on same day need to fix it
