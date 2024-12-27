@@ -33,7 +33,7 @@
                   <Button fx:id="foodbtn" mnemonicParsing="false" text="EDIT" />
                </children>
             </HBox>
-            <DatePicker GridPane.rowIndex="2" />
+            <DatePicker fx:id="track_date" GridPane.rowIndex="2" />
          </children>
       </GridPane>
    </children>

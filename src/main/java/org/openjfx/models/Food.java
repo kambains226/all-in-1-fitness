@@ -8,7 +8,7 @@ import java.util.Map;
 
 
 public class Food {
-    private static SimpleStringProperty name;
+    private  SimpleStringProperty name;
     private SimpleIntegerProperty calories;
     private SimpleIntegerProperty protein;
     private SimpleIntegerProperty carbs;
@@ -17,7 +17,7 @@ public class Food {
     private SimpleIntegerProperty fibre;
 
     //lists all the integers in a Map/dictionary with String keys
-    private static Map<String,SimpleIntegerProperty> macros;
+    private  Map<String,SimpleIntegerProperty> macros;
 
     public Food(String name,int calories, int protein, int carbs, int fats, int sugar) {
         this.name = new SimpleStringProperty(name);
@@ -39,7 +39,7 @@ public class Food {
         this.calories = new SimpleIntegerProperty(calories);
     }
     //gets the data that matches the name e.g. Name= NameProperty
-    public static SimpleStringProperty NameProperty() {
+    public  SimpleStringProperty NameProperty() {
         return name;
     }
     //maps it into a key of all the IntegerKeys
@@ -50,7 +50,7 @@ public class Food {
 //        return protein;
 //    }
     //gets thge keys of macros
-    public static SimpleIntegerProperty getMacro(String key) {
+    public  SimpleIntegerProperty getMacro(String key) {
         return macros.get(key);
     }
     public Map<String,SimpleIntegerProperty> getMacros() {

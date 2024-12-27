@@ -146,26 +146,27 @@ public class DatabaseManager {
             ResultSet rs = pstm.executeQuery();
 
 
-            int x = 0;
+            String[] test = new String[rs.getMetaData().getColumnCount()];
+
+
             while(rs.next()){
-                String[] test = new String[rs.getMetaData().getColumnCount()];
                 //need to make the data get looped through
 
                     for (int i =0; i <rs.getMetaData().getColumnCount(); i++){
                         String data = rs.getString(i+1);
                         test[i] =data;
                     }
-                foodView.add(new Food(test[1],Integer.parseInt(test[2]),Integer.parseInt(test[3]),Integer.parseInt(test[4]),Integer.parseInt(test[5]),Integer.parseInt(test[6])));
-
-                    x++;
+                    foodView.add(new Food(test[1],Integer.parseInt(test[2]),Integer.parseInt(test[3]),Integer.parseInt(test[4]),Integer.parseInt(test[5]),Integer.parseInt(test[6])));
 
 
 
             }
+            System.out.println(foodView);
         }
         catch(SQLException e){
             System.out.println(e);
         }
+        System.out.println(foodView.size()+" rows found");
         return foodView;
     }
     public static String check(TextField username){
