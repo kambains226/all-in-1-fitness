@@ -3,57 +3,50 @@ package org.openjfx.models;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
+import javafx.beans.property.SimpleFloatProperty;
 import java.util.HashMap;
 import java.util.Map;
 
 
 public class Food {
     private  SimpleStringProperty name;
-    private SimpleIntegerProperty calories;
-    private SimpleIntegerProperty protein;
-    private SimpleIntegerProperty carbs;
-    private SimpleIntegerProperty fats;
-    private SimpleIntegerProperty sugar;
-    private SimpleIntegerProperty fibre;
+//    private SimpleIntegerProperty calories;
+    private SimpleIntegerProperty id;
+//    private SimpleIntegerProperty protein;
+//    private SimpleIntegerProperty carbs;
+//    private SimpleIntegerProperty fats;
+//    private SimpleIntegerProperty sugar;
+//    private SimpleIntegerProperty fibre;
 
     //lists all the integers in a Map/dictionary with String keys
-    private  Map<String,SimpleIntegerProperty> macros;
+    private  Map<String,SimpleFloatProperty> macros;
 
-    public Food(String name,int calories, int protein, int carbs, int fats, int sugar) {
+    public Food(int id,String name,float calories, float protein, Float carbs, float fats, float sugar) {
         this.name = new SimpleStringProperty(name);
-//        this.calories = new SimpleIntegerProperty(calories);
-//        this.protein = new SimpleIntegerProperty(protein);
-//        this.carbs = new SimpleIntegerProperty(carbs);
-//        this.fats = new SimpleIntegerProperty(fats);
-//        this.sugar = new SimpleIntegerProperty(sugar);
-//        this.fibre = new SimpleIntegerProperty(fibre);
-
+        this.id = new SimpleIntegerProperty(id);
          this.macros = new HashMap<>();
-         macros.put("Calories", new SimpleIntegerProperty(calories));
-         macros.put("Protein", new SimpleIntegerProperty(protein));
-         macros.put("Carbs", new SimpleIntegerProperty(carbs));
-         macros.put("Fats", new SimpleIntegerProperty(fats));
-         macros.put("Sugar", new SimpleIntegerProperty(sugar));
+
+         macros.put("Calories", new SimpleFloatProperty(calories));
+         macros.put("Protein", new SimpleFloatProperty(protein));
+         macros.put("Carbs", new SimpleFloatProperty(carbs));
+         macros.put("Fats", new SimpleFloatProperty(fats));
+         macros.put("Sugar", new SimpleFloatProperty(sugar));
     }
-    public Food (int calories){
-        this.calories = new SimpleIntegerProperty(calories);
-    }
+
     //gets the data that matches the name e.g. Name= NameProperty
     public  SimpleStringProperty NameProperty() {
         return name;
     }
+    public  SimpleIntegerProperty idProperty() {
+
+        return id;
+    }
     //maps it into a key of all the IntegerKeys
-//    public SimpleIntegerProperty CaloriesProperty() {
-//        return calories;
-//    }
-//    public SimpleIntegerProperty ProteinProperty() {
-//        return protein;
-//    }
     //gets thge keys of macros
-    public  SimpleIntegerProperty getMacro(String key) {
+    public  SimpleFloatProperty getMacro(String key) {
         return macros.get(key);
     }
-    public Map<String,SimpleIntegerProperty> getMacros() {
+    public Map<String,SimpleFloatProperty> getMacros() {
        return macros;
     }
     public static String[] getColumnNames(){

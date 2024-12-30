@@ -30,7 +30,7 @@
             <HBox fx:id="Hbox" prefHeight="100.0" prefWidth="200.0" styleClass="Hbox">
                <children>
                   <Label text="edit your food tracking" />
-                  <Button fx:id="foodbtn" mnemonicParsing="false" text="EDIT" />
+                  <Button fx:id="foodbtn" mnemonicParsing="false" text="Add Food" />
                </children>
             </HBox>
             <DatePicker fx:id="track_date" GridPane.rowIndex="2" />

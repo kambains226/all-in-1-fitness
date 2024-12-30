@@ -98,11 +98,11 @@ public class DatabaseManager {
         {
             System.out.println("Inserting food");
             pstmt.setString(1,foodAttributes[0]);
-            pstmt.setInt(2, Integer.parseInt(foodAttributes[1]));
-            pstmt.setInt(3,Integer.parseInt(foodAttributes[2]));
-            pstmt.setInt(4,Integer.parseInt(foodAttributes[3]));
-            pstmt.setInt(5,Integer.parseInt(foodAttributes[4]));
-            pstmt.setInt(6,Integer.parseInt(foodAttributes[5]));
+            pstmt.setFloat(2, Float.parseFloat(foodAttributes[1]));
+            pstmt.setFloat(3,Float.parseFloat(foodAttributes[2]));
+            pstmt.setFloat(4,Float.parseFloat(foodAttributes[3]));
+            pstmt.setFloat(5,Float.parseFloat(foodAttributes[4]));
+            pstmt.setFloat(6,Float.parseFloat(foodAttributes[5]));
             pstmt.setString(7,foodAttributes[6]);
 
 
@@ -136,6 +136,46 @@ public class DatabaseManager {
 //            System.out.println(e);
 //        }
 //    }
+    //updates the data from the table
+    public static void editData(String [] data,int id){
+
+
+        //edits the data in the database
+        String sql ="UPDATE food SET name=?,calories=?,protein=?,carbs=?,fats=?,sugar=? WHERE id=?";
+
+        try(Connection conn = connect();
+        PreparedStatement pstmt = conn.prepareStatement(sql))
+        {
+
+            pstmt.setString(1,data[0]);//name
+            pstmt.setFloat(2,Float.parseFloat(data[1]));//calories
+            pstmt.setFloat(3,Float.parseFloat(data[2]));//protein
+            pstmt.setFloat(4,Float.parseFloat(data[3]));//carbs
+            pstmt.setFloat(5,Float.parseFloat(data[4]));//fats
+            pstmt.setFloat(6,Float.parseFloat(data[5]));//sugars
+            pstmt.setInt(7,id);
+            int rows = pstmt.executeUpdate();
+            System.out.println("rows updated"+rows);
+        }
+        catch (SQLException e){
+            System.out.println(e);
+
+        }
+
+    }
+    public static void deleteData(int id){
+        String sql = "DELETE FROM food WHERE id=?";
+
+        try(Connection conn = connect();
+            PreparedStatement pstmt = conn.prepareStatement(sql))
+        {
+            pstmt.setInt(1,id);
+            pstmt.execute();
+        }
+        catch(SQLException e){
+            System.out.println(e);
+        }
+    }
     public static  ArrayList<Food> Select(String column,String column_value){
         String sql = "SELECT * FROM food WHERE "+ column+" = ?" ;
         ArrayList <Food>foodView = new ArrayList<>();//stores all the inseted food into an array of food
@@ -156,7 +196,7 @@ public class DatabaseManager {
                         String data = rs.getString(i+1);
                         test[i] =data;
                     }
-                    foodView.add(new Food(test[1],Integer.parseInt(test[2]),Integer.parseInt(test[3]),Integer.parseInt(test[4]),Integer.parseInt(test[5]),Integer.parseInt(test[6])));
+                    foodView.add(new Food(Integer.parseInt(test[0]),test[1],Float.parseFloat(test[2]),Float.parseFloat(test[3]),Float.parseFloat(test[4]),Float.parseFloat(test[5]),Float.parseFloat(test[6])));
 
 
 
