@@ -54,7 +54,6 @@ public class DatabaseManager {
         try(Connection conn = connect()){
             Statement stmt = connect().createStatement();
             stmt.execute(createFood);
-            System.out.println("Table created");
         }
         catch(SQLException e)
         {
@@ -64,7 +63,6 @@ public class DatabaseManager {
     public static void insertUser(String username,String password,String dob,String email,String joinDate){
 
         //add the users information to the database
-        System.out.println("Inserting2 user");
         String sql = "INSERT INTO login(username,password,dob,email,join_date) VALUES(?,?,?,?,?)";
 
         try(Connection conn= connect();
@@ -90,13 +88,14 @@ public class DatabaseManager {
 
         //going to need to crate a select funciton
         //add the users information to the database
-        System.out.println(foodAttributes.length);
+
+//        if (foodAttributes == null || foodAttributes.length > foodAttributes.length) {}
         String sql = "INSERT INTO food(name,calories,protein,carbs,fats,sugar,track_date) VALUES(?,?,?,?,?,?,?)";
 
         try(Connection conn= connect();
             PreparedStatement pstmt = conn.prepareStatement(sql))
         {
-            System.out.println("Inserting food");
+
             pstmt.setString(1,foodAttributes[0]);
             pstmt.setFloat(2, Float.parseFloat(foodAttributes[1]));
             pstmt.setFloat(3,Float.parseFloat(foodAttributes[2]));
@@ -110,6 +109,11 @@ public class DatabaseManager {
         }
         catch(SQLException e){
             System.out.println(e);
+        }
+        catch(NullPointerException e){
+
+//           System.out.println("a");
+            e.printStackTrace();
         }
     }
    //used so i can use this insert function for to insert any table i want
@@ -154,8 +158,7 @@ public class DatabaseManager {
             pstmt.setFloat(5,Float.parseFloat(data[4]));//fats
             pstmt.setFloat(6,Float.parseFloat(data[5]));//sugars
             pstmt.setInt(7,id);
-            int rows = pstmt.executeUpdate();
-            System.out.println("rows updated"+rows);
+            pstmt.executeUpdate();
         }
         catch (SQLException e){
             System.out.println(e);
@@ -201,12 +204,10 @@ public class DatabaseManager {
 
 
             }
-            System.out.println(foodView);
         }
         catch(SQLException e){
             System.out.println(e);
         }
-        System.out.println(foodView.size()+" rows found");
         return foodView;
     }
     public static String check(TextField username){

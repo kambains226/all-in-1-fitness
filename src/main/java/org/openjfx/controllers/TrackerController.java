@@ -62,7 +62,6 @@ public class TrackerController extends PageController
     private void loadData(LocalDate date){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); //make sure the date can be taken
 
-        System.out.println(date.format(formatter));
         ArrayList <Food> foodArr = DatabaseManager.Select("track_date",date.format(formatter));
         setGrid(foodArr);
 
@@ -118,7 +117,8 @@ public class TrackerController extends PageController
 
                         }
 
-                        editMeal(values);
+                            editMeal(values);
+
                         reloadUI(track_date.getValue());
                     });
                 }
@@ -148,6 +148,7 @@ public class TrackerController extends PageController
     private void reloadUI(LocalDate newDate){
          grid.getChildren().clear();
          loadData(newDate);//calls the method to update the layout once a new date is selected
+         values =null; //unset the value of values so it doesnt display when clicking to add a value
 
     }
     private void addMeal(){

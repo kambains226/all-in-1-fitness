@@ -22,6 +22,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class PopUpController {
     private Stage stage;
@@ -31,8 +32,9 @@ public class PopUpController {
 
 
 
+
     public static void showPopup(Object[] data,int id){
-        System.out.println(id);
+
         //edits the table
         try {
             if(data==null ){
@@ -47,8 +49,7 @@ public class PopUpController {
         }
 
         catch(Exception e){
-            System.out.println("Error: " + e);
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
     private  static void createForm(){
@@ -70,9 +71,18 @@ public class PopUpController {
         Label[] labels = new Label[dataText.length];
         for(int i = 0; i < dataText.length; i++ ) {
             // need to make it so they are all displayed
-            Label labelMac = new Label(dataText[i]);
-            System.out.println(dataText[i]);
             input[i] = new TextField();
+            final int index = i;
+            if(index !=0){
+                input[i].textProperty().addListener((observable, oldValue, newValue) -> {
+
+                    if(!newValue.matches("\\d*(\\.\\d*)?")) //regex to check if input is a number
+                    {
+                        input[index].setText(oldValue);
+                    }
+                });
+            }
+
             labels[i] = new Label(dataText[i]);
 
 
@@ -82,81 +92,96 @@ public class PopUpController {
 
             content.getChildren().addAll(labels[i],input[i]);
         }
+
         dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == submit) {
+            if (dialogButton == submit && !input[0].getText().isEmpty()) {
                 for (int i = 0; i <input.length; i++) {
-                    results[i] = input[i].getText();
+
+                   if(input[i].getText().isEmpty()) {
+
+                       input[i].setText("0");
+                       // if not input sets it to 0 be default
+                    }
+
+                       results[i] = input[i].getText();
+
                 }
+                insertData(results);
                 return results;
+
             }
             return null;
 
         });
         dialog.getDialogPane().setContent(content); //adds the vbox layout to the content
         dialog.showAndWait();  //waits for the user to of input something before proceeding
-        for (String s : results) {
-
-            System.out.println(s); //prints the users inputjkkk
-        }
 
 
-        insertData(results);
+
+//        insertData(results);
     }
     private  static void createForm(Object[] obj,int id ){
-        Dialog<String[]> dialog = new Dialog<>();
-        dialog.setTitle(" Input your food");
+        try{
+            Dialog<String[]> dialog = new Dialog<>();
+            dialog.setTitle(" Edit your food");
 
-        setDate();
+            setDate();
 
-        ButtonType submit = new ButtonType("Submit", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(submit, ButtonType.CANCEL);
+            ButtonType submit = new ButtonType("Submit", ButtonBar.ButtonData.OK_DONE);
+            dialog.getDialogPane().getButtonTypes().addAll(submit, ButtonType.CANCEL);
 
-        Label label = new Label("Enter Your food");
-        // all the macros labes
-        String [] dataText = getData();
+            Label label = new Label("Enter Your food");
+            // all the macros labes
+            String [] dataText = getData();
 
-        VBox content = new VBox();
-        TextField[] input = new TextField[dataText.length];
-        String[] results = new String [input.length+1]; //stores the results from the input
-        Label[] labels = new Label[dataText.length];
-        for(int i = 0; i < dataText.length; i++ ) {
-            // need to make it so they are all displayed
-            String value=""; //assign it with a temp value
-            //makes it so the value can be added to the textfield
-            if(obj[i] instanceof SimpleStringProperty){
-                value =((StringProperty)obj[i]).get();
-            }
-            else if(obj[i] instanceof SimpleFloatProperty){
-                float x = ((SimpleFloatProperty)obj[i]).get();
-                value = String.valueOf(x); //turns the int value into a string
-            }
-            input[i] = new TextField();
-            input[i].setText(value);
-
-            labels[i] = new Label(dataText[i]);
-
-
-            //adds the input to the content
-
-
-
-            content.getChildren().addAll(labels[i],input[i]);
-        }
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == submit) {
-                for (int i = 0; i <input.length; i++) {
-                    results[i] = input[i].getText();
+            VBox content = new VBox();
+            TextField[] input = new TextField[dataText.length];
+            String[] results = new String [input.length+1]; //stores the results from the input
+            Label[] labels = new Label[dataText.length];
+            for(int i = 0; i < dataText.length; i++ ) {
+                // need to make it so they are all displayed
+                String value=""; //assign it with a temp value
+                //makes it so the value can be added to the textfield
+                if(obj[i] instanceof SimpleStringProperty){
+                    value =((StringProperty)obj[i]).get();
                 }
-                return results;
+                else if(obj[i] instanceof SimpleFloatProperty){
+                    float x = ((SimpleFloatProperty)obj[i]).get();
+                    value = String.valueOf(x); //turns the int value into a string
+                }
+                input[i] = new TextField();
+                input[i].setText(value);
+
+                labels[i] = new Label(dataText[i]);
+
+
+                //adds the input to the content
+
+
+
+                content.getChildren().addAll(labels[i],input[i]);
             }
-            return null;
+            dialog.setResultConverter(dialogButton -> {
+                if (dialogButton == submit) {
+                    for (int i = 0; i <input.length; i++) {
+                        results[i] = input[i].getText();
+                    }
+                    DatabaseManager.editData(results,id); //runs when submitted
+                    return results;
+                }
+                return null;
 
-        });
-        dialog.getDialogPane().setContent(content); //adds the vbox layout to the content
-        dialog.showAndWait();  //waits for the user to of input something before proceeding
+            });
+            dialog.getDialogPane().setContent(content); //adds the vbox layout to the content
+            dialog.showAndWait();  //waits for the user to of input something before proceeding
 
 
-        DatabaseManager.editData(results,id);
+
+        }
+        catch (NullPointerException e){
+            e.printStackTrace();
+        }
+
     }
 
 
@@ -166,7 +191,6 @@ public class PopUpController {
         String todaysDate = formatter.format(LocalDate.now());
 //
         data[data.length-1] = todaysDate;
-        System.out.println(todaysDate);
        DatabaseManager.insertFood(data);
 
 
@@ -183,7 +207,6 @@ public class PopUpController {
 
     public  static String getDate() {
         setDate();
-        System.out.println("th@" +date);
         return date;
     }
     // sets the date to the todays date

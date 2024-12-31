@@ -45,18 +45,14 @@ public class LoginController extends BaseController {
 
         if (usernameValid && passwordValid) {
             if(LoginCheck()){
-                System.out.println("Login Successful");
                 switchScene("/org/openjfx/layout.fxml");
-                System.out.println("Login Successful");
                 password.getScene().getWindow().hide();
             }
         }
         return usernameValid && passwordValid;
     }
     private boolean LoginCheck() {
-        System.out.println("LoginCheck");
         String hash =DatabaseManager.check(username);
-        System.out.println(hash);
         return matchPassword(password.getText(), hash);
 
 
