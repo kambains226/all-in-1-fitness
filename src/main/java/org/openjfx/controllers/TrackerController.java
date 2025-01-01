@@ -1,9 +1,7 @@
 package org.openjfx.controllers;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -35,12 +33,14 @@ public class TrackerController extends PageController
 
     private Button delete;
     private Button edit; //  to edit the foods
-
+    private ArrayList<String> foods; //used to display the foods that are saved in the select
     private Object[] values;
     private int currentId;
+
+    private ComboBox<String> comboBox;
+
      public void initialize(){
          //sets the datepicker value to todays value
-         grid = new GridPane();
          track_date.setValue(LocalDate.now());
          loadData(track_date.getValue());
 
@@ -54,12 +54,11 @@ public class TrackerController extends PageController
              }
          });
 
-         TableView<Food> tableView = new TableView<>();
 
         //coverts the restult to string from the inputbox
-         content.getChildren().add(grid);
     }
     private void loadData(LocalDate date){
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); //make sure the date can be taken
 
         ArrayList <Food> foodArr = DatabaseManager.Select("track_date",date.format(formatter));
@@ -67,12 +66,27 @@ public class TrackerController extends PageController
 
     }
     private void setGrid(ArrayList<Food> arr){
+        grid = new GridPane();
+        content.getChildren().add(grid); //sets the layout for the page
+        String[] columns ={"name"};
+        comboBox = new ComboBox<>();
+        comboBox.getItems().addAll(getFood(columns));
         String[] columnNames =Food.getColumnNames();
         foodbtn.setOnAction(event -> {addMeal();
 
        reloadUI(track_date.getValue());
         });
+        //quick add label
+        Label quickAdd = new Label("Quick Add");
+        // loads the check box to select foods already  been added
+//        String[] comoboFoodNames =new String[getFood().length/2+1];
+
+
+        //
+
+
         // create the grid to display the data
+        content.getChildren().addAll(quickAdd, comboBox);
         //creates the rows and columns of the grid
         for (int  row =0; row <arr.size()+1; row++){
             for (int col =0; col <=columnNames.length+1; col++){
@@ -145,7 +159,17 @@ public class TrackerController extends PageController
         grid.setHgap(20);
         grid.setVgap(20);
     }
+    //gets the names and id from the database for the quick add
+    private String[] getFood(String [] arr){
+         //stores all the values
+
+        String []dupes =DatabaseManager.selectAll(arr,"food");
+        Set<String> remove = new HashSet<>(Arrays.asList(dupes)); //removes dupes so foods with same name wont appear
+        return remove.toArray(new String[0]);
+    }
+//    gets only the food names
     private void reloadUI(LocalDate newDate){
+         content.getChildren().remove(comboBox);
          grid.getChildren().clear();
          loadData(newDate);//calls the method to update the layout once a new date is selected
          values =null; //unset the value of values so it doesnt display when clicking to add a value

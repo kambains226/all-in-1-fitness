@@ -188,7 +188,7 @@ public class DatabaseManager {
             pstm.setString(1,column_value);
             ResultSet rs = pstm.executeQuery();
 
-
+            //stores the data where the columns match
             String[] test = new String[rs.getMetaData().getColumnCount()];
 
 
@@ -209,6 +209,49 @@ public class DatabaseManager {
             System.out.println(e);
         }
         return foodView;
+    }
+    //selects all the data in  a specified table
+    public static String[] selectAll(String[] columns, String table){
+
+        //allows the function to be used in multipe situations
+       String sql ="SELECT ";
+       for (int i = 0; i < columns.length; i++) {
+           sql += columns[i]+" ";
+           if(i!=columns.length-1){
+               sql += ",";
+           }
+
+       }
+       sql+= "FROM "+table;
+       System.out.println(sql);
+        ArrayList<String> data=new ArrayList<>() ;
+        try(Connection conn = connect();
+        PreparedStatement pstmt =conn.prepareStatement(sql)){
+
+            ResultSet rs  =pstmt.executeQuery();
+
+            String [] temp = new String[rs.getMetaData().getColumnCount()];
+            // used to store the values of the data to add to the arraylist
+            while(rs.next()){
+                for (int i =0; i <rs.getMetaData().getColumnCount(); i++){
+                    String value= rs.getString(i+1);
+                    temp[i] =value;
+                }
+//                System.out.println(temp.toString());
+                data.addAll(Arrays.asList(temp));//adds the temp contents to the data
+            }
+            for (int i =0; i <data.size(); i++){
+                System.out.println(data.get(i));
+            }
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+        }
+
+        return data.toArray(new String[data.size()]);
+
+
+
     }
     public static String check(TextField username){
 

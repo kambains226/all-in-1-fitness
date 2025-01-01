@@ -1,1 +1,16 @@
 -- bmi page
+weight / height
+timelimit on user information
+--add weight to the food
+-- and saved foods
+--make code less repeated
+-- like repeated functions
+--inheritance
+-database code
+
+--overload the select database manager could have a select
+database manager which inherits from databasemanager for the selects so easy to overload
+
+
+--bugs
+--quick add gets duped probably get added in hte reload funciton
