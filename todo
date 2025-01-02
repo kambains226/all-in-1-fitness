@@ -2,8 +2,6 @@
 weight / height
 timelimit on user information
 --add weight to the food
--- and saved foods
---- make the load data function take string parameter
 
 --make code less repeated
 -- like repeated functions
@@ -15,3 +13,4 @@ database manager which inherits from databasemanager for the selects so easy to 
 
 
 --bugs
+potential bug where quick add alwasy get added

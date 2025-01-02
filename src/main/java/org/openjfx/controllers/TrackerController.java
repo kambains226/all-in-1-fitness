@@ -39,6 +39,7 @@ public class TrackerController extends PageController
 
     private ComboBox<String> comboBox;
     private Label quickAdd;
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); //make sure the date can be taken
      public void initialize(){
          //sets the datepicker value to todays value
          track_date.setValue(LocalDate.now());
@@ -59,7 +60,7 @@ public class TrackerController extends PageController
     }
     private void loadData(LocalDate date){
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); //make sure the date can be taken
+         //make sure the date can be taken
 
         ArrayList <Food> foodArr = DatabaseManager.Select("track_date",date.format(formatter));
         setGrid(foodArr);
@@ -76,6 +77,17 @@ public class TrackerController extends PageController
             //when a change occurs add the value to the grid
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 //call the select function from the database
+                String[] quickItem;
+                //inserts the quick add item to the database
+                quickItem= DatabaseManager.select("food","name",newValue,"1");
+
+                //sets the new quick add label to todays date
+                quickItem[quickItem.length-1] = track_date.getValue().format(formatter);
+                System.out.println(Arrays.toString(quickItem));
+               DatabaseManager.insertFood(quickItem);
+               reloadUI(track_date.getValue());
+
+
             }
         } );
         String[] columnNames =Food.getColumnNames();

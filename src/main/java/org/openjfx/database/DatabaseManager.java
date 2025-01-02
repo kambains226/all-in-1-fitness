@@ -88,7 +88,10 @@ public class DatabaseManager {
 
         //going to need to crate a select funciton
         //add the users information to the database
-
+        System.out.println("insert");
+        for (int i = 0; i<foodAttributes.length; i++){
+            System.out.println(foodAttributes[i]);
+        }
 //        if (foodAttributes == null || foodAttributes.length > foodAttributes.length) {}
         String sql = "INSERT INTO food(name,calories,protein,carbs,fats,sugar,track_date) VALUES(?,?,?,?,?,?,?)";
 
@@ -252,6 +255,39 @@ public class DatabaseManager {
 
 
 
+    }
+    // overloads the selectAll to take a limit
+    public static String[]  select(String table,String identifer,String idValue,String limit)
+    {
+        String sql ="SELECT * "+"FROM "+table+" WHERE " + identifer +" = ? LIMIT ?";
+        ArrayList<String> data=new ArrayList<>() ;
+
+        try(Connection conn = connect();
+            PreparedStatement pstmt =conn.prepareStatement(sql)){
+
+
+            // used to store the values of the data to add to the arraylist
+//                System.out.println(temp.toString());
+           pstmt.setString(1,idValue);
+           pstmt.setInt(2,Integer.parseInt(limit));
+
+           ResultSet rs = pstmt.executeQuery();
+
+            String [] temp = new String[rs.getMetaData().getColumnCount()-1];
+           while(rs.next()){
+               for (int i =0; i <rs.getMetaData().getColumnCount()-1; i++){
+                   String value= rs.getString(i+2);
+                   temp[i] =value;
+               }
+//                System.out.println(temp.toString());
+               data.addAll(Arrays.asList(temp));
+           }
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+        }
+        System.out.println(Arrays.toString(data.toArray(new String[data.size()])));
+        return data.toArray(new String[data.size()]);
     }
     public static String check(TextField username){
 
