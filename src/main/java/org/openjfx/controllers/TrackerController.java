@@ -38,7 +38,7 @@ public class TrackerController extends PageController
     private int currentId;
 
     private ComboBox<String> comboBox;
-
+    private Label quickAdd;
      public void initialize(){
          //sets the datepicker value to todays value
          track_date.setValue(LocalDate.now());
@@ -67,17 +67,24 @@ public class TrackerController extends PageController
     }
     private void setGrid(ArrayList<Food> arr){
         grid = new GridPane();
-        content.getChildren().add(grid); //sets the layout for the page
         String[] columns ={"name"};
         comboBox = new ComboBox<>();
         comboBox.getItems().addAll(getFood(columns));
+        //event listener where the comboBox has a value
+        comboBox.valueProperty().addListener( new ChangeListener<String>(){
+            @Override
+            //when a change occurs add the value to the grid
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                //call the select function from the database
+            }
+        } );
         String[] columnNames =Food.getColumnNames();
         foodbtn.setOnAction(event -> {addMeal();
 
        reloadUI(track_date.getValue());
         });
         //quick add label
-        Label quickAdd = new Label("Quick Add");
+        quickAdd = new Label("Quick Add");
         // loads the check box to select foods already  been added
 //        String[] comoboFoodNames =new String[getFood().length/2+1];
 
@@ -87,6 +94,7 @@ public class TrackerController extends PageController
 
         // create the grid to display the data
         content.getChildren().addAll(quickAdd, comboBox);
+        content.getChildren().add(grid); //sets the layout for the page
         //creates the rows and columns of the grid
         for (int  row =0; row <arr.size()+1; row++){
             for (int col =0; col <=columnNames.length+1; col++){
@@ -169,7 +177,7 @@ public class TrackerController extends PageController
     }
 //    gets only the food names
     private void reloadUI(LocalDate newDate){
-         content.getChildren().remove(comboBox);
+         content.getChildren().removeAll(comboBox,quickAdd);
          grid.getChildren().clear();
          loadData(newDate);//calls the method to update the layout once a new date is selected
          values =null; //unset the value of values so it doesnt display when clicking to add a value

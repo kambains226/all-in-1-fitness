@@ -3,6 +3,8 @@ weight / height
 timelimit on user information
 --add weight to the food
 -- and saved foods
+--- make the load data function take string parameter
+
 --make code less repeated
 -- like repeated functions
 --inheritance
@@ -13,4 +15,3 @@ database manager which inherits from databasemanager for the selects so easy to 
 
 
 --bugs
---quick add gets duped probably get added in hte reload funciton
