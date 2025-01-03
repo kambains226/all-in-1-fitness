@@ -7,6 +7,7 @@ timelimit on user information
 -- like repeated functions
 --inheritance
 -database code
+--like date formate is repeatative
 
 --overload the select database manager could have a select
 database manager which inherits from databasemanager for the selects so easy to overload
