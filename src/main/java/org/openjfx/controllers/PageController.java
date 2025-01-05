@@ -39,8 +39,7 @@ public abstract class PageController {
     }
 
         // refershes the page when called
-    protected void reloadUI(GridPane grid, LocalDate newTime,TrackerController reloadClass){
-        grid.getChildren().clear();
+    protected void reloadUi(){
 //        Stage stage = (Stage) grid.getScene().getWindow();
 //        Scene refershScene = new Scene(grid);
 //        stage.setScene(refershScene);

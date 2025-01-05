@@ -18,6 +18,7 @@ public class LoginController extends BaseController {
 
     @FXML
     private TextField username;
+    private static String usernameText; //used to give the username to other pages needs to be static
 
     @FXML
     private PasswordField password;
@@ -27,9 +28,9 @@ public class LoginController extends BaseController {
     private Button loginbtn;
     private void handleLogin(){
         //checks if the information has been entered
-        if (validLogin()){
+        validLogin();
 
-        }
+
     }
     private void switchSignup() {
 
@@ -45,6 +46,7 @@ public class LoginController extends BaseController {
 
         if (usernameValid && passwordValid) {
             if(LoginCheck()){
+                usernameText=username.getText();
                 switchScene("/org/openjfx/layout.fxml");
                 password.getScene().getWindow().hide();
             }
@@ -65,6 +67,13 @@ public class LoginController extends BaseController {
     public void initialize(){
        signupLink.setOnAction(event -> {switchSignup();});
        loginbtn.setOnAction(event -> {handleLogin();});
+    }
+
+    public static  String getusername(){
+       return usernameText;
+    }
+    public static int getId(){
+        return DatabaseManager.getsId("login","username",usernameText);
     }
 
     protected boolean informationValidation(){

@@ -18,38 +18,53 @@ import javafx.stage.Stage;
 import org.openjfx.models.Food;
 import org.openjfx.database.DatabaseManager;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
+
+import org.openjfx.controllers.LoginController;
 
 public class PopUpController {
     private Stage stage;
 
     private  static String date;
 //    private Button closeButton;
-
-
+    private static LocalDate todayDate = LocalDate.now();
+    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static boolean goalSet; // used to see if goals should be updated or inserted
+    private static int user_id = LoginController.getId();
 
 
     public static void showPopup(Object[] data,int id){
 
         //edits the table
         try {
-            if(data==null ){
-               createForm();
-            }
-            else{
+                if(data==null ){
+                    createForm();
+                }
+                else{
 
-                //overloading the creat form method to put the input data in
-                createForm(data,id);
+                    //overloading the creat form method to put the input data in
+                    createForm(data,id);
             }
+
+
 
         }
 
         catch(Exception e){
             e.printStackTrace();
+        }
+    }
+
+    public static void showPopup(String type){
+        //check if type equals goals
+        if (Objects.equals(type, "goals")){
+           createGoals();
         }
     }
     private  static void createForm(){
@@ -187,7 +202,6 @@ public class PopUpController {
 
     private static void insertData(String [] data){
        // could use a interface for the todays date
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         String todaysDate = formatter.format(LocalDate.now());
 //
         data[data.length-1] = todaysDate;
@@ -211,8 +225,120 @@ public class PopUpController {
     }
     // sets the date to the todays date
     public static  void  setDate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         date = formatter.format(LocalDate.now());
+    }
+    private static  void createGoals(){
+        try{
+            Dialog<String[]> dialog = new Dialog<>();
+            dialog.setTitle("Set Your Goals ");
+
+            setDate();
+
+            ButtonType submit = new ButtonType("Submit", ButtonBar.ButtonData.OK_DONE);
+            dialog.getDialogPane().getButtonTypes().addAll(submit, ButtonType.CANCEL);
+
+            Label label = new Label("Enter Your goals");
+            // all the macros labes
+
+            VBox content = new VBox();
+
+            String [] goalsColumn = getGoalsColumn("display");
+            //textfield array for the goals input
+            TextField[] goalsInput = new TextField[goalsColumn.length];
+            String[] goalValues = getValue();
+            System.out.println(Arrays.toString(goalValues));
+            if(goalValues.length>0)
+            {
+                goalSet = true;
+            }
+            else{
+
+                goalSet = false;
+            }
+
+            String [] results  = new String[goalsColumn.length+2]; //plus 2 for the additional columns
+            Label[] labels = new Label[goalsColumn.length];
+
+           for(int i = 0; i < goalsColumn.length; i++ ) {
+
+               goalsInput[i] = new TextField();
+
+               labels[i] = new Label(goalsColumn[i]);
+               final int index =i;
+                if(goalSet){
+                    goalsInput[i].setText(goalValues[index]);
+                }
+               goalsInput[i].textProperty().addListener((observable, oldValue, newValue) -> {
+                 if(!newValue.matches("\\d*(\\.\\d*)?"))
+                 {
+                     goalsInput[index].setText(oldValue);
+                 }
+               });
+
+                content.getChildren().addAll(labels[i],goalsInput[i]);
+
+           }
+
+
+
+
+
+            dialog.setResultConverter(dialogButton -> {
+                if (dialogButton == submit) {
+                    for (int i = 0; i <goalsInput.length; i++) {
+                        results [i]= goalsInput[i].getText();
+
+                    }
+
+                    results[results.length-2]= todayDate.toString();
+                    System.out.println(user_id);
+                    results[results.length-1] = String.valueOf(user_id);
+
+
+
+                    //if there is already values it will update instead of inserting
+                    if(goalSet){
+                        DatabaseManager.edit("goals",getGoalsColumn("edit"),results,"user_id",String.valueOf(user_id));
+                    }
+                    else{
+
+                        DatabaseManager.insert("goals",getGoalsColumn("db"),results); //runs when submitted
+                    }
+
+                }
+                return null;
+
+            });
+            dialog.getDialogPane().setContent(content); //adds the vbox layout to the content
+            dialog.showAndWait();  //waits for the user to of input something before proceeding
+
+
+
+        }
+        catch (NullPointerException e){
+            e.printStackTrace();
+        }
+
+    }
+    //if goals have values select them from the database
+    private static String[] getValue(){
+        return DatabaseManager.select("goals","user_id",String.valueOf(user_id),"1");
+
+    }
+    //gets the columns for the goals popup
+    private static  String[] getGoalsColumn(String type)
+    {
+        if(type=="display")
+        {
+
+            return new String [] {"Weight Goal","BMI Goal","Daily Calorie Goal",};
+        }
+        else if(type=="edit"){
+            return new String [] {"weight","bmi","calories",};
+        }
+        else{
+            return new String [] {"weight","bmi","calories","track_date","user_id"};
+        }
     }
 
 

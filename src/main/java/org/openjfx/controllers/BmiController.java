@@ -4,10 +4,11 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
-
+import org.openjfx.view.BmiChart;
 
 public class BmiController {
     //gets the FXML contorls
@@ -32,10 +33,18 @@ public class BmiController {
     @FXML
     private Button bmiSubmit;
 
+    @FXML
+    private VBox bmiLayout;
     private int count =0;
     private TextField[] data ;
-
+    // for the bmi chart
+    private VBox chart; // bmi chart;
+    private Label blueLabel;
+    private Label greenLabel;
+    private Label yellowLabel;
+    private Label redLabel;
     private boolean imperial;
+    private Label bmiLabel;
     public void initialize() {
 
 
@@ -97,18 +106,21 @@ public class BmiController {
     }
    //submits the values of the weight and height to the database
     private void submit(){
+        double bmi;
         if (imperial){
             double[] converstion = new double[2];
             converstion = convert();
-            double bmi =calculate(converstion[0],converstion[1]);
-            System.out.println(bmi);
+            bmi =calculate(converstion[0],converstion[1]);
         }
         else{
-            double bmi=calculate(Double.parseDouble(heightInput.getText()),Double.parseDouble(weightInput.getText()));
-            System.out.println(bmi);
+            bmi=calculate(Double.parseDouble(heightInput.getText()),Double.parseDouble(weightInput.getText()));
 
         }
-//        display()
+        //checks for 0/0 error
+        if(Double.isNaN(bmi)){
+            bmi=0;
+        }
+        display(bmi);
     }
     //makes sure only numbers have been added
     private void inputControl(){
@@ -153,6 +165,35 @@ public class BmiController {
 
         return  converstion;
 
+
+    }
+    private void display(double bmi){
+        //removes the chart or the label if its already being displayed
+        bmiLayout.getChildren().remove(chart);
+        bmiLayout.getChildren().remove(bmiLabel);
+
+        bmiLayout.getChildren().remove(blueLabel);
+        bmiLayout.getChildren().remove(greenLabel);
+        bmiLayout.getChildren().remove(yellowLabel);
+        bmiLayout.getChildren().remove(redLabel);
+
+
+        bmiLabel = new Label("your bmi is "+bmi);
+        bmiLayout.getChildren().add(bmiLabel);
+        chart =BmiChart.createChart(bmi);
+//        bmiLayout.getChildren().remove(chart);
+        bmiLayout.getChildren().add(chart);
+
+        // key for the graph
+        blueLabel = new Label("UNDER WEIGHT"); //colour highlight
+        blueLabel.setStyle("-fx-background-color: lightblue;");
+        greenLabel = new Label("HEALTHY WEIGHT");
+        greenLabel.setStyle("-fx-background-color: green;");
+        yellowLabel = new Label("SLIGHTLY OVERWEIGHT");
+        yellowLabel.setStyle("-fx-background-color: yellow ;");
+        redLabel = new Label("OVER WEIGHT");
+        redLabel.setStyle("-fx-background-color: red;");
+        bmiLayout.getChildren().addAll(blueLabel,greenLabel,yellowLabel,redLabel);
 
     }
 }

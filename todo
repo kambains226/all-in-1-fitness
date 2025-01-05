@@ -1,6 +1,4 @@
--- bmi page
-weight / height
-timelimit on user information
+ timelimit on user information
 --add weight to the food
 
 --make code less repeated
@@ -8,10 +6,13 @@ timelimit on user information
 --inheritance
 -database code
 --like date formate is repeatative
+-- add a total calories
 
 --overload the select database manager could have a select
 database manager which inherits from databasemanager for the selects so easy to overload
 
-
+--home page
+-- need to make reloadui a inheritance class
+-- need to make data user dependant
 --bugs
 potential bug where quick add alwasy get added
