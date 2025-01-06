@@ -65,7 +65,9 @@ public class DatabaseManager {
                 CREATE TABLE IF NOT EXISTS weight (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 weight INTEGER,
-                user_id INTEGER 
+                goal   INTEGER,
+                user_id INTEGER, 
+                goal_date DATE
                 );
                 """;
         //membership will be used to decided if it is a trainer or a member
@@ -381,11 +383,12 @@ public class DatabaseManager {
         }
         return 0;
     }
-    public static String[]  select(String table,String identifer,String idValue,String limit)
+    //returns the most recently added data
+    public static String[]  selectOrder(String table,String identifer,String idValue,String limit)
     {
 
-
-        String sql ="SELECT * "+"FROM "+table+" WHERE " + identifer +" = ?";
+        //by id as its alwasy uniquye and auto incremented
+        String sql ="SELECT * "+"FROM "+table+" WHERE " + identifer +" = ?"+"ORDER BY id DESC ";
         //if limit is 0 ther will be no limit applied
         if(Integer.valueOf(limit) != 0){
             sql+=" LIMIT ? ";
@@ -420,9 +423,44 @@ public class DatabaseManager {
     }
     public static String[]  selectSpecific(String table,String column,String identifer,String idValue)
     {
+        System.out.println("a");
+
+        String sql ="SELECT "+column+" FROM "+table+" WHERE " + identifer +" = "+idValue;
+        //if limit is 0 ther will be no limit applied
+        System.out.println(sql );
+        ArrayList<String> data=new ArrayList<>() ;
+        try(Connection conn = connect();
+            PreparedStatement pstmt =conn.prepareStatement(sql)){
 
 
-        String sql ="SELECT weight"+" FROM "+table+" WHERE " + identifer +" = "+idValue;
+            // used to store the values of the data to add to the arraylist
+//            pstmt.setString(1,idValue);
+
+
+            ResultSet rs = pstmt.executeQuery();
+
+            System.out.println(rs.getMetaData().getColumnCount()+"£");
+            while(rs.next()){
+                System.out.println(rs.getInt(1));
+                data.add(rs.getString(1));
+                for (int i =0; i <rs.getMetaData().getColumnCount()-1; i++){
+                    String value= rs.getString(i+2);
+                    data.add(value);
+                    System.out.println(value);
+                }
+            }
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+        }
+        //converts data to an array
+        return data.toArray(new String[data.size()]);
+    }
+    public static String[]  selectSpecificAND(String table,String column,String identifer,String idValue,String andId ,String andValue)
+    {
+        System.out.println("a");
+
+        String sql ="SELECT "+column+" FROM "+table+" WHERE " + identifer +" = "+idValue  +" AND " + andId + "=" +andValue;
         //if limit is 0 ther will be no limit applied
         System.out.println(sql );
         ArrayList<String> data=new ArrayList<>() ;

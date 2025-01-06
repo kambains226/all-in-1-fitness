@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
-import org.openjfx.controllers.LoginController;
+import org.openjfx.controllers.HomeController;
 
 public class PopUpController {
     private Stage stage;
@@ -63,8 +63,8 @@ public class PopUpController {
 
     public static void showPopup(String type){
         //check if type equals goals
-        if (Objects.equals(type, "goals")){
-           createGoals();
+        if (Objects.equals(type, "weight")){
+           createWeights();
         }
     }
     private  static void createForm(){
@@ -227,27 +227,29 @@ public class PopUpController {
     public static  void  setDate() {
         date = formatter.format(LocalDate.now());
     }
-    private static  void createGoals(){
+    private static  void createWeights(){
         try{
             Dialog<String[]> dialog = new Dialog<>();
-            dialog.setTitle("Set Your Goals ");
+            dialog.setTitle("Track your Weight");
 
             setDate();
 
             ButtonType submit = new ButtonType("Submit", ButtonBar.ButtonData.OK_DONE);
             dialog.getDialogPane().getButtonTypes().addAll(submit, ButtonType.CANCEL);
 
-            Label label = new Label("Enter Your goals");
+//            Label label = new Label("Enter Your Weight");
             // all the macros labes
 
             VBox content = new VBox();
 
-            String [] goalsColumn = getGoalsColumn("display");
+            String [] weightColumn = getWeightsColumn("display");
             //textfield array for the goals input
-            TextField[] goalsInput = new TextField[goalsColumn.length];
-            String[] goalValues = getValue();
-            System.out.println(Arrays.toString(goalValues));
-            if(goalValues.length>0)
+            TextField[] weightInput = new TextField[weightColumn.length];
+            String[] weightValues = getValue();
+
+
+            System.out.println(Arrays.toString(weightValues));
+            if(weightValues.length>0)
             {
                 goalSet = true;
             }
@@ -256,54 +258,58 @@ public class PopUpController {
                 goalSet = false;
             }
 
-            String [] results  = new String[goalsColumn.length+2]; //plus 2 for the additional columns
-            Label[] labels = new Label[goalsColumn.length];
+            String [] results  = new String[weightColumn.length+2]; //plus 2 for the additional columns
+            Label[] labels = new Label[weightColumn.length];
 
-           for(int i = 0; i < goalsColumn.length; i++ ) {
+           for(int i = 0; i < weightColumn.length; i++ ) {
 
-               goalsInput[i] = new TextField();
+               weightInput[i] = new TextField();
 
-               labels[i] = new Label(goalsColumn[i]);
+               labels[i] = new Label(weightColumn[i]);
                final int index =i;
-                if(goalSet){
-                    goalsInput[i].setText(goalValues[index]);
-                }
-               goalsInput[i].textProperty().addListener((observable, oldValue, newValue) -> {
+
+               weightInput[i].textProperty().addListener((observable, oldValue, newValue) -> {
                  if(!newValue.matches("\\d*(\\.\\d*)?"))
                  {
-                     goalsInput[index].setText(oldValue);
+                     weightInput[index].setText(oldValue);
                  }
                });
 
-                content.getChildren().addAll(labels[i],goalsInput[i]);
+                content.getChildren().addAll(labels[i],weightInput[i]);
 
            }
-
+            if(goalSet){
+                weightInput[weightColumn.length-1].setText(weightValues[1]);//sets the weightgoal with the weight goal values
+            }
 
 
 
 
             dialog.setResultConverter(dialogButton -> {
                 if (dialogButton == submit) {
-                    for (int i = 0; i <goalsInput.length; i++) {
-                        results [i]= goalsInput[i].getText();
+                    for (int i = 0; i <weightInput.length; i++) {
+                        results [i]= weightInput[i].getText();
 
                     }
 
-                    results[results.length-2]= todayDate.toString();
-                    System.out.println(user_id);
-                    results[results.length-1] = String.valueOf(user_id);
+                    results[results.length-1]= todayDate.toString();
+                    results[results.length-2] = String.valueOf(user_id);
 
 
 
                     //if there is already values it will update instead of inserting
-                    if(goalSet){
-                        DatabaseManager.edit("goals",getGoalsColumn("edit"),results,"user_id",String.valueOf(user_id));
+//                    if(goalSet){
+////                        DatabaseManager.edit("weight",getWeightsColumn("edit"),results,"user_id",String.valueOf(user_id));
+//                        DatabaseManager.insert("weight",)
+//                    }
+//                    else{
+//
+//                        DatabaseManager.insert("weight",getWeightsColumn("db"),results); //runs when submitted
+//                    }
+                    for (String x : results) {
+                        System.out.println(x);
                     }
-                    else{
-
-                        DatabaseManager.insert("goals",getGoalsColumn("db"),results); //runs when submitted
-                    }
+                    DatabaseManager.insert("weight",getWeightsColumn("db"),results);
 
                 }
                 return null;
@@ -322,24 +328,24 @@ public class PopUpController {
     }
     //if goals have values select them from the database
     private static String[] getValue(){
-        return DatabaseManager.select("goals","user_id",String.valueOf(user_id),"1");
+        return DatabaseManager.selectOrder("weight","user_id",String.valueOf(user_id),"1");
 
     }
     //gets the columns for the goals popup
-    private static  String[] getGoalsColumn(String type)
+    private static  String[] getWeightsColumn(String type)
     {
         if(type=="display")
         {
 
-            return new String [] {"Weight Goal","BMI Goal","Daily Calorie Goal",};
+            return new String [] {"Current Weight","Weight Goal"};
         }
-        else if(type=="edit"){
-            return new String [] {"weight","bmi","calories",};
+        else {
+            return new String [] {"weight","goal","user_id","goal_date"};
         }
-        else{
-            return new String [] {"weight","bmi","calories","track_date","user_id"};
-        }
+
+
     }
+
 
 
 }

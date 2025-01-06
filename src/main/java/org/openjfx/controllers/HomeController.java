@@ -20,48 +20,44 @@ public class HomeController extends PageController{
     private Label welcomeLabel;
     @FXML
     private VBox homeLayout;
-    @FXML
-    private TextField weightInput;
-    @FXML
-    private Button weightSubmit;
     private String user_id;
     private String username;
     private VBox graphLayout;
+    private String []goalWeight;
     public void initialize() {
-        user_id = String.valueOf(LoginController.getId());
+        user_id = String.valueOf(LoginController.getId()); //gets the users id
+        goalWeight = getGoalWeight();
+        System.out.println(goalWeight[0]);
         username = LoginController.getusername();
         welcomeLabel.setText("welcome " + username);
         goalsButton.setOnAction(event -> {
-            PopUpController.showPopup("goals");
+            PopUpController.showPopup("weight");
+            reloadUi();
+
         });
         loadChart();
-        weightSubmit.setOnAction(event -> {
-            if (!weightInput.getText().equals("")) {
-                DatabaseManager.insert("weight", getWeightColumn(), getWeightValues());
-                weightInput.setText("");
-
-                reloadUi();
-            }
-        });
 
     }
     //code to load bmi chart
     private void loadChart(){
 
         WeightGraph graph = new WeightGraph();
-        String[] weights = DatabaseManager.selectSpecific("weight","weight", "user_id", user_id );
+        String[] weights = DatabaseManager.selectSpecificAND("weight","weight", "user_id", user_id ,"goal",goalWeight[0] );
         double [] convertedWeights =convertStringToDouble(weights); // the convertedweights array
+        System.out.println(Arrays.toString(convertedWeights));
+        double []convertedGoalWeight = convertStringToDouble(goalWeight);
+        System.out.println(Arrays.toString(convertedGoalWeight));
         graphLayout = new VBox();
         homeLayout.getChildren().add(graphLayout);
-        graphLayout.getChildren().add(graph.createGraph(73,convertedWeights));
+        graphLayout.getChildren().add(graph.createGraph(convertedGoalWeight[0],convertedWeights));
     }
     private String[] getWeightColumn() {
         return new String[]{"weight", "user_id"};
     }
 
-    private String[] getWeightValues() {
-        return new String[]{weightInput.getText(), user_id};
-    }
+//    private String[] getWeightValues() {
+//        return new String[]{weightInput.getText(), user_id};
+//    }
 
     // convert the string array to double
     private double[] convertStringToDouble(String[] arr) {
@@ -80,10 +76,14 @@ public class HomeController extends PageController{
         return convert;
     }
     @Override
-    protected void reloadUi(){
+    public void reloadUi(){
         graphLayout.getChildren().clear();
-//        homeLayout.getChildren().add(graphLayout);
         loadChart();
 
+    }
+        public  String [] getGoalWeight(){
+
+//        return new String []{"1","4"};
+        return DatabaseManager.selectSpecific("weight","goal","user_id",String.valueOf(user_id));
     }
 }

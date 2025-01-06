@@ -79,7 +79,7 @@ public class TrackerController extends PageController
                 //call the select function from the database
                 String[] quickItem;
                 //inserts the quick add item to the database
-                quickItem= DatabaseManager.select("food","name",newValue,"1");
+                quickItem= DatabaseManager.selectOrder("food","name",newValue,"1");
 
                 //sets the new quick add label to todays date
                 quickItem[quickItem.length-1] = track_date.getValue().format(formatter);

@@ -39,7 +39,7 @@ public class WeightGraph {
         yAxis.setTickUnit(5);
         yAxis.setAutoRanging(false);
         yAxis.setLowerBound(0);
-        yAxis.setUpperBound(upperYLimit+10); //+10 for viewing
+        yAxis.setUpperBound(Math.round(upperYLimit+10)); //+10 for viewing
 
         LineChart <Number ,Number> lineChart = new LineChart<>(xAxis,yAxis);
         lineChart.setTitle("Weight progress");
