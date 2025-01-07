@@ -53,6 +53,7 @@ public class TrackerController extends PageController
              @Override // overrides the changed method
 
              public void changed(ObservableValue<? extends LocalDate> observable, LocalDate oldValue, LocalDate newValue) {
+                 System.out.println(newValue);
                  reloadUI(newValue);
              }
          });
@@ -63,10 +64,8 @@ public class TrackerController extends PageController
     private void loadData(LocalDate date){
 
          //make sure the date can be taken
-        System.out.println(track_date.getValue().toString());
         ArrayList <Food> foodArr = DatabaseManager.selectFoodAnd("track_date",track_date.getValue().format(formatter),"user_id",userId);
 //        ArrayList <Food> foodArr = DatabaseManager.Select("track_date",track_date.toString());
-        System.out.println(foodArr.toString() +"asdfasd");
         setGrid(foodArr);
 
     }
@@ -86,8 +85,12 @@ public class TrackerController extends PageController
                 quickItem= DatabaseManager.selectOrder("food","name",newValue,"1");
 
                 //sets the new quick add label to todays date
-                quickItem[quickItem.length-1] = track_date.getValue().format(formatter);
-                quickItem[quickItem.length-2] = userId;
+                quickItem[quickItem.length-2] = track_date.getValue().format(formatter);
+
+                quickItem[quickItem.length-1] = userId;
+                for (int i = 0; i < quickItem.length; i++) {
+                    System.out.println(quickItem[i]);
+                }
                DatabaseManager.insertFood(quickItem);
                reloadUI(track_date.getValue());
 
@@ -124,12 +127,12 @@ public class TrackerController extends PageController
 
                 else if(col == columnNames.length ){
                     Food currentDelete= arr.get(row-1); //used to get the current food to past the food that wants editing
-                    currentId=currentDelete.idProperty().getValue();
                     System.out.println(currentId +"current");
                     delete = new Button("Delete");
                     grid.add(delete,col,row);
                     delete.setOnAction(actionEvent ->
                     {
+                        currentId=currentDelete.idProperty().getValue();
                         deleteMeal();
                         reloadUI(track_date.getValue());
                     });
@@ -201,20 +204,20 @@ public class TrackerController extends PageController
     }
     private void addMeal(){
 
-        PopUpController.showPopup(values,currentId,userId);
+
+        PopUpController.showPopup(values,currentId,userId,track_date.getValue());
 
      }
 
      private void editMeal(Object[] obj){
 
-         PopUpController.showPopup(obj,currentId,userId);
+         PopUpController.showPopup(obj,currentId,userId,track_date.getValue());
 
      }
      private void deleteMeal(){
 
 
-         System.out.println(currentId);
-//         DatabaseManager.deleteData(currentId);
+         DatabaseManager.deleteData(currentId);
      }
 
 

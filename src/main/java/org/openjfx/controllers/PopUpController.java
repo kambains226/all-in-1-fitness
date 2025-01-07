@@ -39,8 +39,11 @@ public class PopUpController {
     private static int user_id = LoginController.getId();
     private static boolean exitCheck ; //checks if the user wants to exit the popup
 
-    public static void showPopup(Object[] data,int id,String userId){
 
+    //selected user from the date picker
+    private static String dateChosen;
+    public static void showPopup(Object[] data,int id,String userId,LocalDate dateSelected){
+            dateChosen=dateSelected.format(formatter);
         //edits the table
         try {
                 if(data==null ){
@@ -122,6 +125,7 @@ public class PopUpController {
 
                 }
 
+                System.out.println(results.toString());
                 insertData(results,user);
                 return results;
 
@@ -205,7 +209,7 @@ public class PopUpController {
        // could use a interface for the todays date
         String todaysDate = formatter.format(LocalDate.now());
 //
-        data[data.length-2] = todaysDate;
+        data[data.length-2] = dateChosen;
         data[data.length-1] =userId ;
        DatabaseManager.insertFood(data);
 
