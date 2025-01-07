@@ -39,17 +39,20 @@ public class PopUpController {
     private static int user_id = LoginController.getId();
     private static boolean exitCheck ; //checks if the user wants to exit the popup
 
-    public static void showPopup(Object[] data,int id){
 
+    //selected user from the date picker
+    private static String dateChosen;
+    public static void showPopup(Object[] data,int id,String userId,LocalDate dateSelected){
+            dateChosen=dateSelected.format(formatter);
         //edits the table
         try {
                 if(data==null ){
-                    createForm();
+                    createForm(userId);
                 }
                 else{
 
                     //overloading the creat form method to put the input data in
-                    createForm(data,id);
+                    createForm(data,id,userId);
             }
 
 
@@ -67,7 +70,7 @@ public class PopUpController {
            createWeights();
         }
     }
-    private  static void createForm(){
+    private  static void createForm(String user){
         Dialog<String[]> dialog = new Dialog<>();
         dialog.setTitle(" Input your food");
 
@@ -76,13 +79,12 @@ public class PopUpController {
         ButtonType submit = new ButtonType("Submit", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(submit, ButtonType.CANCEL);
 
-        Label label = new Label("Enter Your food");
         // all the macros labes
         String [] dataText = getData();
 
         VBox content = new VBox();
         TextField[] input = new TextField[dataText.length];
-        String[] results = new String [input.length+1]; //stores the results from the input
+        String[] results = new String [input.length+2]; //stores the results from the input +2 for date and user id
         Label[] labels = new Label[dataText.length];
         for(int i = 0; i < dataText.length; i++ ) {
             // need to make it so they are all displayed
@@ -120,8 +122,11 @@ public class PopUpController {
 
                        results[i] = input[i].getText();
 
+
                 }
-                insertData(results);
+
+                System.out.println(results.toString());
+                insertData(results,user);
                 return results;
 
             }
@@ -135,7 +140,7 @@ public class PopUpController {
 
 //        insertData(results);
     }
-    private  static void createForm(Object[] obj,int id ){
+    private  static void createForm(Object[] obj,int id,String user  ){
         try{
             Dialog<String[]> dialog = new Dialog<>();
             dialog.setTitle(" Edit your food");
@@ -181,7 +186,7 @@ public class PopUpController {
                     for (int i = 0; i <input.length; i++) {
                         results[i] = input[i].getText();
                     }
-                    DatabaseManager.editData(results,id); //runs when submitted
+                    DatabaseManager.editData(results,id,user); //runs when submitted
                     return results;
                 }
                 return null;
@@ -200,11 +205,12 @@ public class PopUpController {
     }
 
 
-    private static void insertData(String [] data){
+    private static void insertData(String [] data,String userId){
        // could use a interface for the todays date
         String todaysDate = formatter.format(LocalDate.now());
 //
-        data[data.length-1] = todaysDate;
+        data[data.length-2] = dateChosen;
+        data[data.length-1] =userId ;
        DatabaseManager.insertFood(data);
 
 

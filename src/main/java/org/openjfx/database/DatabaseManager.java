@@ -4,6 +4,7 @@ import org.openjfx.models.Food;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.function.IntToDoubleFunction;
 
 
 //sqllite documentation https://www.sqlite.org/docs.html
@@ -47,8 +48,8 @@ public class DatabaseManager {
                carbs INTEGER,
                fats INTEGER,
                sugar INTEGER,
-               track_date DATE
-               user_id INTEGER,
+               track_date DATE,
+               user_id INTEGER
                ); 
                 """;
 
@@ -64,7 +65,7 @@ public class DatabaseManager {
         //membership will be used to decided if it is a trainer or a member
         try(Connection conn = connect()){
             Statement stmt = connect().createStatement();
-            stmt.execute(createWeight);
+            stmt.execute(createFood);
         }
         catch(SQLException e)
         {
@@ -143,9 +144,9 @@ public class DatabaseManager {
         System.out.println("insert");
         for (int i = 0; i<foodAttributes.length; i++){
             System.out.println(foodAttributes[i]);
+//            System.out.println(foodAttributes[6] +"ta");
         }
-//        if (foodAttributes == null || foodAttributes.length > foodAttributes.length) {}
-        String sql = "INSERT INTO food(name,calories,protein,carbs,fats,sugar,track_date) VALUES(?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO food(name,calories,protein,carbs,fats,sugar,track_date,user_id) VALUES(?,?,?,?,?,?,?,?)";
 
         try(Connection conn= connect();
             PreparedStatement pstmt = conn.prepareStatement(sql))
@@ -158,6 +159,7 @@ public class DatabaseManager {
             pstmt.setFloat(5,Float.parseFloat(foodAttributes[4]));
             pstmt.setFloat(6,Float.parseFloat(foodAttributes[5]));
             pstmt.setString(7,foodAttributes[6]);
+            pstmt.setInt(8, Integer.valueOf(foodAttributes[7]));
 
 
             pstmt.execute();
@@ -203,7 +205,7 @@ public class DatabaseManager {
         }
 
     }
-    public static void editData(String [] data,int id){
+    public static void editData(String [] data,int id,String user){
 
 
         //edits the data in the database
@@ -270,46 +272,18 @@ public class DatabaseManager {
 
         return result;
     }
-    public static  ArrayList<Food> Select(String column,String column_value){
-        String sql = "SELECT * FROM food WHERE "+ column+" = ?" ;
-        ArrayList <Food>foodView = new ArrayList<>();//stores all the inseted food into an array of food
-        try(Connection conn = connect();
-            PreparedStatement pstm  =conn.prepareStatement(sql)
-        ){
-            pstm.setString(1,column_value);
-            ResultSet rs = pstm.executeQuery();
-
-            //stores the data where the columns match
-            String[] test = new String[rs.getMetaData().getColumnCount()];
-
-
-            while(rs.next()){
-                //need to make the data get looped through
-
-                    for (int i =0; i <rs.getMetaData().getColumnCount(); i++){
-                        String data = rs.getString(i+1);
-                        test[i] =data;
-                    }
-                    foodView.add(new Food(Integer.parseInt(test[0]),test[1],Float.parseFloat(test[2]),Float.parseFloat(test[3]),Float.parseFloat(test[4]),Float.parseFloat(test[5]),Float.parseFloat(test[6])));
-
-
-
-            }
-        }
-        catch(SQLException e){
-            System.out.println(e);
-        }
-        return foodView;
-    }public static ArrayList<Food>  selectFoodAnd(String identifer,String idValue,String andId ,String andValue)
+    public static ArrayList<Food>  selectFoodAnd(String identifer,String idValue,String andId ,String andValue)
     {
 
-        String sql ="SELECT * FROM food WHERE " + identifer +" = "+idValue  +" AND " + andId + "=" +andValue ;
-        //if limit is 0 ther will be no limit applied
+        String sql ="SELECT * FROM food WHERE " + identifer +" = ? AND " + andId + " = ? " ;
+       System.out.println(sql+idValue+andValue);
         ArrayList <Food>foodView = new ArrayList<>();//stores all the inseted food into an array of food
         try(Connection conn = connect();
             PreparedStatement pstm  =conn.prepareStatement(sql)
         ){
             pstm.setString(1,idValue);
+            pstm.setInt(2,(Integer.parseInt(andValue)));
+//            pstm.setString(2,andValue)
             ResultSet rs = pstm.executeQuery();
 
             //stores the data where the columns match
