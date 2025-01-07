@@ -198,13 +198,13 @@ public class TrackerController extends PageController
     }
     private void addMeal(){
 
-        PopUpController.showPopup(values,currentId);
+        PopUpController.showPopup(values,currentId,userId);
 
      }
 
      private void editMeal(Object[] obj){
 
-         PopUpController.showPopup(obj,currentId);
+         PopUpController.showPopup(obj,currentId,userId);
 
      }
      private void deleteMeal(){

@@ -39,17 +39,17 @@ public class PopUpController {
     private static int user_id = LoginController.getId();
     private static boolean exitCheck ; //checks if the user wants to exit the popup
 
-    public static void showPopup(Object[] data,int id){
+    public static void showPopup(Object[] data,int id,String userId){
 
         //edits the table
         try {
                 if(data==null ){
-                    createForm();
+                    createForm(userId);
                 }
                 else{
 
                     //overloading the creat form method to put the input data in
-                    createForm(data,id);
+                    createForm(data,id,userId);
             }
 
 
@@ -67,7 +67,7 @@ public class PopUpController {
            createWeights();
         }
     }
-    private  static void createForm(){
+    private  static void createForm(String user){
         Dialog<String[]> dialog = new Dialog<>();
         dialog.setTitle(" Input your food");
 
@@ -76,7 +76,6 @@ public class PopUpController {
         ButtonType submit = new ButtonType("Submit", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(submit, ButtonType.CANCEL);
 
-        Label label = new Label("Enter Your food");
         // all the macros labes
         String [] dataText = getData();
 
@@ -135,7 +134,7 @@ public class PopUpController {
 
 //        insertData(results);
     }
-    private  static void createForm(Object[] obj,int id ){
+    private  static void createForm(Object[] obj,int id,String user  ){
         try{
             Dialog<String[]> dialog = new Dialog<>();
             dialog.setTitle(" Edit your food");
