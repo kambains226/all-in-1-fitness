@@ -81,7 +81,7 @@ public class PopUpController {
 
         VBox content = new VBox();
         TextField[] input = new TextField[dataText.length];
-        String[] results = new String [input.length+1]; //stores the results from the input
+        String[] results = new String [input.length+2]; //stores the results from the input +2 for date and user id
         Label[] labels = new Label[dataText.length];
         for(int i = 0; i < dataText.length; i++ ) {
             // need to make it so they are all displayed
@@ -119,8 +119,10 @@ public class PopUpController {
 
                        results[i] = input[i].getText();
 
+
                 }
-                insertData(results);
+
+                insertData(results,user);
                 return results;
 
             }
@@ -180,7 +182,7 @@ public class PopUpController {
                     for (int i = 0; i <input.length; i++) {
                         results[i] = input[i].getText();
                     }
-                    DatabaseManager.editData(results,id); //runs when submitted
+                    DatabaseManager.editData(results,id,user); //runs when submitted
                     return results;
                 }
                 return null;
@@ -199,11 +201,12 @@ public class PopUpController {
     }
 
 
-    private static void insertData(String [] data){
+    private static void insertData(String [] data,String userId){
        // could use a interface for the todays date
         String todaysDate = formatter.format(LocalDate.now());
 //
-        data[data.length-1] = todaysDate;
+        data[data.length-2] = todaysDate;
+        data[data.length-1] =userId ;
        DatabaseManager.insertFood(data);
 
 

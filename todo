@@ -17,3 +17,5 @@ database manager which inherits from databasemanager for the selects so easy to 
 --bugs
 potential bug where quick add alwasy get added
 -- add a sign out
+--lots of problems with tracker
+delets the most recent one

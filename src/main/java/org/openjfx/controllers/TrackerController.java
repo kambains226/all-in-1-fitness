@@ -63,8 +63,10 @@ public class TrackerController extends PageController
     private void loadData(LocalDate date){
 
          //make sure the date can be taken
-
-        ArrayList <Food> foodArr = DatabaseManager.selectFoodAnd("track_date",date.format(formatter),"user_id",userId);
+        System.out.println(track_date.getValue().toString());
+        ArrayList <Food> foodArr = DatabaseManager.selectFoodAnd("track_date",track_date.getValue().format(formatter),"user_id",userId);
+//        ArrayList <Food> foodArr = DatabaseManager.Select("track_date",track_date.toString());
+        System.out.println(foodArr.toString() +"asdfasd");
         setGrid(foodArr);
 
     }
@@ -123,6 +125,7 @@ public class TrackerController extends PageController
                 else if(col == columnNames.length ){
                     Food currentDelete= arr.get(row-1); //used to get the current food to past the food that wants editing
                     currentId=currentDelete.idProperty().getValue();
+                    System.out.println(currentId +"current");
                     delete = new Button("Delete");
                     grid.add(delete,col,row);
                     delete.setOnAction(actionEvent ->
@@ -209,20 +212,12 @@ public class TrackerController extends PageController
      }
      private void deleteMeal(){
 
-         DatabaseManager.deleteData(currentId);
+
+         System.out.println(currentId);
+//         DatabaseManager.deleteData(currentId);
      }
 
-     private void setDeleteButton(){
 
-         delete = new Button("Delete Meal");
-     }
-     private Button getdeleteButton(){
-
-        return delete;
-     }
-     private String getDate(){
-         return null ;
-     }
 
 
 }
