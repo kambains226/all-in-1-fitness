@@ -26,8 +26,6 @@ public class HomeController extends PageController{
     private String []goalWeight;
     public void initialize() {
         user_id = String.valueOf(LoginController.getId()); //gets the users id
-        goalWeight = getGoalWeight();
-        System.out.println(goalWeight[0]);
         username = LoginController.getusername();
         welcomeLabel.setText("welcome " + username);
         goalsButton.setOnAction(event -> {
@@ -41,23 +39,24 @@ public class HomeController extends PageController{
     //code to load bmi chart
     private void loadChart(){
 
+        goalWeight = getGoalWeight();
         WeightGraph graph = new WeightGraph();
-        String[] weights = DatabaseManager.selectSpecificAND("weight","weight", "user_id", user_id ,"goal",goalWeight[0] );
+//        String[] weights = DatabaseManager.selectSpecificAND("weight","weight", "user_id", user_id ,"goal",goalWeight[0] );
+
+        String[] weights = DatabaseManager.selectSpecific("weight","weight", "user_id", user_id );
         double [] convertedWeights =convertStringToDouble(weights); // the convertedweights array
-        System.out.println(Arrays.toString(convertedWeights));
         double []convertedGoalWeight = convertStringToDouble(goalWeight);
+        System.out.println("goals");
         System.out.println(Arrays.toString(convertedGoalWeight));
         graphLayout = new VBox();
         homeLayout.getChildren().add(graphLayout);
-        graphLayout.getChildren().add(graph.createGraph(convertedGoalWeight[0],convertedWeights));
+
+        graphLayout.getChildren().add(graph.createGraph(convertedGoalWeight,convertedWeights));
     }
     private String[] getWeightColumn() {
         return new String[]{"weight", "user_id"};
     }
 
-//    private String[] getWeightValues() {
-//        return new String[]{weightInput.getText(), user_id};
-//    }
 
     // convert the string array to double
     private double[] convertStringToDouble(String[] arr) {
@@ -77,13 +76,13 @@ public class HomeController extends PageController{
     }
     @Override
     public void reloadUi(){
+
         graphLayout.getChildren().clear();
         loadChart();
 
     }
         public  String [] getGoalWeight(){
 
-//        return new String []{"1","4"};
         return DatabaseManager.selectSpecific("weight","goal","user_id",String.valueOf(user_id));
     }
 }

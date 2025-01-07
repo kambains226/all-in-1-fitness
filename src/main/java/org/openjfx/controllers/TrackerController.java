@@ -36,14 +36,16 @@ public class TrackerController extends PageController
     private ArrayList<String> foods; //used to display the foods that are saved in the select
     private Object[] values;
     private int currentId;
-
+    private String userId;//gets the user id
     private ComboBox<String> comboBox;
     private Label quickAdd;
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); //make sure the date can be taken
      public void initialize(){
          //sets the datepicker value to todays value
          track_date.setValue(LocalDate.now());
+         userId =String.valueOf(LoginController.getId());
          loadData(track_date.getValue());
+
 
          //event listner for when the date is changed
          //documenation https://docs.oracle.com/javase/8/docs/api/java/time/LocalDate.html
@@ -62,7 +64,7 @@ public class TrackerController extends PageController
 
          //make sure the date can be taken
 
-        ArrayList <Food> foodArr = DatabaseManager.Select("track_date",date.format(formatter));
+        ArrayList <Food> foodArr = DatabaseManager.selectFoodAnd("track_date",date.format(formatter),"user_id",userId);
         setGrid(foodArr);
 
     }
@@ -83,7 +85,7 @@ public class TrackerController extends PageController
 
                 //sets the new quick add label to todays date
                 quickItem[quickItem.length-1] = track_date.getValue().format(formatter);
-                System.out.println(Arrays.toString(quickItem));
+                quickItem[quickItem.length-2] = userId;
                DatabaseManager.insertFood(quickItem);
                reloadUI(track_date.getValue());
 
@@ -98,7 +100,6 @@ public class TrackerController extends PageController
         //quick add label
         quickAdd = new Label("Quick Add");
         // loads the check box to select foods already  been added
-//        String[] comoboFoodNames =new String[getFood().length/2+1];
 
 
         //

@@ -37,7 +37,7 @@ public class PopUpController {
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static boolean goalSet; // used to see if goals should be updated or inserted
     private static int user_id = LoginController.getId();
-
+    private static boolean exitCheck ; //checks if the user wants to exit the popup
 
     public static void showPopup(Object[] data,int id){
 
@@ -229,6 +229,7 @@ public class PopUpController {
     }
     private static  void createWeights(){
         try{
+            exitCheck = true;//true by default so user can click cancel
             Dialog<String[]> dialog = new Dialog<>();
             dialog.setTitle("Track your Weight");
 
@@ -286,38 +287,44 @@ public class PopUpController {
 
 
             dialog.setResultConverter(dialogButton -> {
-                if (dialogButton == submit) {
-                    for (int i = 0; i <weightInput.length; i++) {
-                        results [i]= weightInput[i].getText();
+                if (dialogButton == submit ) {
 
+
+                    if(weightInputCheck(weightInput)){
+                        for (int i = 0; i <weightInput.length; i++) {
+                            results [i]= weightInput[i].getText();
+
+                        }
+
+                        results[results.length-1]= todayDate.toString();
+                        results[results.length-2] = String.valueOf(user_id);
+                        DatabaseManager.insert("weight",getWeightsColumn("db"),results);
+                        return results;
                     }
-
-                    results[results.length-1]= todayDate.toString();
-                    results[results.length-2] = String.valueOf(user_id);
-
-
-
-                    //if there is already values it will update instead of inserting
-//                    if(goalSet){
-////                        DatabaseManager.edit("weight",getWeightsColumn("edit"),results,"user_id",String.valueOf(user_id));
-//                        DatabaseManager.insert("weight",)
-//                    }
-//                    else{
-//
-//                        DatabaseManager.insert("weight",getWeightsColumn("db"),results); //runs when submitted
-//                    }
-                    for (String x : results) {
-                        System.out.println(x);
-                    }
-                    DatabaseManager.insert("weight",getWeightsColumn("db"),results);
-
+                    exitCheck  = false;
+                    return null;
                 }
+
+
+
+
+
                 return null;
 
             });
+
+
+
+
             dialog.getDialogPane().setContent(content); //adds the vbox layout to the content
             dialog.showAndWait();  //waits for the user to of input something before proceeding
+            for (int i=0; i<weightInput.length-1; i++) {
+                if(results[i] ==null&& !exitCheck){
+                    PageController.showError("Current weight needs to be added to be displayed");
+                    createWeights();
+                }
 
+            }
 
 
         }
@@ -327,6 +334,18 @@ public class PopUpController {
 
     }
     //if goals have values select them from the database
+//
+    private static boolean weightInputCheck(TextField[] inputs){
+        int count =0;
+        for (TextField textField : inputs) {
+            if (!textField.getText().isEmpty()) {
+                count++;
+            }
+
+        }
+        return count==inputs.length;
+
+    }
     private static String[] getValue(){
         return DatabaseManager.selectOrder("weight","user_id",String.valueOf(user_id),"1");
 

@@ -48,19 +48,10 @@ public class DatabaseManager {
                fats INTEGER,
                sugar INTEGER,
                track_date DATE
+               user_id INTEGER,
                ); 
                 """;
-        String createGoals = """
-                CREATE TABLE IF NOT EXISTS goals (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                weight INTEGER,
-                bmi  INTEGER,
-                calories INTEGER,
-                track_date DATE ,
-                user_id INTEGER
-                
-                );
-                """;
+
         String createWeight = """
                 CREATE TABLE IF NOT EXISTS weight (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -309,6 +300,39 @@ public class DatabaseManager {
             System.out.println(e);
         }
         return foodView;
+    }public static ArrayList<Food>  selectFoodAnd(String identifer,String idValue,String andId ,String andValue)
+    {
+
+        String sql ="SELECT * FROM food WHERE " + identifer +" = "+idValue  +" AND " + andId + "=" +andValue ;
+        //if limit is 0 ther will be no limit applied
+        ArrayList <Food>foodView = new ArrayList<>();//stores all the inseted food into an array of food
+        try(Connection conn = connect();
+            PreparedStatement pstm  =conn.prepareStatement(sql)
+        ){
+            pstm.setString(1,idValue);
+            ResultSet rs = pstm.executeQuery();
+
+            //stores the data where the columns match
+            String[] test = new String[rs.getMetaData().getColumnCount()];
+
+
+            while(rs.next()){
+                //need to make the data get looped through
+
+                    for (int i =0; i <rs.getMetaData().getColumnCount(); i++){
+                        String data = rs.getString(i+1);
+                        test[i] =data;
+                    }
+                    foodView.add(new Food(Integer.parseInt(test[0]),test[1],Float.parseFloat(test[2]),Float.parseFloat(test[3]),Float.parseFloat(test[4]),Float.parseFloat(test[5]),Float.parseFloat(test[6])));
+
+
+
+            }
+        }
+        catch(SQLException e){
+            System.out.println(e);
+        }
+        return foodView;
     }
     //selects all the data in  a specified table
 
@@ -423,11 +447,9 @@ public class DatabaseManager {
     }
     public static String[]  selectSpecific(String table,String column,String identifer,String idValue)
     {
-        System.out.println("a");
 
         String sql ="SELECT "+column+" FROM "+table+" WHERE " + identifer +" = "+idValue;
         //if limit is 0 ther will be no limit applied
-        System.out.println(sql );
         ArrayList<String> data=new ArrayList<>() ;
         try(Connection conn = connect();
             PreparedStatement pstmt =conn.prepareStatement(sql)){
@@ -439,58 +461,20 @@ public class DatabaseManager {
 
             ResultSet rs = pstmt.executeQuery();
 
-            System.out.println(rs.getMetaData().getColumnCount()+"£");
             while(rs.next()){
-                System.out.println(rs.getInt(1));
                 data.add(rs.getString(1));
                 for (int i =0; i <rs.getMetaData().getColumnCount()-1; i++){
                     String value= rs.getString(i+2);
                     data.add(value);
-                    System.out.println(value);
                 }
             }
         }
         catch(SQLException e){
             e.printStackTrace();
-        }
-        //converts data to an array
+        }        //converts data to an array
         return data.toArray(new String[data.size()]);
     }
-    public static String[]  selectSpecificAND(String table,String column,String identifer,String idValue,String andId ,String andValue)
-    {
-        System.out.println("a");
 
-        String sql ="SELECT "+column+" FROM "+table+" WHERE " + identifer +" = "+idValue  +" AND " + andId + "=" +andValue;
-        //if limit is 0 ther will be no limit applied
-        System.out.println(sql );
-        ArrayList<String> data=new ArrayList<>() ;
-        try(Connection conn = connect();
-            PreparedStatement pstmt =conn.prepareStatement(sql)){
-
-
-            // used to store the values of the data to add to the arraylist
-//            pstmt.setString(1,idValue);
-
-
-            ResultSet rs = pstmt.executeQuery();
-
-            System.out.println(rs.getMetaData().getColumnCount()+"£");
-            while(rs.next()){
-                System.out.println(rs.getInt(1));
-                data.add(rs.getString(1));
-                for (int i =0; i <rs.getMetaData().getColumnCount()-1; i++){
-                    String value= rs.getString(i+2);
-                    data.add(value);
-                    System.out.println(value);
-                }
-            }
-        }
-        catch(SQLException e){
-            e.printStackTrace();
-        }
-        //converts data to an array
-        return data.toArray(new String[data.size()]);
-    }
     public static String check(TextField username){
 
         String sql = "SELECT * FROM login WHERE username=?";

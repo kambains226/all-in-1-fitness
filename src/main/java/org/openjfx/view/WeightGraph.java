@@ -4,10 +4,13 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.Pane;
+
 public class WeightGraph {
 
 
-    public LineChart createGraph(double weight, double[] weightData){
+    public ScrollPane createGraph(double[] goal, double[] weightData){
 
        // xaxis
         NumberAxis xAxis = new NumberAxis();
@@ -16,24 +19,22 @@ public class WeightGraph {
         xAxis.setTickUnit(1);
         xAxis.setAutoRanging(false);
         xAxis.setLowerBound(1);
-        xAxis.setUpperBound(weightData.length);
+        xAxis.setUpperBound(weightData.length+1);
 
         //y axis
         double upperYLimit =0 ;
         int count =0;
         //keeps track of whats the bigger number
         for (double x : weightData){
-            if(weight > x){
-                count++;
-               if(count ==weightData.length-1){
-                  upperYLimit = weight;
-               }
-            }
-            else{
-               upperYLimit = x;
-            }
+            //gets the biggest number in the array
+           upperYLimit = Math.max(upperYLimit, x);
 
         }
+        for (double y:goal){
+
+            upperYLimit = Math.max(upperYLimit, y);
+        }
+
         NumberAxis yAxis = new NumberAxis();
         yAxis.setLabel("Weight (kg)");
         yAxis.setTickUnit(5);
@@ -44,6 +45,7 @@ public class WeightGraph {
         LineChart <Number ,Number> lineChart = new LineChart<>(xAxis,yAxis);
         lineChart.setTitle("Weight progress");
 
+
         //gets the date
         XYChart.Series<Number ,Number> series = new XYChart.Series<>();
         series.setName("Weight Progress");
@@ -53,15 +55,34 @@ public class WeightGraph {
             series.getData().add(new XYChart.Data<>(i+1 ,weightData[i]));
         }
         //goal weight constant line
-        lineChart.getData().add(series);
+//        lineChart.getData().add(series);
 
         XYChart.Series<Number ,Number> goalSeries= new XYChart.Series<>();
         goalSeries.setName("goal");
-        for (int i =0; i < weightData.length; i++){
-            goalSeries.getData().add(new XYChart.Data<>(i+1,weight));
+        for (int i =0; i < goal.length; i++){
+            System.out.println("ta");
+            System.out.println(goal[i]);
+            goalSeries.getData().add(new XYChart.Data<>(i+1,goal[i]));
         }
-        lineChart.getData().add(goalSeries);
-        return lineChart;
+
+            lineChart.getData().addAll(series,goalSeries);
+
+//        lineChart.setMinWidth(weightData.length);
+
+        lineChart.setMinWidth(weightData.length*20);
+        //adds a scrollpane so if the chart gets to much data it can be scrolled
+        ScrollPane scrollPane = new ScrollPane(lineChart);
+//        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setPannable(true);
+        if(weightData.length >30){
+            scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        }
+        else{
+            scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        }
+
+        return scrollPane;
 
 
 

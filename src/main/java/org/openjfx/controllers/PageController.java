@@ -1,6 +1,7 @@
 package org.openjfx.controllers;
 
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
@@ -47,6 +48,15 @@ public abstract class PageController {
 
 
 
+    }
+    //creates an alert telling the user whats going on
+    public static void showError(String message)
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 //    protected abstract loadData()
 }
