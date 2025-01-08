@@ -54,8 +54,6 @@ public class MainController {
 
 
 
-//                Parent root = FXMLLoader.load(getClass().getResource("/org/openjfx/login.fxml"));
-//                fxmlPath="/org/openjfx/login.fxml";
 
             }
             else{
