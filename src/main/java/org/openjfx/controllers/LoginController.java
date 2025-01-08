@@ -26,6 +26,8 @@ public class LoginController extends BaseController {
     private Hyperlink signupLink;
     @FXML
     private Button loginbtn;
+
+    private static Stage stage;
     private void handleLogin(){
         //checks if the information has been entered
         validLogin();
@@ -48,6 +50,9 @@ public class LoginController extends BaseController {
             if(LoginCheck()){
                 usernameText=username.getText();
                 switchScene("/org/openjfx/layout.fxml");
+
+                stage =getSignupStage();
+                System.out.println(stage);
                 password.getScene().getWindow().hide();
             }
         }
@@ -78,6 +83,10 @@ public class LoginController extends BaseController {
 
     protected boolean informationValidation(){
         return true;
+    }
+
+    public void stageClose() {
+       stage.close();
     }
 }
 

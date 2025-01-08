@@ -4,12 +4,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-
+import javafx.scene.control.ButtonType;
 import java.time.LocalDate;
 
 public abstract class PageController {
     protected String title;
-
+//    private ButtonType result// gets the user choice
     protected Scene scene;
     //conststructor to set the title variable what is given
 //     PageController(String title) {
@@ -50,13 +50,15 @@ public abstract class PageController {
 
     }
     //creates an alert telling the user whats going on
-    public static void showError(String message)
+    public static boolean showError(String message)
     {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Error");
         alert.setHeaderText(null);
         alert.setContentText(message);
-        alert.showAndWait();
+        ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);
+
+        return result == ButtonType.OK;
     }
 //    protected abstract loadData()
 }

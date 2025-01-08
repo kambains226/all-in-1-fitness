@@ -1,5 +1,8 @@
 package org.openjfx.controllers;
 
+import javafx.stage.Stage;
+import org.openjfx.controllers.BaseController;
+import org.openjfx.view.Main;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -8,16 +11,15 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.StackPane;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class MainController {
 
     @FXML
     private TabPane tabPane; // The TabPane containing all tabs
+    @FXML
+    private StackPane mainLayout;
 
-    @FXML
-    private Tab homeTab; // Tab for Home
-    @FXML
-    private Tab trackTab; // Tab for Tracker
 
     public void initialize() {
         // Load content for the initially selected tab
@@ -34,7 +36,32 @@ public class MainController {
         try {
             // Determine the FXML to load based on the tab
             String fxmlPath = null;
-            fxmlPath="/org/openjfx/"+tab.getText()+".fxml";
+            boolean check ;
+            //if the tab is sign out go clear the current stage and open the log in page
+            if (Objects.equals(tab.getText(), "Sign out")) {
+                    check = false;
+                if (PageController.showError("Are you sure ") )
+                {
+                    LoginController loginController = new LoginController();
+
+                    loginController.stageClose();
+                    Main main = new Main();
+                    main.start(new Stage());
+                }
+                else{
+                    tabPane.getSelectionModel().select(0);
+                }
+
+
+
+//                Parent root = FXMLLoader.load(getClass().getResource("/org/openjfx/login.fxml"));
+//                fxmlPath="/org/openjfx/login.fxml";
+
+            }
+            else{
+                System.out.println(tab.getText());
+                fxmlPath="/org/openjfx/"+tab.getText()+".fxml";
+            }
 
             // If we have an FXML file to load for this tab
             if (fxmlPath != null) {

@@ -13,7 +13,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.io.IOException;
 
 public abstract class BaseController {
-    protected Stage stage;
+    protected Stage signupStage;
     protected Scene scene;
 
     protected void switchScene(String fxmlPath) {
@@ -23,7 +23,7 @@ public abstract class BaseController {
             Parent signupRoot = load.load();
             Scene scene = new Scene(signupRoot);
 
-            Stage signupStage = new Stage();
+            signupStage = new Stage();
 
             signupStage.setScene(scene);
             signupStage.show();
@@ -94,6 +94,9 @@ public abstract class BaseController {
 
         return true;
     }
+   public Stage getSignupStage(){
+        return signupStage;
+   }
     public abstract void initialize();
 
 }
