@@ -5,20 +5,13 @@ import java.util.*;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import org.openjfx.database.DatabaseManager;
 import org.openjfx.models.Food;
 import javafx.beans.property.SimpleFloatProperty;
-import javafx.beans.property.SimpleStringProperty;
-
-import javax.sound.midi.Track;
 
 public class TrackerController extends PageController
 {
@@ -40,10 +33,19 @@ public class TrackerController extends PageController
     private ComboBox<String> comboBox;
     private Label quickAdd;
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); //make sure the date can be taken
+    private LoginController loginController;
+    private DatabaseManager databaseManager;
+    private PopUpController popUpController;
+    private testController test;
      public void initialize(){
+         //intializes the controllers variables
+         loginController = new LoginController();
+         databaseManager = new DatabaseManager();
+         popUpController = new PopUpController();
+         test = new testController();
          //sets the datepicker value to todays value
          track_date.setValue(LocalDate.now());
-         userId =String.valueOf(LoginController.getId());
+         userId =String.valueOf(loginController.getId());
          loadData(track_date.getValue());
 
 
@@ -64,7 +66,7 @@ public class TrackerController extends PageController
     private void loadData(LocalDate date){
 
          //make sure the date can be taken
-        ArrayList <Food> foodArr = DatabaseManager.selectFoodAnd("track_date",track_date.getValue().format(formatter),"user_id",userId);
+        ArrayList <Food> foodArr = databaseManager.selectFoodAnd("track_date",track_date.getValue().format(formatter),"user_id",userId);
 //        ArrayList <Food> foodArr = DatabaseManager.Select("track_date",track_date.toString());
         setGrid(foodArr);
 
@@ -82,7 +84,7 @@ public class TrackerController extends PageController
                 //call the select function from the database
                 String[] quickItem;
                 //inserts the quick add item to the database
-                quickItem= DatabaseManager.selectOrder("food","name",newValue,"1");
+                quickItem= databaseManager.selectOrder("food","name",newValue,"1");
 
                 //sets the new quick add label to todays date
                 quickItem[quickItem.length-2] = track_date.getValue().format(formatter);
@@ -91,7 +93,7 @@ public class TrackerController extends PageController
                 for (int i = 0; i < quickItem.length; i++) {
                     System.out.println(quickItem[i]);
                 }
-               DatabaseManager.insertFood(quickItem);
+               databaseManager.insertFood(quickItem);
                reloadUI(track_date.getValue());
 
 
@@ -190,7 +192,7 @@ public class TrackerController extends PageController
     private String[] getFood(String [] arr){
          //stores all the values
 
-        String []dupes =DatabaseManager.selectAll(arr,"food");
+        String []dupes =databaseManager.selectAll(arr,"food");
         Set<String> remove = new HashSet<>(Arrays.asList(dupes)); //removes dupes so foods with same name wont appear
         return remove.toArray(new String[0]);
     }
@@ -205,19 +207,18 @@ public class TrackerController extends PageController
     private void addMeal(){
 
 
-        PopUpController.showPopup(values,currentId,userId,track_date.getValue());
-
+//        popUpController.showPopup(values,currentId,userId,track_date.getValue());
+            test.createFoodPop(userId,track_date.getValue());
      }
 
      private void editMeal(Object[] obj){
-
-         PopUpController.showPopup(obj,currentId,userId,track_date.getValue());
-
+//         popUpController.showPopup(obj,currentId,userId,track_date.getValue());
+        test.createFoodPop(userId,currentId,obj,track_date.getValue());
      }
      private void deleteMeal(){
 
 
-         DatabaseManager.deleteData(currentId);
+         databaseManager.deleteData(currentId);
      }
 
 

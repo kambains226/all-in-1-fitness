@@ -1,49 +1,36 @@
 package org.openjfx.controllers;
 
-import javafx.application.Platform;
 import javafx.beans.property.SimpleFloatProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.openjfx.models.Food;
 import org.openjfx.database.DatabaseManager;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Objects;
-
-import org.openjfx.controllers.HomeController;
 
 public class PopUpController {
     private Stage stage;
 
-    private  static String date;
+    private  String date;
 //    private Button closeButton;
-    private static LocalDate todayDate = LocalDate.now();
-    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    private static boolean goalSet; // used to see if goals should be updated or inserted
-    private static int user_id = LoginController.getId();
-    private static boolean exitCheck ; //checks if the user wants to exit the popup
-
-
+    private LocalDate todayDate = LocalDate.now();
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private boolean goalSet; // used to see if goals should be updated or inserted
+    private int user_id ;
+    private boolean exitCheck ; //checks if the user wants to exit the popup
+    private LoginController loginController;
+    private DatabaseManager dbm;
     //selected user from the date picker
-    private static String dateChosen;
-    public static void showPopup(Object[] data,int id,String userId,LocalDate dateSelected){
+    private String dateChosen;
+    public  void showPopup (Object[] data,int id,String userId,LocalDate dateSelected){
             dateChosen=dateSelected.format(formatter);
+            loginController=new LoginController();
+            dbm = new DatabaseManager();
+            user_id= loginController.getId();
         //edits the table
         try {
                 if(data==null ){
@@ -64,17 +51,16 @@ public class PopUpController {
         }
     }
 
-    public static void showPopup(String type){
+    public void showPopup(String type){
         //check if type equals goals
         if (Objects.equals(type, "weight")){
            createWeights();
         }
     }
-    private  static void createForm(String user){
+    private  void createForm(String user){
         Dialog<String[]> dialog = new Dialog<>();
         dialog.setTitle(" Input your food");
 
-        setDate();
 
         ButtonType submit = new ButtonType("Submit", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(submit, ButtonType.CANCEL);
@@ -140,12 +126,12 @@ public class PopUpController {
 
 //        insertData(results);
     }
-    private  static void createForm(Object[] obj,int id,String user  ){
+    private  void createForm(Object[] obj,int id,String user  ){
         try{
             Dialog<String[]> dialog = new Dialog<>();
             dialog.setTitle(" Edit your food");
 
-            setDate();
+//            setDate();
 
             ButtonType submit = new ButtonType("Submit", ButtonBar.ButtonData.OK_DONE);
             dialog.getDialogPane().getButtonTypes().addAll(submit, ButtonType.CANCEL);
@@ -186,7 +172,7 @@ public class PopUpController {
                     for (int i = 0; i <input.length; i++) {
                         results[i] = input[i].getText();
                     }
-                    DatabaseManager.editData(results,id,user); //runs when submitted
+                    dbm.editData(results,id,user); //runs when submitted
                     return results;
                 }
                 return null;
@@ -205,18 +191,19 @@ public class PopUpController {
     }
 
 
-    private static void insertData(String [] data,String userId){
+    private void insertData(String [] data,String userId){
        // could use a interface for the todays date
         String todaysDate = formatter.format(LocalDate.now());
 //
         data[data.length-2] = dateChosen;
         data[data.length-1] =userId ;
-       DatabaseManager.insertFood(data);
+        dbm.insertFood(data);
+//       DatabaseManager.insertFood(data);
 
 
     }
 
-    private static String[] getData(){
+    private String[] getData(){
 
         return new String [] {"Name:","Calories:","Protein:","Carbs:","Fats:","Sugar:"};
 
@@ -225,27 +212,18 @@ public class PopUpController {
         this.stage = stage;
     }
 
-    public  static String getDate() {
-        setDate();
-        return date;
-    }
-    // sets the date to the todays date
-    public static  void  setDate() {
-        date = formatter.format(LocalDate.now());
-    }
-    private static  void createWeights(){
+
+//
+    private void createWeights(){
         try{
             exitCheck = true;//true by default so user can click cancel
             Dialog<String[]> dialog = new Dialog<>();
             dialog.setTitle("Track your Weight");
 
-            setDate();
-
             ButtonType submit = new ButtonType("Submit", ButtonBar.ButtonData.OK_DONE);
             dialog.getDialogPane().getButtonTypes().addAll(submit, ButtonType.CANCEL);
 
-//            Label label = new Label("Enter Your Weight");
-            // all the macros labes
+
 
             VBox content = new VBox();
 
@@ -255,7 +233,6 @@ public class PopUpController {
             String[] weightValues = getValue();
 
 
-            System.out.println(Arrays.toString(weightValues));
             if(weightValues.length>0)
             {
                 goalSet = true;
@@ -304,7 +281,7 @@ public class PopUpController {
 
                         results[results.length-1]= todayDate.toString();
                         results[results.length-2] = String.valueOf(user_id);
-                        DatabaseManager.insert("weight",getWeightsColumn("db"),results);
+                        dbm.insert("weight",getWeightsColumn("db"),results);
                         return results;
                     }
                     exitCheck  = false;
@@ -341,7 +318,7 @@ public class PopUpController {
     }
     //if goals have values select them from the database
 //
-    private static boolean weightInputCheck(TextField[] inputs){
+    private boolean weightInputCheck(TextField[] inputs){
         int count =0;
         for (TextField textField : inputs) {
             if (!textField.getText().isEmpty()) {
@@ -352,12 +329,12 @@ public class PopUpController {
         return count==inputs.length;
 
     }
-    private static String[] getValue(){
-        return DatabaseManager.selectOrder("weight","user_id",String.valueOf(user_id),"1");
+    private String[] getValue(){
+        return dbm.selectOrder("weight","user_id",String.valueOf(user_id),"1");
 
     }
     //gets the columns for the goals popup
-    private static  String[] getWeightsColumn(String type)
+    private String[] getWeightsColumn(String type)
     {
         if(type=="display")
         {
@@ -365,7 +342,7 @@ public class PopUpController {
             return new String [] {"Current Weight","Weight Goal"};
         }
         else {
-            return new String [] {"weight","goal","user_id","goal_date"};
+            return new String [] {"weight","goal","user_id"};
         }
 
 

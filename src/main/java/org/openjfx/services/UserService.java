@@ -8,7 +8,9 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.regex.Pattern;
 
+
 public class UserService {
+    private DatabaseManager dbm;
     //reference https://uibakery.io/regex-library/email-regex-java for the regex and matching for the email
     public boolean validEmail(TextField email ) {
         boolean match = Pattern.compile("\\S+@\\S+\\.\\S+$")
@@ -45,7 +47,9 @@ public class UserService {
 
     //checks if the password entered matches the encrpyted one
     public boolean valid( String username, String password) {
-        String hash =DatabaseManager.check(username);
+        dbm = new DatabaseManager();
+        System.out.println(username);
+        String hash =dbm.check(username);
         return hash != null && BCrypt.checkpw(password,hash);
 
 

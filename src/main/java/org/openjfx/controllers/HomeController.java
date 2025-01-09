@@ -3,13 +3,13 @@ package org.openjfx.controllers;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import org.openjfx.controllers.LoginController;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 
 import org.openjfx.database.DatabaseManager;
+import org.openjfx.services.UserService;
 import org.openjfx.view.WeightGraph;
 
 
@@ -24,12 +24,23 @@ public class HomeController extends PageController{
     private String username;
     private VBox graphLayout;
     private String []goalWeight;
+
+    private UserService userService;
+    private DatabaseManager dbm;
+    private LoginController loginController;
+    private PopUpController popUp;
+    private testController test;
     public void initialize() {
-        user_id = String.valueOf(LoginController.getId()); //gets the users id
-        username = LoginController.getusername();
+        dbm = new DatabaseManager();
+        loginController = new LoginController();
+        popUp = new PopUpController();
+        test = new testController();
+        user_id = String.valueOf(loginController.getId()); //gets the users id
+        username = loginController.getusername();
         welcomeLabel.setText("welcome " + username);
         goalsButton.setOnAction(event -> {
-            PopUpController.showPopup("weight");
+            test.createWeights(LocalDate.now(),String.valueOf(user_id));
+//            popUp.showPopup("weight");
             reloadUi();
 
         });
@@ -43,7 +54,7 @@ public class HomeController extends PageController{
         WeightGraph graph = new WeightGraph();
 //        String[] weights = DatabaseManager.selectSpecificAND("weight","weight", "user_id", user_id ,"goal",goalWeight[0] );
 
-        String[] weights = DatabaseManager.selectSpecific("weight","weight", "user_id", user_id );
+        String[] weights = dbm.selectSpecific("weight","weight", "user_id", user_id );
         double [] convertedWeights =convertStringToDouble(weights); // the convertedweights array
         double []convertedGoalWeight = convertStringToDouble(goalWeight);
         System.out.println("goals");
@@ -83,6 +94,6 @@ public class HomeController extends PageController{
     }
         public  String [] getGoalWeight(){
 
-        return DatabaseManager.selectSpecific("weight","goal","user_id",String.valueOf(user_id));
+        return dbm.selectSpecific("weight","goal","user_id",String.valueOf(user_id));
     }
 }

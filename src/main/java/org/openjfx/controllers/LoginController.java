@@ -30,6 +30,7 @@ public class LoginController extends BaseController {
     private Button loginbtn;
 
     private UserService userService = new UserService();
+    private DatabaseManager dbm;
     private static Stage stage;
     private void handleLogin(){
         //checks if the information has been entered
@@ -59,15 +60,17 @@ public class LoginController extends BaseController {
     }
     @FXML
     public void initialize(){
+        dbm = new DatabaseManager();
        signupLink.setOnAction(event -> {switchSignup();});
        loginbtn.setOnAction(event -> {handleLogin();});
     }
 
-    public static  String getusername(){
+    public String getusername(){
        return usernameText;
     }
-    public static int getId(){
-        return DatabaseManager.getsId("login","username",usernameText);
+    public int getId(){
+        dbm = new DatabaseManager();
+        return dbm.getsId("login","username",usernameText);
     }
 
 

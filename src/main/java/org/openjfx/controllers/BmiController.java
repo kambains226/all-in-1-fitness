@@ -1,13 +1,12 @@
 package org.openjfx.controllers;
 
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.text.DecimalFormat;
-import java.util.Arrays;
+
 import org.openjfx.view.BmiChart;
 
 public class BmiController {
@@ -45,7 +44,12 @@ public class BmiController {
     private Label redLabel;
     private boolean imperial;
     private Label bmiLabel;
+    private LoginController login;
     public void initialize() {
+
+
+       login= new LoginController();
+
 
 
         data = new TextField[4];

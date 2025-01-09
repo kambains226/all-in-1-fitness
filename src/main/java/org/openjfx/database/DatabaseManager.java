@@ -161,7 +161,6 @@ public class DatabaseManager {
 
         //going to need to crate a select funciton
         //add the users information to the database
-        System.out.println("insert");
 
         String sql = "INSERT INTO food(name,calories,protein,carbs,fats,sugar,track_date,user_id) VALUES(?,?,?,?,?,?,?,?)";
 
@@ -259,7 +258,6 @@ public class DatabaseManager {
         }
     }public ArrayList<String> Select(String table,String column,String column_value){
         String sql = "SELECT * FROM "+table+" WHERE "+ column+" = ? Limit 1" ;
-        System.out.println(sql);
         ArrayList <String>result= new ArrayList<>();//stores all the inseted food into an array of food
         try(PreparedStatement pstm  =conn.prepareStatement(sql)
         ){
