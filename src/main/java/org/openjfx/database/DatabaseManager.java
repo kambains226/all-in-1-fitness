@@ -449,14 +449,14 @@ public class DatabaseManager {
         return data.toArray(new String[data.size()]);
     }
 
-    public static String check(TextField username){
+    public static String check(String username){
 
         String sql = "SELECT * FROM login WHERE username=?";
 
         try(Connection conn=connect();
             PreparedStatement pstmt = conn.prepareStatement(sql))
         {
-            pstmt.setString(1,username.getText());
+            pstmt.setString(1,username);
             // gets the result of the query
             ResultSet rs = pstmt.executeQuery();
             while(rs.next()){

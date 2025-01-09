@@ -14,13 +14,16 @@ import java.time.LocalDateTime;  //https://www.javatpoint.com/java-get-current-d
 import java.time.LocalDate;
 
 import org.mindrot.jbcrypt.BCrypt;
+import org.openjfx.models.User;
+import org.openjfx.services.UserService;
+
 import java.util.regex.Pattern;
 import java.util.regex.MatchResult;
 //import javax.swing.*;
 
 public class SignupController extends BaseController{
     @FXML
-    private TextField newUser;
+    private TextField username;
 
     @FXML
     protected PasswordField password;
@@ -32,95 +35,41 @@ public class SignupController extends BaseController{
     @FXML
     private DatePicker birthday;
 
-    private LocalDate today  = LocalDate.now();
-    private boolean underAge =false;
+//    private LocalDate today  = LocalDate.now();
+    private UserService userService = new UserService();
 
     @FXML
     private Label feedback;
-    @FXML
+
     private void handleSignup(){
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            String hash =hashPassword(password.getText());
-            String dob = birthday.getValue().format(formatter);
-            DatabaseManager.insertUser(newUser.getText(),hash,dob,email.getText(),formatter.format(this.today));
+            User newUser = new User(username.getText(),userService.hashPassword(password.getText()),email.getText(),birthday.getValue());
+
+        userService.saveUser(newUser);
+        showAlert("Account Created","Account Created Successfully Press ok to proceed");
+        switchScene("/org/openjfx/login.fxml");
+        Stage stage = (Stage) signbtn.getScene().getWindow();
+        stage.close();
+//            DatabaseManager.insertUser(newUser.getText(),hash,dob,email.getText(),formatter.format(this.today));
     }
+    @Override
     protected boolean informationValidation (){
         //makes it so the erorr checking doesnt it for all of them not one by one
-        boolean usernameValid = validUsername(newUser);
+
+        boolean usernameValid = validUsername(username);
         boolean passwordValid = validPassword(password);
-        boolean dateValid = handleDate();
-        boolean emailValid =validEmail();
-        System.out.println(emailValid);
+        boolean emailValid = userService.validEmail(email);
+        boolean dateValid = userService.isOfAge(birthday.getValue());
         return usernameValid && passwordValid && emailValid && dateValid;
-    }
 
-
-
-
-    //reference https://uibakery.io/regex-library/email-regex-java for the regex and matching for the email
-    private boolean validEmail(){
-        boolean match = Pattern.compile("\\S+@\\S+\\.\\S+$")
-                .matcher(email.getText())
-                .find();
-        System.out.println(email.getText());
-        if(!match){
-            email.getStyleClass().add("error");
-        }
-        if(match){
-
-            email.getStyleClass().remove("error");
-        }
-
-        return match;
-    }
-    private boolean handleDate(){
-        if(birthday.getValue()!=null){
-
-            int age = calculateAge();
-           if(birthday.getValue() !=null && age >17 ){
-
-
-               birthday.getStyleClass().remove("error");
-               return true;
-           }
-           else if(age <18) {
-               feedback.setText("You must be over 18 years old");
-           }
-        }
-
-           birthday.getStyleClass().add("error");
-       return false;
-
-    }
-    private int calculateAge(){
-       return Period.between(birthday.getValue(),today).getYears();
-    }
-    private static String hashPassword(String password){  //https://stackoverflow.com/questions/54609663/how-to-use-password-hashing-with-bcrypt-in-android-java
-        String salt = BCrypt.gensalt(12); // generates the salt with value of 12
-        return BCrypt.hashpw(password,salt);
-
-    }
-
-
-
-    @FXML
-    private void switchLogin(){
-        switchScene("/org/openjfx/login.fxml");
-        Stage current = (Stage) newUser.getScene().getWindow();
-
-        current.close();
     }
 
     public void initialize(){
         signbtn.setOnAction(event -> {
             if(informationValidation()){
                 handleSignup();
-                showAlert("Account Created","Account Created Successfully Press ok to proceed");
-                switchLogin();
 
             }
 
-//            feedback.setText("Invalid Information");
         });
     }
 }

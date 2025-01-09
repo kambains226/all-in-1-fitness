@@ -11,6 +11,8 @@ import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
 import org.openjfx.database.*;
+import org.openjfx.services.UserService;
+
 import java.awt.*;
 import java.io.IOException;
 
@@ -27,10 +29,19 @@ public class LoginController extends BaseController {
     @FXML
     private Button loginbtn;
 
+    private UserService userService = new UserService();
     private static Stage stage;
     private void handleLogin(){
         //checks if the information has been entered
-        validLogin();
+        if(informationValidation()){
+            boolean success  = userService.valid(username.getText(),password.getText());
+            if(success){
+                usernameText = username.getText();
+                switchScene("/org/openjfx/layout.fxml");
+                stage =getSignupStage();
+                password.getScene().getWindow().hide();
+            }
+        }
 
 
     }
@@ -42,31 +53,9 @@ public class LoginController extends BaseController {
 
 
     }
-    private boolean validLogin() {
-        boolean usernameValid =validUsername(username);
-        boolean passwordValid =validPassword(password);
-
-        if (usernameValid && passwordValid) {
-            if(LoginCheck()){
-                usernameText=username.getText();
-                switchScene("/org/openjfx/layout.fxml");
-
-                stage =getSignupStage();
-                System.out.println(stage);
-                password.getScene().getWindow().hide();
-            }
-        }
-        return usernameValid && passwordValid;
-    }
-    private boolean LoginCheck() {
-        String hash =DatabaseManager.check(username);
-        return matchPassword(password.getText(), hash);
-
-
-
-        //if hashed password matches sigin
-
-
+    @Override
+    protected boolean informationValidation(){
+        return validUsername(username) && validPassword(password);
     }
     @FXML
     public void initialize(){
@@ -81,9 +70,7 @@ public class LoginController extends BaseController {
         return DatabaseManager.getsId("login","username",usernameText);
     }
 
-    protected boolean informationValidation(){
-        return true;
-    }
+
 
     public void stageClose() {
        stage.close();

@@ -1,5 +1,4 @@
  timelimit on user information
---add weight to the food
 
 --make code less repeated
 -- like repeated functions
@@ -10,10 +9,15 @@
 --overload the select database manager could have a select
 database manager which inherits from databasemanager for the selects so easy to overload
 
---make tracker user id dependent
 --home page
 -- need to make reloadui a inheritance class
 -- need to make data user dependant
 --bugs
 potential bug where quick add alwasy get added
--- add a sign out
+
+need to make it say whats wrong with teh sign up
+
+--recode plan
+- start with Login in
+-- then home
+--
