@@ -9,24 +9,45 @@ import java.util.function.IntToDoubleFunction;
 
 //sqllite documentation https://www.sqlite.org/docs.html
 public class DatabaseManager {
+    private Connection conn;
     private static final String DB_URL= "jdbc:sqlite:gym.db";
 
 
-    public static Connection connect(){
-        Connection conn = null;
-
-            try{
-                conn = DriverManager.getConnection(DB_URL);
-                System.out.println("Connected to database");
-            }
-            catch(SQLException e){
-                System.out.println(e);
-            }
-            return conn;
-
+    public DatabaseManager() {
+        try{
+            conn = DriverManager.getConnection(DB_URL);
+        }
+        catch (SQLException e){
+            System.out.println(e);
+        }
     }
+
+    public void Close(){
+        try{
+            if(conn != null){
+                conn.close();
+            }
+        }
+        catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+//    public Connection connect(){
+//        Connection conn = null;
+//
+//            try{
+//                //connects to the gym data base
+//                conn = DriverManager.getConnection(DB_URL);
+//            }
+//            catch(SQLException e){
+//                System.out.println(e);
+//            }
+//            return conn;
+//
+//    }
     //creates the table
-    public static void create(){
+    public void create(){
         String createLogin = """
                CREATE TABLE IF NOT EXISTS login (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -63,16 +84,19 @@ public class DatabaseManager {
                 );
                 """;
         //membership will be used to decided if it is a trainer or a member
-        try(Connection conn = connect()){
-            Statement stmt = connect().createStatement();
+        try{
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(createLogin);
+
             stmt.execute(createFood);
+            stmt.execute(createWeight);
         }
         catch(SQLException e)
         {
             System.out.println(e);
         }
     }
-    public static void insert(String table ,String[] columns,String[] values) {
+    public void insert(String table ,String[] columns,String[] values) {
         String sql = "INSERT INTO " + table + "(";
 
 //        String sql = "INSERT INTO goals(weight,bmi,calories,track_date,user_id) VALUES(?,?,?,?,?)";
@@ -97,31 +121,27 @@ public class DatabaseManager {
         sql += ")";
 
         System.out.println(sql);
-        try (Connection conn = connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             for (int i = 0; i < values.length; i++) {
                 pstmt.setString(i+1  ,  (values[i]));
-                System.out.println(values[i]);
             }
 
             pstmt.execute();
 
         }
         catch(SQLException e){
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
 
     }
-    public static void insertUser(String username,String password,String dob,String email,String joinDate){
+    public void insertUser(String username,String password,String dob,String email,String joinDate){
 
         //add the users information to the database
         String sql = "INSERT INTO login(username,password,dob,email,join_date) VALUES(?,?,?,?,?)";
 
         System.out.println(sql);
-        try(Connection conn= connect();
-            PreparedStatement pstmt = conn.prepareStatement(sql))
+        try(PreparedStatement pstmt = conn.prepareStatement(sql))
         {
-            System.out.println("Inserting user");
             pstmt.setString(1,username);
             pstmt.setString(2,password);
             pstmt.setString(3,dob);
@@ -136,19 +156,16 @@ public class DatabaseManager {
         }
     }
     // make a function which can be used to with an array
-    public static void insertFood(String [] foodAttributes){
+    public void insertFood(String [] foodAttributes){
 
 
         //going to need to crate a select funciton
         //add the users information to the database
         System.out.println("insert");
-        for (int i = 0; i<foodAttributes.length; i++){
-            System.out.println(foodAttributes[i]);
-//            System.out.println(foodAttributes[6] +"ta");
-        }
+
         String sql = "INSERT INTO food(name,calories,protein,carbs,fats,sugar,track_date,user_id) VALUES(?,?,?,?,?,?,?,?)";
 
-        try(Connection conn= connect();
+        try(
             PreparedStatement pstmt = conn.prepareStatement(sql))
         {
 
@@ -165,7 +182,7 @@ public class DatabaseManager {
             pstmt.execute();
         }
         catch(SQLException e){
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
         catch(NullPointerException e){
 
@@ -177,7 +194,7 @@ public class DatabaseManager {
 
 
     //updates the data from the table
-    public static void edit(String table,String[] columns,String[] values , String unique , String uniquevalue){
+    public void edit(String table,String[] columns,String[] values , String unique , String uniquevalue){
 
         String sql = "UPDATE " + table + " SET ";
         for (int i = 0; i < columns.length; i++) {
@@ -192,7 +209,7 @@ public class DatabaseManager {
         }
         sql+= "WHERE "+unique+"="+uniquevalue ;
         System.out.println(sql);
-        try(Connection conn = connect();
+        try(
             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             for (int i =1; i < values.length-1; i++) {
                pstmt.setString(i ,   values[i-1]);
@@ -201,18 +218,17 @@ public class DatabaseManager {
             pstmt.executeUpdate();
         }
         catch(SQLException e){
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
 
     }
-    public static void editData(String [] data,int id,String user){
+    public void editData(String [] data,int id,String user){
 
 
         //edits the data in the database
         String sql ="UPDATE food SET name=?,calories=?,protein=?,carbs=?,fats=?,sugar=? WHERE id=?";
 
-        try(Connection conn = connect();
-        PreparedStatement pstmt = conn.prepareStatement(sql))
+        try(PreparedStatement pstmt = conn.prepareStatement(sql))
         {
 
             pstmt.setString(1,data[0]);//name
@@ -225,16 +241,15 @@ public class DatabaseManager {
             pstmt.executeUpdate();
         }
         catch (SQLException e){
-            System.out.println(e);
+            System.out.println(e.getMessage());
 
         }
 
     }
-    public static void deleteData(int id){
+    public void deleteData(int id){
         String sql = "DELETE FROM food WHERE id=?";
 
-        try(Connection conn = connect();
-            PreparedStatement pstmt = conn.prepareStatement(sql))
+        try(PreparedStatement pstmt = conn.prepareStatement(sql))
         {
             pstmt.setInt(1,id);
             pstmt.execute();
@@ -242,12 +257,11 @@ public class DatabaseManager {
         catch(SQLException e){
             System.out.println(e);
         }
-    }public static  ArrayList<String> Select(String table,String column,String column_value){
+    }public ArrayList<String> Select(String table,String column,String column_value){
         String sql = "SELECT * FROM "+table+" WHERE "+ column+" = ? Limit 1" ;
         System.out.println(sql);
         ArrayList <String>result= new ArrayList<>();//stores all the inseted food into an array of food
-        try(Connection conn = connect();
-            PreparedStatement pstm  =conn.prepareStatement(sql)
+        try(PreparedStatement pstm  =conn.prepareStatement(sql)
         ){
             pstm.setString(1,column_value);
             ResultSet rs = pstm.executeQuery();
@@ -267,23 +281,21 @@ public class DatabaseManager {
             }
         }
         catch(SQLException e){
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
 
         return result;
     }
-    public static ArrayList<Food>  selectFoodAnd(String identifer,String idValue,String andId ,String andValue)
+    public ArrayList<Food>  selectFoodAnd(String identifer,String idValue,String andId ,String andValue)
     {
 
         String sql ="SELECT * FROM food WHERE " + identifer +" = ? AND " + andId + " = ? " ;
        System.out.println(sql+idValue+andValue);
         ArrayList <Food>foodView = new ArrayList<>();//stores all the inseted food into an array of food
-        try(Connection conn = connect();
-            PreparedStatement pstm  =conn.prepareStatement(sql)
+        try(PreparedStatement pstm  =conn.prepareStatement(sql)
         ){
             pstm.setString(1,idValue);
             pstm.setInt(2,(Integer.parseInt(andValue)));
-//            pstm.setString(2,andValue)
             ResultSet rs = pstm.executeQuery();
 
             //stores the data where the columns match
@@ -304,13 +316,13 @@ public class DatabaseManager {
             }
         }
         catch(SQLException e){
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
         return foodView;
     }
     //selects all the data in  a specified table
 
-    public static String[] selectAll(String[] columns, String table){
+    public String[] selectAll(String[] columns, String table){
 
         //allows the function to be used in multipe situations
        String sql ="SELECT ";
@@ -324,7 +336,7 @@ public class DatabaseManager {
        sql+= "FROM "+table;
        System.out.println(sql);
         ArrayList<String> data=new ArrayList<>() ;
-        try(Connection conn = connect();
+        try(
         PreparedStatement pstmt =conn.prepareStatement(sql)){
 
             ResultSet rs  =pstmt.executeQuery();
@@ -355,13 +367,12 @@ public class DatabaseManager {
     // overloads the selectAll to take a limit
     //selects the login id
 
-    public static int getsId(String table,String identifer,String idValue)
+    public int getsId(String table,String identifer,String idValue)
     {
         String sql = "SELECT id FROM " + table+ " WHERE "+ identifer+ " =? " ;
         System.out.println(sql);
 
-        try(Connection conn=connect();
-            PreparedStatement pstmt = conn.prepareStatement(sql))
+        try(PreparedStatement pstmt = conn.prepareStatement(sql))
 
         {
             // gets the result of the query
@@ -382,7 +393,7 @@ public class DatabaseManager {
         return 0;
     }
     //returns the most recently added data
-    public static String[]  selectOrder(String table,String identifer,String idValue,String limit)
+    public String[]  selectOrder(String table,String identifer,String idValue,String limit)
     {
 
         //by id as its alwasy uniquye and auto incremented
@@ -392,8 +403,7 @@ public class DatabaseManager {
             sql+=" LIMIT ? ";
         }
         ArrayList<String> data=new ArrayList<>() ;
-        try(Connection conn = connect();
-            PreparedStatement pstmt =conn.prepareStatement(sql)){
+        try(PreparedStatement pstmt =conn.prepareStatement(sql)){
 
 
             // used to store the values of the data to add to the arraylist
@@ -419,13 +429,13 @@ public class DatabaseManager {
         }
         return data.toArray(new String[data.size()]);
     }
-    public static String[]  selectSpecific(String table,String column,String identifer,String idValue)
+    public String[]  selectSpecific(String table,String column,String identifer,String idValue)
     {
 
         String sql ="SELECT "+column+" FROM "+table+" WHERE " + identifer +" = "+idValue;
         //if limit is 0 ther will be no limit applied
         ArrayList<String> data=new ArrayList<>() ;
-        try(Connection conn = connect();
+        try(
             PreparedStatement pstmt =conn.prepareStatement(sql)){
 
 
@@ -449,11 +459,11 @@ public class DatabaseManager {
         return data.toArray(new String[data.size()]);
     }
 
-    public static String check(String username){
+    public String check(String username){
 
         String sql = "SELECT * FROM login WHERE username=?";
 
-        try(Connection conn=connect();
+        try(
             PreparedStatement pstmt = conn.prepareStatement(sql))
         {
             pstmt.setString(1,username);
@@ -476,6 +486,7 @@ public class DatabaseManager {
     }
 //
     public static void main(String[] args){
-    create();
+        DatabaseManager dbm = new DatabaseManager();
+    dbm.create();
 }
 }

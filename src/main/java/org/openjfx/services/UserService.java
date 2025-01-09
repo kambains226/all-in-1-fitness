@@ -31,7 +31,11 @@ public class UserService {
     }
     //saves the users information to the database
     public void saveUser(User user){
-        DatabaseManager.insertUser(user.getUsername(),user.getPasswordHash(),user.getDob().toString(),user.getEmail(),LocalDate.now().toString());
+        String []columns = {"username","password","email","dob","join_date"}; //login table columsn
+        String []values = {user.getUsername(),user.getPasswordHash(),user.getDob().toString(),user.getEmail(),LocalDate.now().toString()};
+//        DatabaseManager.insertFood(,user.getUsername(),user.getPasswordHash(),user.getDob().toString(),user.getEmail(),LocalDate.now().toString());
+
+
     }
     //https://stackoverflow.com/questions/54609663/how-to-use-password-hashing-with-bcrypt-in-android-java
     public String hashPassword(String password){
