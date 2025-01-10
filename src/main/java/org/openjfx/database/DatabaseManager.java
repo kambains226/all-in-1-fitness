@@ -249,7 +249,7 @@ public class DatabaseManager implements  DatabaseFunctions {
     //deletes the data
     @Override
     public void deleteData(String table,int id){
-        String sql = "DELETE FROM"+table +"WHERE id=?";
+        String sql = "DELETE FROM "+table +" WHERE id=?";
 
         try(PreparedStatement pstmt = conn.prepareStatement(sql))
         {
