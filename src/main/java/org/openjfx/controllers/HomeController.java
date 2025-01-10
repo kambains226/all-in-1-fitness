@@ -28,13 +28,11 @@ public class HomeController extends PageController{
     private UserService userService;
     private DatabaseManager dbm;
     private LoginController loginController;
-    private PopUpController popUp;
-    private testController test;
+    private PopUpController test;
     public void initialize() {
         dbm = new DatabaseManager();
         loginController = new LoginController();
-        popUp = new PopUpController();
-        test = new testController();
+        test = new PopUpController();
         user_id = String.valueOf(loginController.getId()); //gets the users id
         username = loginController.getusername();
         welcomeLabel.setText("welcome " + username);

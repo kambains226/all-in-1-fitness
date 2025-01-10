@@ -35,14 +35,12 @@ public class TrackerController extends PageController
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); //make sure the date can be taken
     private LoginController loginController;
     private DatabaseManager databaseManager;
-    private PopUpController popUpController;
-    private testController test;
+    private PopUpController popUp;
      public void initialize(){
          //intializes the controllers variables
          loginController = new LoginController();
          databaseManager = new DatabaseManager();
-         popUpController = new PopUpController();
-         test = new testController();
+         popUp = new PopUpController();
          //sets the datepicker value to todays value
          track_date.setValue(LocalDate.now());
          userId =String.valueOf(loginController.getId());
@@ -207,13 +205,11 @@ public class TrackerController extends PageController
     private void addMeal(){
 
 
-//        popUpController.showPopup(values,currentId,userId,track_date.getValue());
-            test.createFoodPop(userId,track_date.getValue());
+            popUp.createFoodPop(userId,track_date.getValue());
      }
 
      private void editMeal(Object[] obj){
-//         popUpController.showPopup(obj,currentId,userId,track_date.getValue());
-        test.createFoodPop(userId,currentId,obj,track_date.getValue());
+        popUp.createFoodPop(userId,currentId,obj,track_date.getValue());
      }
      private void deleteMeal(){
 

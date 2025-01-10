@@ -8,6 +8,7 @@ import javafx.scene.layout.VBox;
 import org.openjfx.database.DatabaseManager;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
 public class DialogService {
 
@@ -19,7 +20,8 @@ public class DialogService {
         dialog.setTitle(title);
 
         boolean edit = false;
-        if(editData != null) {
+        //seeing if the edit data has anything inside it to check if edit mode or insert
+        if(editData.length>0 ) {
             edit = true;
         }
 
@@ -86,7 +88,6 @@ public class DialogService {
 
                 }
 
-//                insertData(results,user);
                 return results;
 
             }
@@ -155,9 +156,15 @@ public class DialogService {
 
                         }
 
+                        exitCheck  = false;
                         return results;
                     }
+
                     exitCheck  = false;
+                    return null;
+                }
+                else{
+                    dialog.close();
                     return null;
                 }
 
@@ -165,7 +172,6 @@ public class DialogService {
 
 
 
-                return null;
 
             });
         dialog.getDialogPane().setContent(content); //adds the vbox layout to the content
@@ -189,5 +195,8 @@ public class DialogService {
         dbm = new DatabaseManager();
         return dbm.selectOrder("weight","user_id",String.valueOf(user),"1");
 
+    }
+    public boolean getExitCheck(){
+        return exitCheck;
     }
 }
