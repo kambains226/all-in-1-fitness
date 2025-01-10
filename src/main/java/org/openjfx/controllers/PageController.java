@@ -2,55 +2,59 @@ package org.openjfx.controllers;
 
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
 import javafx.scene.control.ButtonType;
-import java.time.LocalDate;
+import org.openjfx.database.DatabaseManager;
 
 public abstract class PageController {
-    protected String title;
-//    private ButtonType result// gets the user choice
+    //makes it so the inhertied classes have access to it
+    protected DatabaseManager dbm;
+    protected LoginController loginController;
+    protected  PopUpController popUp;
+    protected String userId;
     protected Scene scene;
-    //conststructor to set the title variable what is given
-//     PageController(String title) {
-//       this.title =title;
+//    public PageController(DatabaseManager dbm, LoginController loginController,PopUpController popUp) {
+//        this.dbm = dbm != null ? dbm : new DatabaseManager();
+//        this.loginController = loginController != null ? loginController : new LoginController();
+//        this.popUp = popUp != null ? popUp : new PopUpController();
+//        setUserId();
+//        this.userId = getUserId();
 //    }
-//    public void setScene(Scene scene) {
-//        this.scene = scene;
-//
-//    }
-//    //abstract method
+    public PageController() {
+            this.dbm = new DatabaseManager();
+            this.loginController = new LoginController();
+            this.popUp = new PopUpController();
+
+        setUserId();
+            this.userId = getUserId();
+    }
+
+    public void  setUserId() {
+        this.userId = String.valueOf(loginController.getId());
+    }
+    public String getUserId() {
+        System.out.println(userId);
+        return userId;
+    }
+
+
+
+    protected void reloadUi(){
+        valid();
+    }
+    //abstract method has all subclasses must call it
     public abstract void initialize();
 
-    //used when user clicks on tab to go to another page
-    public void goToTab(PageController page){
-        Stage stage = (Stage) scene.getWindow();
-        stage.setScene(page.getScene());
-    }
-    protected void log(String message){
-        System.out.println(message);
-    }
-    //gets the scene
     public Scene getScene() {
         return scene;
     }
-    //gets the title
-    public String getTitle() {
-        return title;
+    protected void valid(){
+        if(dbm == null || loginController == null || popUp == null){
+            //throws an expection if invalid state3
+
+            throw new IllegalStateException("Database or login or popUP have not been set");
+        }
     }
-
-        // refershes the page when called
-    protected void reloadUi(){
-//        Stage stage = (Stage) grid.getScene().getWindow();
-//        Scene refershScene = new Scene(grid);
-//        stage.setScene(refershScene);
-
-
-
-
-    }
-    //creates an alert telling the user whats going on
-    public static boolean showError(String message)
+    public boolean showError(String message)
     {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Error");
@@ -60,5 +64,4 @@ public abstract class PageController {
 
         return result == ButtonType.OK;
     }
-//    protected abstract loadData()
 }

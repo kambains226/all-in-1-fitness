@@ -8,7 +8,7 @@ import javafx.scene.paint.Color;
 import java.awt.*;
 
 public class BmiChart {
-    public static VBox createChart(double bmi)
+    public VBox createChart(double bmi)
     {
         double width =500;
         double height =50;
@@ -22,7 +22,7 @@ public class BmiChart {
         VBox vbox = new VBox(canvas);
         return vbox;
     }
-    private static void draw(GraphicsContext gc,double width,double height,double bmi){
+    private void draw(GraphicsContext gc,double width,double height,double bmi){
         //for the bmi categories
         if(bmi >30){
             bmi =30;

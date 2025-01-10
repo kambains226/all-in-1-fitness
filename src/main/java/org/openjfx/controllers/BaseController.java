@@ -66,22 +66,16 @@ public abstract class BaseController {
         boolean upper = false;
         boolean lower = false;
         boolean number = false;
-        boolean length = false;
         boolean special = false;
-        for (int i = 0; i < password.getText().length(); i++) {
-            if (Character.isDigit(password.getText().charAt(i))) {
-                number = true;
-            } else if (Character.isUpperCase(password.getText().charAt(i))) {
-                upper = true;
-            } else if (Character.isLowerCase(password.getText().charAt(i))) {
-                lower = true;
-            } else if (!Character.isLetterOrDigit(password.getText().charAt(i))) {
-                special = true;
-            }
-
-
+//
+        for (char c : password.getText().toCharArray()) {
+            if(Character.isUpperCase(c)) upper = true;
+            if(Character.isLowerCase(c)) lower = true;
+            if(Character.isDigit(c)) number = true;
+            if(!Character.isLetterOrDigit(c)) special = true;
         }
-
+        //adds error class if doesnt contain one of the following
+        // could override this part
         if(!(upper &lower & number & special)){
             password.getStyleClass().add("error");
             return false;

@@ -3,13 +3,13 @@ package org.openjfx.controllers;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import org.openjfx.controllers.LoginController;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 
 import org.openjfx.database.DatabaseManager;
+import org.openjfx.services.UserService;
 import org.openjfx.view.WeightGraph;
 
 
@@ -24,15 +24,19 @@ public class HomeController extends PageController{
     private String username;
     private VBox graphLayout;
     private String []goalWeight;
-    public void initialize() {
-        user_id = String.valueOf(LoginController.getId()); //gets the users id
-        username = LoginController.getusername();
-        welcomeLabel.setText("welcome " + username);
-        goalsButton.setOnAction(event -> {
-            PopUpController.showPopup("weight");
-            reloadUi();
 
-        });
+
+    @Override
+    public void initialize() {
+
+ //gets the users id
+        user_id = getUserId();
+        System.out.println(user_id);
+        username = loginController.getusername();
+        welcomeLabel.setText("welcome " + username);
+
+
+        goalButton();
         loadChart();
 
     }
@@ -43,19 +47,15 @@ public class HomeController extends PageController{
         WeightGraph graph = new WeightGraph();
 //        String[] weights = DatabaseManager.selectSpecificAND("weight","weight", "user_id", user_id ,"goal",goalWeight[0] );
 
-        String[] weights = DatabaseManager.selectSpecific("weight","weight", "user_id", user_id );
+        String[] weights = dbm.selectSpecific("weight","weight", "user_id", user_id );
         double [] convertedWeights =convertStringToDouble(weights); // the convertedweights array
         double []convertedGoalWeight = convertStringToDouble(goalWeight);
-        System.out.println("goals");
-        System.out.println(Arrays.toString(convertedGoalWeight));
         graphLayout = new VBox();
         homeLayout.getChildren().add(graphLayout);
 
         graphLayout.getChildren().add(graph.createGraph(convertedGoalWeight,convertedWeights));
     }
-    private String[] getWeightColumn() {
-        return new String[]{"weight", "user_id"};
-    }
+
 
 
     // convert the string array to double
@@ -74,15 +74,21 @@ public class HomeController extends PageController{
         }
         return convert;
     }
-    @Override
-    public void reloadUi(){
+    private void goalButton(){
+        goalsButton.setOnAction(event -> {
+            popUp.createWeights(LocalDate.now(),String.valueOf(user_id));
+            reloadUi();
 
+        });
+    }
+    @Override
+    protected void reloadUi(){
         graphLayout.getChildren().clear();
         loadChart();
-
+        super.reloadUi();
     }
         public  String [] getGoalWeight(){
 
-        return DatabaseManager.selectSpecific("weight","goal","user_id",String.valueOf(user_id));
+        return dbm.selectSpecific("weight","goal","user_id",String.valueOf(user_id));
     }
 }

@@ -47,7 +47,7 @@
                         <Insets left="59.0" top="50.0" />
                      </GridPane.margin>
                   </Label>
-                  <TextField fx:id="newUser" promptText="Enter your Username" GridPane.columnIndex="1">
+                  <TextField fx:id="username" promptText="Enter your Username" GridPane.columnIndex="1">
                      <opaqueInsets>
                         <Insets />
                      </opaqueInsets>
