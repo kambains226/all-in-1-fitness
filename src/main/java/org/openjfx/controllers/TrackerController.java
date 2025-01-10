@@ -24,8 +24,6 @@ public class TrackerController extends PageController
     private DatePicker track_date;
     private GridPane grid;
 
-    private Button delete;
-    private Button edit; //  to edit the foods
     private ArrayList<String> foods; //used to display the foods that are saved in the select
     private Object[] values;
     private int currentId;
@@ -33,38 +31,31 @@ public class TrackerController extends PageController
     private ComboBox<String> comboBox;
     private Label quickAdd;
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); //make sure the date can be taken
-    private LoginController loginController;
-    private DatabaseManager databaseManager;
-    private PopUpController popUp;
+    @Override
      public void initialize(){
          //intializes the controllers variables
-         loginController = new LoginController();
-         databaseManager = new DatabaseManager();
-         popUp = new PopUpController();
+
          //sets the datepicker value to todays value
          track_date.setValue(LocalDate.now());
-         userId =String.valueOf(loginController.getId());
+         userId =getUserId();
          loadData(track_date.getValue());
 
 
          //event listner for when the date is changed
          //documenation https://docs.oracle.com/javase/8/docs/api/java/time/LocalDate.html
-         track_date.valueProperty().addListener(new ChangeListener<LocalDate>(){
-             @Override // overrides the changed method
+        track_date.valueProperty().addListener((observable, oldValue, newValue) -> reloadUi());
 
-             public void changed(ObservableValue<? extends LocalDate> observable, LocalDate oldValue, LocalDate newValue) {
-                 System.out.println(newValue);
-                 reloadUI(newValue);
-             }
-         });
+        //checks to see if the add food button as been clicked
+        foodbtn.setOnAction(event -> {addMeal();
 
-
+            reloadUi();
+        });
         //coverts the restult to string from the inputbox
     }
     private void loadData(LocalDate date){
 
          //make sure the date can be taken
-        ArrayList <Food> foodArr = databaseManager.selectFoodAnd("track_date",track_date.getValue().format(formatter),"user_id",userId);
+        ArrayList <Food> foodArr = dbm.selectFoodAnd("track_date",track_date.getValue().format(formatter),"user_id",userId);
 //        ArrayList <Food> foodArr = DatabaseManager.Select("track_date",track_date.toString());
         setGrid(foodArr);
 
@@ -73,148 +64,164 @@ public class TrackerController extends PageController
         grid = new GridPane();
         String[] columns ={"name"};
         comboBox = new ComboBox<>();
+        //adds all the food to the combniation box
         comboBox.getItems().addAll(getFood(columns));
-        //event listener where the comboBox has a value
-        comboBox.valueProperty().addListener( new ChangeListener<String>(){
-            @Override
-            //when a change occurs add the value to the grid
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                //call the select function from the database
-                String[] quickItem;
-                //inserts the quick add item to the database
-                quickItem= databaseManager.selectOrder("food","name",newValue,"1");
-
-                //sets the new quick add label to todays date
-                quickItem[quickItem.length-2] = track_date.getValue().format(formatter);
-
-                quickItem[quickItem.length-1] = userId;
-                for (int i = 0; i < quickItem.length; i++) {
-                    System.out.println(quickItem[i]);
-                }
-               databaseManager.insertFood(quickItem);
-               reloadUI(track_date.getValue());
 
 
-            }
-        } );
-        String[] columnNames =Food.getColumnNames();
-        foodbtn.setOnAction(event -> {addMeal();
-
-       reloadUI(track_date.getValue());
-        });
-        //quick add label
-        quickAdd = new Label("Quick Add");
         // loads the check box to select foods already  been added
 
-
-        //
-
-
+        comboBox.valueProperty().addListener((observable, oldValue, newValue) -> comboBoxChange(newValue) );
         // create the grid to display the data
+        //quick add label
+        quickAdd = new Label("Quick Add");
         content.getChildren().addAll(quickAdd, comboBox);
         content.getChildren().add(grid); //sets the layout for the page
-        //creates the rows and columns of the grid
-        for (int  row =0; row <arr.size()+1; row++){
-            for (int col =0; col <=columnNames.length+1; col++){
-                Label label ;
-                if(row ==0 ){
-                    if(col == columnNames.length || col ==columnNames.length+1){
-                        continue; //skips the last element to account for the delete button
-                    }
-                    label = new Label(columnNames[col]);
-                    grid.add(label, col, row);
-                }
 
-                else if(col == columnNames.length ){
-                    Food currentDelete= arr.get(row-1); //used to get the current food to past the food that wants editing
-                    System.out.println(currentId +"current");
-                    delete = new Button("Delete");
-                    grid.add(delete,col,row);
-                    delete.setOnAction(actionEvent ->
-                    {
-                        currentId=currentDelete.idProperty().getValue();
-                        deleteMeal();
-                        reloadUI(track_date.getValue());
-                    });
+        //all the columns to go in the grid
+        String[] columnNames =Food.getColumnNames();
+        //creates the grid
+        createGrid(arr,columnNames);
 
-                }
-                else if(col == columnNames.length+1 ){
-                    Food current= arr.get(row-1); //used to get the current food to past the food that wants editing
-                    edit = new Button("EDIT");
-                    grid.add(edit,col,row);
-                    edit.setOnAction(event -> {
 
-                        values =new Object[current.getMacros().values().size()+1];
-                        for(int i = 0; i < current.getMacros().values().size()+1; i++){
-                            currentId=current.idProperty().getValue();
 
-                            if(i==0){
-                                //sets the first element to the name of the food
-                                values[i]=current.NameProperty();
-                            }
-                            else{
-                             values[i]=current.getMacro(columnNames[i]);
-                            }
-
-                        }
-
-                            editMeal(values);
-
-                        reloadUI(track_date.getValue());
-                    });
-                }
-                else {
-                    Food currentFood = arr.get(row-1);
-                    if(columnNames[col].equals("Name")){ //gets the name of the food as its string not integer
-
-                        label = new Label(currentFood.NameProperty().getValue());
-                    }
-                    else{
-                        //not displaying multiple data on same day need to fix it
-                        SimpleFloatProperty word =  currentFood.getMacro(columnNames[col]); //gets the data from the database and puts into a label
-                        label = new Label(word.getValue().toString());
-                    }
-
-                    grid.add(label, col, row);
-                }
-
-            }
-
-        }
 
         //sets the gap between the labels
         grid.setHgap(20);
         grid.setVgap(20);
     }
+
+    private void createGrid(ArrayList<Food> arr ,String[] columnNames) {
+        //creates the rows and columns of the grid
+        for (int row = 0; row < arr.size() + 1; row++) {
+            for (int col = 0; col <= columnNames.length + 1; col++) {
+                Label label;
+                if (row == 0) {
+                    if (col == columnNames.length || col == columnNames.length + 1) {
+                        continue; //skips the last element to account for the delete button and edit
+                    }
+                    //label equals the column name
+                    label = new Label(columnNames[col]);
+                    grid.add(label, col, row);
+                } else {
+                    //gets the data
+                    gridRow(arr, row, col, columnNames);
+                }
+
+            }
+        }
+    }
+    //gets the data for that column to match the food together
+    private void gridRow(ArrayList<Food> arr ,int row, int col ,String[] columns){
+
+        Food current = arr.get(row -1);
+        if(col == columns.length){
+            //delete food funciton
+            deleteFunction(current,row,col);
+        }
+        else if(col == columns.length + 1){
+            //edit food function
+            editFunction(current,row,col,columns);
+        }
+        else{
+           //displays the food data
+            Label label = getFoodLabel(current,columns[col]);
+            grid.add(label, col, row);
+        }
+    }
+    //function that creates the label for the number to match the column
+    private Label getFoodLabel(Food food,String columnName){
+        if("Name".equals(columnName)){
+            return new Label(food.NameProperty().getValue());
+        }
+        else{
+            SimpleFloatProperty macro=  food.getMacro(columnName);
+            return new Label(macro.getValue().toString());
+        }
+
+    }
+    //if pressed will delete the food in that row
+    private void deleteFunction(Food currentDelete, int row,int col){
+        Button deleteButton = new Button("Delete");
+        deleteButton.setOnAction(actionEvent ->
+                    {
+                        currentId=currentDelete.idProperty().getValue();
+                        deleteMeal();
+                        reloadUi();
+                    });
+        //delete button added to the grid
+        grid.add(deleteButton,col,row);
+    }
+    //if the edit button is called
+    private void editFunction(Food currentEdit, int row,int col,String[] columns){
+        Button editButton= new Button("Edit");
+        editButton.setOnAction(actionEvent ->
+        {
+            //sets the current id to which row is clicked
+            currentId=currentEdit.idProperty().getValue();
+            values = new Object[currentEdit.getMacros().size()+1];
+
+            for(int i =0; i < currentEdit.getMacros().size()+1; i++){
+
+                //ads the name of the food to the object []
+                if(i ==0){
+                    values[i] = currentEdit.NameProperty();
+
+                }
+                else{
+                    values[i] = currentEdit.getMacro(columns[i]);
+                }
+            }
+            //values object where all the data gets added to
+           editMeal(values);
+            reloadUi();
+        });
+        grid.add(editButton,col,row);
+    }
+
+    //if the combox is changed
+    private void  comboBoxChange(String newValue){
+       String [] foodItems = dbm.selectOrder("food","name",newValue,"1");
+
+        foodItems[foodItems.length-2] = track_date.getValue().format(formatter);
+
+        foodItems[foodItems.length-1] = userId;
+
+        dbm.insertFood(foodItems);
+        reloadUi();
+    }
     //gets the names and id from the database for the quick add
     private String[] getFood(String [] arr){
          //stores all the values
 
-        String []dupes =databaseManager.selectAll(arr,"food");
+        String []dupes =dbm.selectAll(arr,"food");
         Set<String> remove = new HashSet<>(Arrays.asList(dupes)); //removes dupes so foods with same name wont appear
         return remove.toArray(new String[0]);
     }
 //    gets only the food names
-    private void reloadUI(LocalDate newDate){
+    @Override
+    protected void reloadUi(){
          content.getChildren().removeAll(comboBox,quickAdd);
          grid.getChildren().clear();
-         loadData(newDate);//calls the method to update the layout once a new date is selected
+         loadData(track_date.getValue());//calls the method to update the layout once a new date is selected
          values =null; //unset the value of values so it doesnt display when clicking to add a value
 
+        super.reloadUi();
     }
+    //creates the insert pop uP
     private void addMeal(){
 
 
             popUp.createFoodPop(userId,track_date.getValue());
      }
-
+//creates the edit popup
      private void editMeal(Object[] obj){
         popUp.createFoodPop(userId,currentId,obj,track_date.getValue());
      }
+     //delets the food that is clicked on
      private void deleteMeal(){
 
 
-         databaseManager.deleteData(currentId);
+         dbm.deleteData(currentId);
      }
 
 

@@ -1,7 +1,6 @@
 package org.openjfx.controllers;
 
 import javafx.stage.Stage;
-import org.openjfx.controllers.BaseController;
 import org.openjfx.view.Main;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -40,7 +39,7 @@ public class MainController {
             //if the tab is sign out go clear the current stage and open the log in page
             if (Objects.equals(tab.getText(), "Sign out")) {
                     check = false;
-                if (PageController.showError("Are you sure ") )
+                if (OldPage.showError("Are you sure ") )
                 {
                     LoginController loginController = new LoginController();
 

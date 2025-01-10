@@ -11,7 +11,7 @@ import java.util.Objects;
 public class PopUpController {
     private DialogService dialogService;
     private DatabaseManager dbm;
-    private PageController pageController;
+    private OldPage pageController;
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); //make sure the date can be taken
     public PopUpController(){
         this.dialogService = new DialogService();
@@ -64,7 +64,7 @@ public class PopUpController {
             {
                 if(!dialogService.getExitCheck())
                 {
-                    PageController.showError("Current weight needs to be added to be displayed");
+                    OldPage.showError("Current weight needs to be added to be displayed");
                     break;
                 }
 

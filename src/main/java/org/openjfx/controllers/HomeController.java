@@ -25,23 +25,18 @@ public class HomeController extends PageController{
     private VBox graphLayout;
     private String []goalWeight;
 
-    private UserService userService;
-    private DatabaseManager dbm;
-    private LoginController loginController;
-    private PopUpController test;
+
+    @Override
     public void initialize() {
-        dbm = new DatabaseManager();
-        loginController = new LoginController();
-        test = new PopUpController();
-        user_id = String.valueOf(loginController.getId()); //gets the users id
+
+ //gets the users id
+        user_id = getUserId();
+        System.out.println(user_id);
         username = loginController.getusername();
         welcomeLabel.setText("welcome " + username);
-        goalsButton.setOnAction(event -> {
-            test.createWeights(LocalDate.now(),String.valueOf(user_id));
-//            popUp.showPopup("weight");
-            reloadUi();
 
-        });
+
+        goalButton();
         loadChart();
 
     }
@@ -55,16 +50,12 @@ public class HomeController extends PageController{
         String[] weights = dbm.selectSpecific("weight","weight", "user_id", user_id );
         double [] convertedWeights =convertStringToDouble(weights); // the convertedweights array
         double []convertedGoalWeight = convertStringToDouble(goalWeight);
-        System.out.println("goals");
-        System.out.println(Arrays.toString(convertedGoalWeight));
         graphLayout = new VBox();
         homeLayout.getChildren().add(graphLayout);
 
         graphLayout.getChildren().add(graph.createGraph(convertedGoalWeight,convertedWeights));
     }
-    private String[] getWeightColumn() {
-        return new String[]{"weight", "user_id"};
-    }
+
 
 
     // convert the string array to double
@@ -83,12 +74,18 @@ public class HomeController extends PageController{
         }
         return convert;
     }
-    @Override
-    public void reloadUi(){
+    private void goalButton(){
+        goalsButton.setOnAction(event -> {
+            popUp.createWeights(LocalDate.now(),String.valueOf(user_id));
+            reloadUi();
 
+        });
+    }
+    @Override
+    protected void reloadUi(){
         graphLayout.getChildren().clear();
         loadChart();
-
+        super.reloadUi();
     }
         public  String [] getGoalWeight(){
 

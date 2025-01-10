@@ -48,7 +48,6 @@ public class UserService {
     //checks if the password entered matches the encrpyted one
     public boolean valid( String username, String password) {
         dbm = new DatabaseManager();
-        System.out.println(username);
         String hash =dbm.check(username);
         return hash != null && BCrypt.checkpw(password,hash);
 

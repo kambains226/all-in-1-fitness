@@ -12,15 +12,7 @@ import org.openjfx.view.BmiChart;
 public class BmiController {
     //gets the FXML contorls
     @FXML
-    private Label heightLabel;
-    @FXML
-    private HBox heightLayout;
-    @FXML
     private TextField heightInput;
-    @FXML
-    private Label weightLabel;
-    @FXML
-    private HBox weightLayout;
     @FXML
     private TextField weightInput;
     @FXML
