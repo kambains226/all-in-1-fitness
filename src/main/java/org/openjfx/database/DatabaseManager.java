@@ -8,21 +8,28 @@ import java.util.function.IntToDoubleFunction;
 
 
 //sqllite documentation https://www.sqlite.org/docs.html
-public class DatabaseManager {
+public class DatabaseManager implements  DatabaseFunctions {
     private Connection conn;
     private static final String DB_URL= "jdbc:sqlite:gym.db";
 
 
     public DatabaseManager() {
+        connect();
+
+    }
+
+    @Override
+    public void connect(){
         try{
             conn = DriverManager.getConnection(DB_URL);
         }
         catch (SQLException e){
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
     }
 
-    public void Close(){
+    @Override
+    public void close(){
         try{
             if(conn != null){
                 conn.close();
@@ -33,20 +40,8 @@ public class DatabaseManager {
         }
     }
 
-//    public Connection connect(){
-//        Connection conn = null;
-//
-//            try{
-//                //connects to the gym data base
-//                conn = DriverManager.getConnection(DB_URL);
-//            }
-//            catch(SQLException e){
-//                System.out.println(e);
-//            }
-//            return conn;
-//
-//    }
-    //creates the table
+    //creates the tables
+    @Override
     public void create(){
         String createLogin = """
                CREATE TABLE IF NOT EXISTS login (
@@ -96,6 +91,8 @@ public class DatabaseManager {
             System.out.println(e);
         }
     }
+    @Override
+    //inserts the data
     public void insert(String table ,String[] columns,String[] values) {
         String sql = "INSERT INTO " + table + "(";
 
@@ -120,7 +117,6 @@ public class DatabaseManager {
         }
         sql += ")";
 
-        System.out.println(sql);
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             for (int i = 0; i < values.length; i++) {
                 pstmt.setString(i+1  ,  (values[i]));
@@ -134,6 +130,7 @@ public class DatabaseManager {
         }
 
     }
+    @Override
     public void insertUser(String username,String password,String dob,String email,String joinDate){
 
         //add the users information to the database
@@ -156,6 +153,7 @@ public class DatabaseManager {
         }
     }
     // make a function which can be used to with an array
+    @Override
     public void insertFood(String [] foodAttributes){
 
 
@@ -193,6 +191,7 @@ public class DatabaseManager {
 
 
     //updates the data from the table
+    @Override
     public void edit(String table,String[] columns,String[] values , String unique , String uniquevalue){
 
         String sql = "UPDATE " + table + " SET ";
@@ -221,6 +220,8 @@ public class DatabaseManager {
         }
 
     }
+    //edits the data
+    @Override
     public void editData(String [] data,int id,String user){
 
 
@@ -245,8 +246,10 @@ public class DatabaseManager {
         }
 
     }
-    public void deleteData(int id){
-        String sql = "DELETE FROM food WHERE id=?";
+    //deletes the data
+    @Override
+    public void deleteData(String table,int id){
+        String sql = "DELETE FROM"+table +"WHERE id=?";
 
         try(PreparedStatement pstmt = conn.prepareStatement(sql))
         {
@@ -256,7 +259,13 @@ public class DatabaseManager {
         catch(SQLException e){
             System.out.println(e);
         }
-    }public ArrayList<String> Select(String table,String column,String column_value){
+
+    }
+
+    @Override
+    //limiting the data  by 1
+    public ArrayList<String> Select(String table,String column,String column_value){
+
         String sql = "SELECT * FROM "+table+" WHERE "+ column+" = ? Limit 1" ;
         ArrayList <String>result= new ArrayList<>();//stores all the inseted food into an array of food
         try(PreparedStatement pstm  =conn.prepareStatement(sql)
@@ -284,7 +293,10 @@ public class DatabaseManager {
 
         return result;
     }
+    @Override
+    //when you need multiple where clauses
     public ArrayList<Food>  selectFoodAnd(String identifer,String idValue,String andId ,String andValue)
+
     {
 
         String sql ="SELECT * FROM food WHERE " + identifer +" = ? AND " + andId + " = ? " ;
@@ -320,6 +332,7 @@ public class DatabaseManager {
     }
     //selects all the data in  a specified table
 
+    @Override
     public String[] selectAll(String[] columns, String table){
 
         //allows the function to be used in multipe situations
@@ -332,7 +345,6 @@ public class DatabaseManager {
 
        }
        sql+= "FROM "+table;
-       System.out.println(sql);
         ArrayList<String> data=new ArrayList<>() ;
         try(
         PreparedStatement pstmt =conn.prepareStatement(sql)){
@@ -346,12 +358,9 @@ public class DatabaseManager {
                     String value= rs.getString(i+1);
                     temp[i] =value;
                 }
-//                System.out.println(temp.toString());
                 data.addAll(Arrays.asList(temp));//adds the temp contents to the data
             }
-            for (int i =0; i <data.size(); i++){
-                System.out.println(data.get(i));
-            }
+
         }
         catch(SQLException e){
             e.printStackTrace();
@@ -365,10 +374,10 @@ public class DatabaseManager {
     // overloads the selectAll to take a limit
     //selects the login id
 
+    @Override
     public int getsId(String table,String identifer,String idValue)
     {
         String sql = "SELECT id FROM " + table+ " WHERE "+ identifer+ " =? " ;
-        System.out.println(sql);
 
         try(PreparedStatement pstmt = conn.prepareStatement(sql))
 
@@ -391,6 +400,7 @@ public class DatabaseManager {
         return 0;
     }
     //returns the most recently added data
+    @Override
     public String[]  selectOrder(String table,String identifer,String idValue,String limit)
     {
 
@@ -427,6 +437,8 @@ public class DatabaseManager {
         }
         return data.toArray(new String[data.size()]);
     }
+    @Override
+    //selects the specific value
     public String[]  selectSpecific(String table,String column,String identifer,String idValue)
     {
 
@@ -438,7 +450,6 @@ public class DatabaseManager {
 
 
             // used to store the values of the data to add to the arraylist
-//            pstmt.setString(1,idValue);
 
 
             ResultSet rs = pstmt.executeQuery();
@@ -457,6 +468,8 @@ public class DatabaseManager {
         return data.toArray(new String[data.size()]);
     }
 
+    //checks if the username is exists
+    @Override
     public String check(String username){
 
         String sql = "SELECT * FROM login WHERE username=?";
@@ -482,7 +495,6 @@ public class DatabaseManager {
         }
         return null;
     }
-//
     public static void main(String[] args){
         DatabaseManager dbm = new DatabaseManager();
     dbm.create();

@@ -56,9 +56,6 @@ public class BmiController extends PageController {
         //keeps track of which unit type can be selected
         unit.setOnAction(actionEvent ->toggleUnits());
 
-
-
-
     }
 
     private void submitCheck(){
@@ -66,14 +63,12 @@ public class BmiController extends PageController {
             //checks which function to call dependening on if imperial is true or false
             double bmi =  imperial ? calculateBmiImperial() :calculateBmiMetric();
 
-
             display(bmi);
 
         }
     }
     //if its imperial or metric
     private  void toggleUnits(){
-        //what ever imperial is it will do the possible
 //set imperial to the opposite of what it is
         imperial = !imperial;
         updateUnits();

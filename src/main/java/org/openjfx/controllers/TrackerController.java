@@ -221,7 +221,7 @@ public class TrackerController extends PageController
      private void deleteMeal(){
 
 
-         dbm.deleteData(currentId);
+         dbm.deleteData("food",currentId);
      }
 
 
