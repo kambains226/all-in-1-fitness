@@ -9,16 +9,11 @@ import java.text.DecimalFormat;
 
 import org.openjfx.view.BmiChart;
 
-public class BmiController {
+public class BmiController extends PageController {
     //gets the FXML contorls
     @FXML
-    private TextField heightInput;
-    @FXML
-    private TextField weightInput;
-    @FXML
-    private TextField inches;
-    @FXML
-    private TextField pounds;
+    private TextField heightInput, weightInput,inches,pounds;
+
     @FXML
     private CheckBox unit;
     @FXML
@@ -30,17 +25,21 @@ public class BmiController {
     private TextField[] data ;
     // for the bmi chart
     private VBox chart; // bmi chart;
-    private Label blueLabel;
-    private Label greenLabel;
-    private Label yellowLabel;
-    private Label redLabel;
     private boolean imperial;
-    private Label bmiLabel;
-    private LoginController login;
+
+    private Label bmiLabel, blueLabel, greenLabel, yellowLabel, redLabel;
+    // imperial to metric converstion data
+    private static final  double INCH_CM = 2.54;
+    private static final  double STONE_KG = 6.35;
+    private static final  double POUND_KG= 0.453592;
+    //instand of the bmi chart
+
+    private BmiChart bmiChart;
+    @Override
     public void initialize() {
 
 
-       login= new LoginController();
+        bmiChart = new BmiChart();
 
 
 
@@ -51,118 +50,125 @@ public class BmiController {
         this.data[2]=inches;
         this.data[3]=pounds;
         inputControl();
-        bmiSubmit.setOnAction(actionEvent ->
-        {
-            if(!(heightInput.getText().equals("") || weightInput.getText().equals(""))){
-                if(imperial){
-                    //checks to make sure that the inches and pounds have values
-                   if((inches.getText().equals("") || pounds.getText().equals(""))){
+        //starts the caluclation
+        bmiSubmit.setOnAction(actionEvent -> submitCheck());
 
-                       inches.setText("0");
-                       pounds.setText("0");
-                   }
-                }
-
-                    submit();
-
-            }
-        });
         //keeps track of which unit type can be selected
-        unit.setOnAction(actionEvent ->
-        {
+        unit.setOnAction(actionEvent ->toggleUnits());
 
-            //if imperial is selected change measurements
-            //adds the text fields to the arraysq
-            if(count % 2 ==0){
-                heightInput.setPromptText("feet");
-                inches.setVisible(true);
-                //adds a new input box for the pounds
-                weightInput.setPromptText("stone");
-                pounds.setVisible(true);
 
-                imperial = true;
-                //make sure the inches and pounds have validation
-            }
-            else{
-                inches.setVisible(false);
-                pounds.setVisible(false);//makes it so they cant be seen
-                heightInput.setPromptText("cm");
-                weightInput.setPromptText("kg");
-                //deletes the second text field added with imperial
 
-                unit.setText("Imperial");
-                imperial = false;
-            }
-
-            count++;
-            heightInput.clear();//clears any text if there is any inputed when switched
-            weightInput.clear();
-        });
 
     }
-   //submits the values of the weight and height to the database
-    private void submit(){
-        double bmi;
-        if (imperial){
-            double[] converstion = new double[2];
-            converstion = convert();
-            bmi =calculate(converstion[0],converstion[1]);
+
+    private void submitCheck(){
+        if(inputValid()){
+            //checks which function to call dependening on if imperial is true or false
+            double bmi =  imperial ? calculateBmiImperial() :calculateBmiMetric();
+
+
+            display(bmi);
+
+        }
+    }
+    //if its imperial or metric
+    private  void toggleUnits(){
+        //what ever imperial is it will do the possible
+//set imperial to the opposite of what it is
+        imperial = !imperial;
+        updateUnits();
+    }
+
+    private void updateUnits(){
+        //sts the input fields to the correct unit
+        if(imperial)
+        {
+            heightInput.setPromptText("feet");
+            inches.setVisible(true);
+            //adds a new input box for the pounds
+            weightInput.setPromptText("stone");
+            pounds.setVisible(true);
+
         }
         else{
-            bmi=calculate(Double.parseDouble(heightInput.getText()),Double.parseDouble(weightInput.getText()));
-
+            inches.setVisible(false);
+            //makes inches and pounds invisible
+            pounds.setVisible(false);//makes it so they cant be seen
+            heightInput.setPromptText("cm");
+            weightInput.setPromptText("kg");
+            unit.setText("Imperial");
         }
-        //checks for 0/0 error
-        if(Double.isNaN(bmi)){
-            bmi=0;
-        }
-        display(bmi);
+        clearUnits();
     }
+    //clears the units when swithcing between them
+    private void clearUnits(){
+        heightInput.clear();//clears any text if there is any inputed when switched
+        weightInput.clear();
+        inches.clear();
+        pounds.clear();
+    }
+
     //makes sure only numbers have been added
     private void inputControl(){
 
-        for(int i =0; i <data.length; i++){
+        for(TextField tf:data){
             //used for metric validation
 
-            final int index= i;// used to for the event listener
-
-
-            data[i].textProperty().addListener((observable, oldValue, newValue) -> {
+            tf.textProperty().addListener((observable, oldValue, newValue) -> {
                 if(!newValue.matches("\\d*(\\.\\d*)?")) //regex to check if input is a number
                 {
-                   data[index].setText(oldValue);
+                   tf.setText(oldValue);
                 }
             });
         }
     }
-   //works out the bmi
-    private double calculate(double height, double weight){
-        height /=100; //converts to meters
-        //decimal format documenation https://stackoverflow.com/questions/16583604/formatting-numbers-using-decimalformat
-        //formats to 2 decimal places
-        DecimalFormat df = new DecimalFormat("0.##");
-        double result =weight /(height*height) ;
-        return Double.parseDouble(df.format(result));
-         }
+
         //converts the imperial to metric
-    private double[] convert(){
-        //stores the converted height and width
-        double[] converstion = new double[2];
-        //the height converstion
-        System.out.println(inches.getText());
-        double heightCon = Float.parseFloat(heightInput.getText()) *12 +Float.parseFloat(inches.getText());
-        // 1 inch = 2.54 cm
-        heightCon *=2.54;
-        converstion[0] = heightCon;
-        //weight converstion
-        double weightCon = (Double.parseDouble(weightInput.getText()) *6.35) + (Double.parseDouble(pounds.getText())*0.453592);
 
-        converstion[1] = weightCon;
+    private double calculateBmiImperial(){
+        double height = convertHeightCm();
+        double weight = convertWeightKg();
 
-        return  converstion;
-
+        return calcBmi(height,weight);
 
     }
+
+    //works out the bmi in metric
+    private double calculateBmiMetric(){
+        double height = Double.parseDouble(heightInput.getText())/100;
+        double weight = Double.parseDouble(weightInput.getText());
+        return calcBmi(height,weight);
+    }
+    //converts height to cm
+    private double convertHeightCm(){
+        double feet = Double.parseDouble(heightInput.getText());
+        double inch = inches.getText().isEmpty() ? 0 : Double.parseDouble(inches.getText());
+        double height = feet * 12 +inch;
+
+        System.out.println(height * INCH_CM);
+        return height *INCH_CM/100;
+
+    }
+    //converts weight to kg
+    private double convertWeightKg(){
+        double stone =  Double.parseDouble(weightInput.getText());
+        //sets it to 0 if empty
+        double pound = pounds.getText().isEmpty() ? 0 : Double.parseDouble(pounds.getText());
+        return (stone * STONE_KG) + (pound * POUND_KG);
+
+    }
+    //calculate bmi
+    private double calcBmi(double height,double weight){
+
+        double result = weight / (height * height);
+
+        //decimal format documenation https://stackoverflow.com/questions/16583604/formatting-numbers-using-decimalformat
+        //formats to two decimal places
+        DecimalFormat df = new DecimalFormat("0.##");
+        return Double.parseDouble(df.format(result));
+
+    }
+    //displays the bmi on the display
     private void display(double bmi){
         //removes the chart or the label if its already being displayed
         bmiLayout.getChildren().remove(chart);
@@ -176,8 +182,7 @@ public class BmiController {
 
         bmiLabel = new Label("your bmi is "+bmi);
         bmiLayout.getChildren().add(bmiLabel);
-        chart =BmiChart.createChart(bmi);
-//        bmiLayout.getChildren().remove(chart);
+        chart =bmiChart.createChart(bmi);
         bmiLayout.getChildren().add(chart);
 
         // key for the graph
@@ -192,4 +197,15 @@ public class BmiController {
         bmiLayout.getChildren().addAll(blueLabel,greenLabel,yellowLabel,redLabel);
 
     }
+    //checks to see if data is in textfields
+    private boolean inputValid(){
+        if(heightInput.getText().isEmpty() || weightInput.getText().isEmpty()){
+            return false;
+        }
+        if(imperial && (inches.getText().isEmpty() || pounds.getText().isEmpty())){
+           return false;
+        }
+        return true;
+    }
+
 }
