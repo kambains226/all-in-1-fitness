@@ -82,6 +82,10 @@ public class WeightGraph {
             scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         }
 
+
+        scrollPane.setMaxWidth(weightData.length*30);
+        scrollPane.setId("scroll");
+        lineChart.setId("weightChart");
         return scrollPane;
 
 

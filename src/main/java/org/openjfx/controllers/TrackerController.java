@@ -3,9 +3,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -23,17 +25,23 @@ public class TrackerController extends PageController
     @FXML
     private DatePicker track_date;
     private GridPane grid;
-
+    private Scene scene;
     private ArrayList<String> foods; //used to display the foods that are saved in the select
     private Object[] values;
     private int currentId;
     private String userId;//gets the user id
     private ComboBox<String> comboBox;
     private Label quickAdd;
+     @FXML private Label trackLabel;
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); //make sure the date can be taken
     @Override
      public void initialize(){
-         //intializes the controllers variables
+//        scene = trackLabel.getScene();
+
+        trackLabel.styleProperty().bind(Bindings.format("-fx-font-size: %.2fpx;",trackLabel.widthProperty().multiply(0.02)));
+        trackLabel.setMaxWidth(Double.MAX_VALUE);
+        foodbtn.prefWidthProperty().bind(content.widthProperty().multiply(0.2));
+        content.setAlignment(javafx.geometry.Pos.CENTER); //puts the button in the middle
 
          //sets the datepicker value to todays value
          track_date.setValue(LocalDate.now());
@@ -62,6 +70,7 @@ public class TrackerController extends PageController
     }
     private void setGrid(ArrayList<Food> arr){
         grid = new GridPane();
+        grid.setId("grid");
         String[] columns ={"name"};
         comboBox = new ComboBox<>();
         //adds all the food to the combniation box

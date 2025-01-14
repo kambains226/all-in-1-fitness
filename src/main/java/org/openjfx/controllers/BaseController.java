@@ -7,27 +7,40 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.mindrot.jbcrypt.BCrypt;
+import org.openjfx.database.DatabaseManager;
 
 import java.io.IOException;
 
 public abstract class BaseController {
-    protected Stage signupStage;
+    protected Stage stage;
     protected Scene scene;
 
+    protected DatabaseManager dbm;
+
+    public BaseController() {
+        this.dbm = new DatabaseManager();
+    }
     protected void switchScene(String fxmlPath) {
 
         try{
             FXMLLoader load = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent signupRoot = load.load();
             Scene scene = new Scene(signupRoot);
-
-            signupStage = new Stage();
-
-            signupStage.setScene(scene);
-            signupStage.show();
-
+           stage = new Stage();
+//         pStage.setResizable(false);
+           stage.setScene(scene);
+           scene.getStylesheets().add(getClass().getResource("/org/openjfx/style.css").toExternalForm());
+           stage.show();
+           stage.setMinWidth(600);
+           stage.setMinHeight(400);
+           double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
+            double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
+            //sets the maxvalue to the max height of display
+            stage.setMaxWidth(screenWidth);
+            stage.setMaxHeight(screenHeight);
 
         }
         catch(IOException e){
@@ -89,7 +102,7 @@ public abstract class BaseController {
         return true;
     }
    public Stage getSignupStage(){
-        return signupStage;
+        return stage;
    }
     public abstract void initialize();
 

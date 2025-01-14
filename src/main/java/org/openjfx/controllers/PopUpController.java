@@ -8,13 +8,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-public class PopUpController {
-    private DialogService dialogService;
+public class PopUpController extends DialogService {
     private DatabaseManager dbm;
     private OldPage pageController;
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); //make sure the date can be taken
     public PopUpController(){
-        this.dialogService = new DialogService();
         this.dbm = new DatabaseManager();
     }
 
@@ -23,8 +21,8 @@ public class PopUpController {
         String[] results = new String [labels.length+2] ;//plus 2 for the additional columns
 
 
-        Dialog<String[]> dialog = dialogService.createFoodDialog(labels,results,dateSelected,"input your food",new Object[]{});
-//        chatgpt help me find out how to do this
+
+        Dialog<String[]> dialog = createFoodDialog(labels,results,dateSelected,"input your food",new Object[]{});
         dialog.showAndWait().ifPresent(data ->{
 
             results[results.length-2]= dateSelected.format(formatter).toString();
@@ -40,8 +38,8 @@ public class PopUpController {
        String[] labels = getData("food");
        String[] results = new String [labels.length+1] ;
 
-        Dialog<String[]> dialog =dialogService.createFoodDialog(labels,results,dateSelected,"input your food",obj);
 
+        Dialog<String[]> dialog =createFoodDialog(labels,results,dateSelected,"input your food",obj);
         dialog.showAndWait().ifPresent(data ->{
             dbm.editData(data,foodId,user);
         });
@@ -50,8 +48,8 @@ public class PopUpController {
         String[] labels = getData("weight");
         String [] results = new String [labels.length+1] ;
 
-        Dialog<String[]> dialog =dialogService.createWeightDialog(labels,results,dateSelected,"input your weight",userId);
 
+        Dialog<String[]> dialog =createWeightDialog(labels,results,dateSelected,"input your weight",userId);
         dialog.showAndWait().ifPresent(data ->{
             results[results.length-1]= String.valueOf(userId);
 
@@ -62,7 +60,7 @@ public class PopUpController {
         {
             if(result == null)
             {
-                if(!dialogService.getExitCheck())
+                if(!getExitCheck())
                 {
                     OldPage.showError("Current weight needs to be added to be displayed");
                     break;

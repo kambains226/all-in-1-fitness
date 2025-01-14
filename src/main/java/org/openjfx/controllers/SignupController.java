@@ -1,5 +1,6 @@
 package org.openjfx.controllers;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.openjfx.database.*;
 import javafx.fxml.FXML;
@@ -34,22 +35,25 @@ public class SignupController extends BaseController{
     private TextField email;
     @FXML
     private DatePicker birthday;
+    @FXML
+    private VBox signupLayout;
 
-//    private LocalDate today  = LocalDate.now();
+
+    //displays the error labels
+    private Label usernameError,passwordError,dateError,emailError;
     private UserService userService = new UserService();
 
-    @FXML
-    private Label feedback;
+
 
     private void handleSignup(){
-            User newUser = new User(username.getText(),userService.hashPassword(password.getText()),email.getText(),birthday.getValue());
+        User newUser = new User(username.getText(),userService.hashPassword(password.getText()),email.getText(),birthday.getValue());
 
         userService.saveUser(newUser);
         showAlert("Account Created","Account Created Successfully Press ok to proceed");
         switchScene("/org/openjfx/login.fxml");
         Stage stage = (Stage) signbtn.getScene().getWindow();
+        stage.setResizable(false);
         stage.close();
-//            DatabaseManager.insertUser(newUser.getText(),hash,dob,email.getText(),formatter.format(this.today));
     }
     @Override
     protected boolean informationValidation (){
@@ -58,9 +62,58 @@ public class SignupController extends BaseController{
         boolean usernameValid = validUsername(username);
         boolean passwordValid = validPassword(password);
         boolean emailValid = userService.validEmail(email);
-        boolean dateValid = userService.isOfAge(birthday.getValue());
+        boolean dateValid=false ;
+        if(birthday.getValue()!=null){
+
+            dateValid = userService.isOfAge(birthday.getValue());
+        }
+
+
+        //creates the labels to show the errors
+        removeErrors();
+         usernameError = new Label("username needs to be at least 5 characters");
+         passwordError = new Label("password needs to be at least 8 characters contain at least 1 upper and lower case letters , digit and special character");
+         emailError = new Label("invalid email format");
+         dateError = new Label("Must be over 18 to signup");
+        if(!usernameValid ){
+
+           signupLayout.getChildren().add(usernameError);
+
+        }
+        else{
+            removeError(usernameError);
+        }
+        if(!passwordValid ){
+            signupLayout.getChildren().add(passwordError);
+        }
+        else{
+            removeError(passwordError);
+        }
+        if(!emailValid ){
+            signupLayout.getChildren().add(emailError);
+        }
+        else{
+            removeError(emailError);
+        }
+
+        if(!dateValid ){
+            signupLayout.getChildren().add(dateError);
+        }
+        else{
+            removeError(dateError);
+        }
+
+
+
         return usernameValid && passwordValid && emailValid && dateValid;
 
+    }
+    //stops displaying the error is correct
+    private void removeError(Label label){
+        signupLayout.getChildren().remove(label);
+    }
+    private void removeErrors(){
+        signupLayout.getChildren().removeAll(usernameError,passwordError,emailError,dateError);
     }
 
     public void initialize(){
@@ -68,7 +121,9 @@ public class SignupController extends BaseController{
             if(informationValidation()){
                 handleSignup();
 
+
             }
+
 
         });
     }

@@ -21,8 +21,7 @@ public class Main extends Application {
         //login in page
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/org/openjfx/login.fxml"));
-//            Parent root = loader.load();
-//            LoginController loginController = new LoginController();
+
             Scene scene = new Scene(root);
             primaryStage.setResizable(false);
             primaryStage.setScene(scene);
@@ -34,29 +33,7 @@ public class Main extends Application {
 
 
 
-//        LoginPage login = new LoginPage();
-//        Scene scene = new Scene(login, 300, 250);
-        primaryStage.setTitle("Login - AllIn1Fitness");
-//        primaryStage.setScene(scene);
-//        login.SetLoginSuccess(() -> {
-//
-//            try{
-//                Parent root =FXMLLoader.load(getClass().getResource("/org/openjfx/mainScene.fxml"));
-//                Scene mainScene = new Scene(root,550,255);
-//                primaryStage.setScene(mainScene);
-//
-//            }
-//           catch (IOException e){
-//                System.out.println("te");
-//                e.printStackTrace();
-//           }
-//        });
-//        // links the scene with the css file
-//        scene.getStylesheets().add(getClass().getResource("/org/openjfx/style.css").toExternalForm());
-//creates a title with name
-
-//        primaryStage.show();
-//        User user = new User();
+        primaryStage.setTitle("Login - All-In-1Fitness");
 
         // going to be a welcome page to welcome the user with tabs to the other pages
     }

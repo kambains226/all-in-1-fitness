@@ -14,13 +14,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="599.0" prefWidth="705.0" styleClass="sign" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.controllers.SignupController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="599.0" prefWidth="705.0" style="-fx-background-color: #328fa8;" styleClass="sign" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.controllers.SignupController">
    <children>
-      <VBox layoutX="-37.0" prefHeight="599.0" prefWidth="705.0" style="-fx-control-inner-colour: black;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-37.0" AnchorPane.rightAnchor="37.0" AnchorPane.topAnchor="0.0">
+      <VBox fx:id="signupLayout" layoutX="-37.0" prefHeight="599.0" prefWidth="705.0" style="-fx-control-inner-colour: black;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <Label prefHeight="62.0" prefWidth="128.0" styleClass="login-heading" text="Sign up">
                <font>
-                  <Font size="34.0" />
+                  <Font name="Microsoft YaHei Bold" size="34.0" />
                </font>
                <VBox.margin>
                   <Insets bottom="80.0" />

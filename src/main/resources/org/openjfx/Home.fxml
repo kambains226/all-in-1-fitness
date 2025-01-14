@@ -1,13 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox fx:id="homeLayout" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.controllers.HomeController">
+<VBox fx:id="homeLayout" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #32a885;" styleClass="homeLayout" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.controllers.HomeController">
    <children>
-      <Label fx:id="welcomeLabel" text="WELCOME USER" />
-      <Label text="SET YOUR GOALS" />
-      <Button fx:id="goalsButton" mnemonicParsing="false" text="Add Weight" />
+      <Label fx:id="welcomeLabel" prefHeight="20.0" prefWidth="649.0" style="-fx-font-weight: bold;" styleClass="welcomeLabel" stylesheets="@style.css" text="WELCOME USER">
+         <font>
+            <Font size="14.0" />
+         </font>
+         <VBox.margin>
+            <Insets top="25.0" />
+         </VBox.margin></Label>
+      <Label fx:id="goalLabel" prefHeight="17.0" prefWidth="605.0" styleClass="welcomeLabel" text="SET YOUR GOALS">
+         <VBox.margin>
+            <Insets bottom="25.0" top="25.0" />
+         </VBox.margin></Label>
+      <Button fx:id="goalsButton" alignment="BASELINE_CENTER" mnemonicParsing="false" prefHeight="25.0" prefWidth="191.0" style="-fx-alignment: center;" styleClass="welcomeLabel" text="Add Weight">
+         <VBox.margin>
+            <Insets />
+         </VBox.margin></Button>
    </children>
 </VBox>

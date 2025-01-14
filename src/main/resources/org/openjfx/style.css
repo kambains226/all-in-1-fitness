@@ -72,3 +72,22 @@
 .Hbox{
     -fx-alignment: center;
 }
+.password{
+    -fx-alignment: center;
+}
+.welcomeLabel{
+    -fx-alignment: center;
+    -fx-font-weight:bold;
+}
+#scroll{
+    /*-fx-background-color: blue;*/
+    -fx--color: blue;
+}
+#weightChart{
+
+    /*-fx-background-color: blue;*/
+}
+#grid{
+    -fx-font-weight:bold;
+    -fx-alignment: center;
+}

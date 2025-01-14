@@ -1,43 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox fx:id="content" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="trackgrid" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.controllers.TrackerController">
+<VBox fx:id="content" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #42f2f5; -fx-alignment: center;" styleClass="trackgrid" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.controllers.TrackerController">
    <children>
-      <Label text="Track your calories">
-         <graphic>
-            <Label text="Calorie goal " />
-         </graphic></Label>
-      <GridPane fx:id="trackgrid" style="-fx-text-alignment: center;">
-         <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-         </columnConstraints>
-         <rowConstraints>
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-         </rowConstraints>
-         <children>
-            <HBox fx:id="Hbox" prefHeight="100.0" prefWidth="200.0" styleClass="Hbox">
-               <children>
-                  <Label text="edit your food tracking" />
-                  <Button fx:id="foodbtn" mnemonicParsing="false" text="Add Food" />
-               </children>
-            </HBox>
-            <DatePicker fx:id="track_date" GridPane.rowIndex="2" />
-         </children>
-      </GridPane>
+      <Label fx:id="trackLabel" prefHeight="17.0" prefWidth="659.0" style="-fx-alignment: center;" styleClass="welcomeLabel" text="Track your calories">
+         <VBox.margin>
+            <Insets top="20.0" />
+         </VBox.margin>
+         <font>
+            <Font size="22.0" />
+         </font></Label>
+      <Button fx:id="foodbtn" mnemonicParsing="false" prefHeight="25.0" prefWidth="143.0" styleClass="welcomeLabel" text="Add Food">
+         <VBox.margin>
+            <Insets bottom="30.0" top="30.0" />
+         </VBox.margin>
+      </Button>
+      <DatePicker fx:id="track_date" prefHeight="25.0" prefWidth="136.0" />
    </children>
 </VBox>

@@ -12,13 +12,7 @@ public abstract class PageController {
     protected  PopUpController popUp;
     protected String userId;
     protected Scene scene;
-//    public PageController(DatabaseManager dbm, LoginController loginController,PopUpController popUp) {
-//        this.dbm = dbm != null ? dbm : new DatabaseManager();
-//        this.loginController = loginController != null ? loginController : new LoginController();
-//        this.popUp = popUp != null ? popUp : new PopUpController();
-//        setUserId();
-//        this.userId = getUserId();
-//    }
+
     public PageController() {
             this.dbm = new DatabaseManager();
             this.loginController = new LoginController();

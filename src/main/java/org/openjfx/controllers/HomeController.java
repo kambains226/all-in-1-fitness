@@ -1,5 +1,6 @@
 package org.openjfx.controllers;
 
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -17,7 +18,7 @@ public class HomeController extends PageController{
     @FXML
     private Button goalsButton;
     @FXML
-    private Label welcomeLabel;
+    private Label welcomeLabel,goalLabel;
     @FXML
     private VBox homeLayout;
     private String user_id;
@@ -29,9 +30,19 @@ public class HomeController extends PageController{
     @Override
     public void initialize() {
 
+        //makes the code responsive
+        welcomeLabel.styleProperty().bind(Bindings.format("-fx-font-size: %.2fpx;",welcomeLabel.widthProperty().multiply(0.02)));
+        welcomeLabel.setMaxWidth(Double.MAX_VALUE);
+
+        goalLabel.styleProperty().bind(Bindings.format("-fx-font-size: %.2fpx;",welcomeLabel.widthProperty().multiply(0.02)));
+        goalLabel.setMaxWidth(Double.MAX_VALUE);
+        goalsButton.prefWidthProperty().bind(homeLayout.widthProperty().multiply(0.2));
+        homeLayout.setAlignment(javafx.geometry.Pos.CENTER); //puts the button in the middle
+
+
+
  //gets the users id
         user_id = getUserId();
-        System.out.println(user_id);
         username = loginController.getusername();
         welcomeLabel.setText("welcome " + username);
 
@@ -45,15 +56,15 @@ public class HomeController extends PageController{
 
         goalWeight = getGoalWeight();
         WeightGraph graph = new WeightGraph();
-//        String[] weights = DatabaseManager.selectSpecificAND("weight","weight", "user_id", user_id ,"goal",goalWeight[0] );
 
         String[] weights = dbm.selectSpecific("weight","weight", "user_id", user_id );
         double [] convertedWeights =convertStringToDouble(weights); // the convertedweights array
         double []convertedGoalWeight = convertStringToDouble(goalWeight);
         graphLayout = new VBox();
         homeLayout.getChildren().add(graphLayout);
-
         graphLayout.getChildren().add(graph.createGraph(convertedGoalWeight,convertedWeights));
+        graphLayout.setAlignment(javafx.geometry.Pos.CENTER);
+        homeLayout.setAlignment(javafx.geometry.Pos.CENTER); //puts the button in the middle
     }
 
 
