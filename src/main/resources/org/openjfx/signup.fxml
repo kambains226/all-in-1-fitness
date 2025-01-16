@@ -16,7 +16,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="599.0" prefWidth="705.0" style="-fx-background-color: #328fa8;" styleClass="sign" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.controllers.SignupController">
    <children>
-      <VBox fx:id="signupLayout" layoutX="-37.0" prefHeight="599.0" prefWidth="705.0" style="-fx-control-inner-colour: black;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox fx:id="signupLayout" layoutX="121.0" prefHeight="448.0" prefWidth="463.0" style="-fx-control-inner-colour: black;" AnchorPane.bottomAnchor="151.0" AnchorPane.leftAnchor="121.0" AnchorPane.rightAnchor="121.0" AnchorPane.topAnchor="0.0">
          <children>
             <Label prefHeight="62.0" prefWidth="128.0" styleClass="login-heading" text="Sign up">
                <font>
@@ -112,6 +112,11 @@
             <String fx:value="login-heading" />
             <String fx:value="login-container" />
          </styleClass>
+      </VBox>
+      <VBox fx:id="errorBox" layoutX="46.0" layoutY="454.0" prefHeight="163.0" prefWidth="613.0" AnchorPane.topAnchor="435.0">
+         <padding>
+            <Insets left="100.0" />
+         </padding>
       </VBox>
    </children>
 </AnchorPane>

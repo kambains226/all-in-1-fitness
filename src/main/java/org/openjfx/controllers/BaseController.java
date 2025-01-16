@@ -27,11 +27,20 @@ public abstract class BaseController {
 
         try{
             FXMLLoader load = new FXMLLoader(getClass().getResource(fxmlPath));
+
             Parent signupRoot = load.load();
             Scene scene = new Scene(signupRoot);
            stage = new Stage();
-//         pStage.setResizable(false);
            stage.setScene(scene);
+           //makes the signup page none resizable
+            if(fxmlPath == "/org/openjfx/signup.fxml"){
+
+                stage.setResizable(false);
+            }
+            else{
+
+                stage.setResizable(true);
+            }
            scene.getStylesheets().add(getClass().getResource("/org/openjfx/style.css").toExternalForm());
            stage.show();
            stage.setMinWidth(600);

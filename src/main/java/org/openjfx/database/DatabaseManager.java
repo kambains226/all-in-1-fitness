@@ -69,19 +69,7 @@ public class DatabaseManager implements  DatabaseFunctions {
                user_id INTEGER
                ); 
                 """;
-        String createFood2 = """
-               CREATE TABLE IF NOT EXISTS food2 (
-               id INTEGER PRIMARY KEY AUTOINCREMENT,
-               name TEXT,
-               user_id INTEGER,
-               calories INTEGER,
-               protein INTEGER,
-               carbs INTEGER,
-               fats INTEGER,
-               sugar INTEGER,
-               track_date DATE
-               ); 
-                """;
+        ;
         String createWeight = """
                 CREATE TABLE IF NOT EXISTS weight (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -96,7 +84,7 @@ public class DatabaseManager implements  DatabaseFunctions {
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(createLogin);
 
-            stmt.execute(createFood2);
+            stmt.execute(createFood);
 
             stmt.execute(createWeight);
         }

@@ -1,5 +1,7 @@
 package org.openjfx.controllers;
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.openjfx.database.*;
@@ -37,7 +39,8 @@ public class SignupController extends BaseController{
     private DatePicker birthday;
     @FXML
     private VBox signupLayout;
-
+    @FXML
+    private VBox errorBox;
 
     //displays the error labels
     private Label usernameError,passwordError,dateError,emailError;
@@ -71,33 +74,33 @@ public class SignupController extends BaseController{
 
         //creates the labels to show the errors
         removeErrors();
-         usernameError = new Label("username needs to be at least 5 characters");
-         passwordError = new Label("password needs to be at least 8 characters contain at least 1 upper and lower case letters , digit and special character");
-         emailError = new Label("invalid email format");
-         dateError = new Label("Must be over 18 to signup");
+         usernameError = new Label("-username needs to be at least 5 characters");
+         passwordError = new Label("-Password must have upper, lower, digit, and special a character.");
+         emailError = new Label("-invalid email format");
+         dateError = new Label("-Must be over 18 to signup");
         if(!usernameValid ){
 
-           signupLayout.getChildren().add(usernameError);
+           errorBox.getChildren().add(usernameError);
 
         }
         else{
             removeError(usernameError);
         }
         if(!passwordValid ){
-            signupLayout.getChildren().add(passwordError);
+            errorBox.getChildren().add(passwordError);
         }
         else{
             removeError(passwordError);
         }
         if(!emailValid ){
-            signupLayout.getChildren().add(emailError);
+            errorBox.getChildren().add(emailError);
         }
         else{
             removeError(emailError);
         }
 
         if(!dateValid ){
-            signupLayout.getChildren().add(dateError);
+            errorBox.getChildren().add(dateError);
         }
         else{
             removeError(dateError);
@@ -110,10 +113,10 @@ public class SignupController extends BaseController{
     }
     //stops displaying the error is correct
     private void removeError(Label label){
-        signupLayout.getChildren().remove(label);
+        errorBox.getChildren().remove(label);
     }
     private void removeErrors(){
-        signupLayout.getChildren().removeAll(usernameError,passwordError,emailError,dateError);
+        errorBox.getChildren().removeAll(usernameError,passwordError,emailError,dateError);
     }
 
     public void initialize(){
