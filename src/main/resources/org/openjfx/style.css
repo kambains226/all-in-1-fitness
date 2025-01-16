@@ -82,9 +82,10 @@
 #scroll{
     /*-fx-background-color: blue;*/
     -fx--color: blue;
+    -fx-alignment: center;
 }
 #weightChart{
-
+    fx-alignment: center;
     /*-fx-background-color: blue;*/
 }
 #grid{

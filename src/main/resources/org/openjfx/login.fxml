@@ -51,7 +51,7 @@
                   <Insets />
                </VBox.margin>
             </GridPane>
-            <Hyperlink fx:id="signupLink" text="Sign up ">
+            <Hyperlink fx:id="signupLink" text="Sign up " textFill="WHITE">
                <VBox.margin>
                   <Insets right="10.0" top="60.0" />
                </VBox.margin>

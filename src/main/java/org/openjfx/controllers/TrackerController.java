@@ -32,6 +32,7 @@ public class TrackerController extends PageController
     private String userId;//gets the user id
     private ComboBox<String> comboBox;
     private Label quickAdd;
+    private Food food;
      @FXML private Label trackLabel;
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); //make sure the date can be taken
     @Override
@@ -122,29 +123,33 @@ public class TrackerController extends PageController
     //gets the data for that column to match the food together
     private void gridRow(ArrayList<Food> arr ,int row, int col ,String[] columns){
 
-        Food current = arr.get(row -1);
+//        Food current = arr.get(row -1);
+        food = arr.get(row-1);
         if(col == columns.length){
             //delete food funciton
-            deleteFunction(current,row,col);
+            deleteFunction(food,row,col);
         }
         else if(col == columns.length + 1){
             //edit food function
-            editFunction(current,row,col,columns);
+            editFunction(food,row,col,columns);
         }
         else{
            //displays the food data
-            Label label = getFoodLabel(current,columns[col]);
+            Label label = getFoodLabel(food,columns[col]);
             grid.add(label, col, row);
         }
     }
     //function that creates the label for the number to match the column
     private Label getFoodLabel(Food food,String columnName){
         if("Name".equals(columnName)){
-            return new Label(food.NameProperty().getValue());
+            return new Label(food.NameProperty());
         }
-        else{
-            SimpleFloatProperty macro=  food.getMacro(columnName);
-            return new Label(macro.getValue().toString());
+        else
+        {
+
+            float macro = food.getMacro(columnName);
+
+            return new Label(Float.toString(macro));
         }
 
     }
@@ -153,7 +158,7 @@ public class TrackerController extends PageController
         Button deleteButton = new Button("Delete");
         deleteButton.setOnAction(actionEvent ->
                     {
-                        currentId=currentDelete.idProperty().getValue();
+                        currentId=currentDelete.idProperty();
                         deleteMeal();
                         reloadUi();
                     });
@@ -166,7 +171,9 @@ public class TrackerController extends PageController
         editButton.setOnAction(actionEvent ->
         {
             //sets the current id to which row is clicked
-            currentId=currentEdit.idProperty().getValue();
+            currentId= currentEdit.idProperty();
+            System.out.println(currentId);
+//            currentId=Integer.toString(currentEdit.idProperty());
             values = new Object[currentEdit.getMacros().size()+1];
 
             for(int i =0; i < currentEdit.getMacros().size()+1; i++){
@@ -181,6 +188,7 @@ public class TrackerController extends PageController
                 }
             }
             //values object where all the data gets added to
+            System.out.println(Arrays.toString(values));
            editMeal(values);
             reloadUi();
         });
@@ -195,7 +203,8 @@ public class TrackerController extends PageController
 
         foodItems[foodItems.length-1] = userId;
 
-        dbm.insertFood(foodItems);
+        //inserts into the database
+        dbm.insert("food",popUp.getData("fooddb"),foodItems);
         reloadUi();
     }
     //gets the names and id from the database for the quick add
@@ -220,7 +229,7 @@ public class TrackerController extends PageController
     private void addMeal(){
 
 
-            popUp.createFoodPop(userId,track_date.getValue());
+            popUp.createFoodPop(userId,track_date.getValue(),food);
      }
 //creates the edit popup
      private void editMeal(Object[] obj){

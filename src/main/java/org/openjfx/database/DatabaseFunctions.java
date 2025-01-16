@@ -9,20 +9,17 @@ public interface DatabaseFunctions  {
     void connect();
     void close();
     void create();
+    //used for the weight and quick add
     void insert(String table ,String [] columns , String [ ] values);
-
     /**
      *
      *
-     * @param username the username of the user
-     * @param password the hashed password ofhte user
-     * @param dob     the date of birth of the user
-     * @param email   the email of the user
-     * @param joinDate the date the user joined
+     * @param table table name
+     * @param object the object getting inserted
      */
-    void insertUser(String username,String password,String dob,String email,String joinDate);
-    void insertFood(String [] foodAttributes);
-    void edit(String table,String[] columns,String[] values , String unique , String uniquevalue);
+    //used for the insert and login
+    void insertOb(String table,Object object);
+
     default void editData(String [] data,int id,String user) {
         throw new UnsupportedOperationException("editing is not been implemeneted ");
     }

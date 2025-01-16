@@ -1,19 +1,12 @@
 package org.openjfx.controllers;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import org.openjfx.database.*;
 import org.openjfx.services.UserService;
-
-import java.io.IOException;
 
 public class LoginController extends BaseController {
 
@@ -42,7 +35,7 @@ public class LoginController extends BaseController {
 
             if(success){
                 usernameText = username.getText();
-                switchScene("/org/openjfx/layout.fxml");
+                switchScene("/org/openjfx/main.fxml");
                 stage =getSignupStage();
 
                password.getScene().getWindow().hide();

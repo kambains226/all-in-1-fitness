@@ -1,9 +1,13 @@
 package org.openjfx.database;
 import javafx.scene.control.TextField;
 import org.openjfx.models.Food;
+
+import java.lang.reflect.Field;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.function.IntToDoubleFunction;
 
 
@@ -49,10 +53,7 @@ public class DatabaseManager implements  DatabaseFunctions {
                 username TEXT unique,
                 password TEXT,
                 email TEXT ,
-                dob DATE,
-                membership TEXT , 
-                join_date DATE
-               
+                dob DATE
                ); 
                 """;
         String createFood = """
@@ -68,7 +69,19 @@ public class DatabaseManager implements  DatabaseFunctions {
                user_id INTEGER
                ); 
                 """;
-
+        String createFood2 = """
+               CREATE TABLE IF NOT EXISTS food2 (
+               id INTEGER PRIMARY KEY AUTOINCREMENT,
+               name TEXT,
+               user_id INTEGER,
+               calories INTEGER,
+               protein INTEGER,
+               carbs INTEGER,
+               fats INTEGER,
+               sugar INTEGER,
+               track_date DATE
+               ); 
+                """;
         String createWeight = """
                 CREATE TABLE IF NOT EXISTS weight (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -83,7 +96,8 @@ public class DatabaseManager implements  DatabaseFunctions {
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(createLogin);
 
-            stmt.execute(createFood);
+            stmt.execute(createFood2);
+
             stmt.execute(createWeight);
         }
         catch(SQLException e)
@@ -94,30 +108,14 @@ public class DatabaseManager implements  DatabaseFunctions {
     @Override
     //inserts the data
     public void insert(String table ,String[] columns,String[] values) {
-        String sql = "INSERT INTO " + table + "(";
+        String columnsNames = String.join(",", columns);
+        String[] questionMarks = new String [values.length];
+        //files the array with question marks
+        Arrays.fill(questionMarks, "?");
+        String placeholders = String.join(",", questionMarks);
 
-//        String sql = "INSERT INTO goals(weight,bmi,calories,track_date,user_id) VALUES(?,?,?,?,?)";
-        for (int i = 0; i < columns.length; i++) {
-            if (i == columns.length - 1) {
-                sql += columns[i];
-            } else {
-
-                sql += columns[i] + ",";
-            }
-
-        }
-        sql += ")" + " VALUES (";
-        for (int j = 0; j < values.length; j++) {
-            if (j == values.length - 1) {
-                sql+="?";
-            } else {
-
-                sql +=   "?,";
-            }
-        }
-        sql += ")";
-
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        String insertSql = "INSERT INTO " + table + "(" + columnsNames + ") VALUES (" + placeholders + ")";
+        try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {
             for (int i = 0; i < values.length; i++) {
                 pstmt.setString(i+1  ,  (values[i]));
             }
@@ -130,102 +128,89 @@ public class DatabaseManager implements  DatabaseFunctions {
         }
 
     }
-    @Override
-    public void insertUser(String username,String password,String dob,String email,String joinDate){
 
-        //add the users information to the database
-        String sql = "INSERT INTO login(username,password,dob,email,join_date) VALUES(?,?,?,?,?)";
+    //gets the object to determine the fields
 
+    public void insertOb(String table,Object object){
+        Class <?> clas = object.getClass();
+        //gets the fields with annotations
+        Field[] fields = clas.getDeclaredFields();
+       //gets the columsn
+        List<String> columnsNames = new ArrayList<>();
+        //gets the values
+        List<Object> values = new ArrayList<>();
+
+        for(Field f : fields){
+            //checks if there is annotation
+           if(f.isAnnotationPresent(Column.class)){
+              Column column = f.getAnnotation(Column.class);
+              String columnName = column.name();
+              columnsNames.add(columnName);
+           }
+           //makes sure fiedls are able to be accessed
+            f.setAccessible(true);
+            try{
+                values.add(f.get(object));
+
+            }
+            catch(IllegalAccessException e){
+                System.out.println(e.getMessage());
+            }
+        }
+//        https://docs.oracle.com/javase/8/docs/api/java/util/Map.html
+        //map documenation
+        if(object instanceof  Food){
+            Food food = (Food) object;
+            Map<String, Float> macros= food.getMacros();
+            columnsNames = new ArrayList<>();
+           values = new ArrayList<>();
+           values.add(food.NameProperty());
+            columnsNames.add("name");
+            for(Map.Entry<String, Float> entry : macros.entrySet()){
+                columnsNames.add(entry.getKey());
+                values.add(entry.getValue());
+            }
+
+            columnsNames.add("track_date");
+            columnsNames.add("user_id");
+            values.add(food.getDate());
+            values.add(food.getUser_id());
+
+        }
+        System.out.println(columnsNames);
+        System.out.println(values);
+        String columns= String.join(",", columnsNames);
+        String[] questionMarks = new String [values.size()];
+        //files the array with question marks
+        Arrays.fill(questionMarks, "?");
+        String placeholders = String.join(",", questionMarks);
+
+        String sql = "INSERT INTO " + table + "(" + columns+ ") VALUES (" + placeholders + ")";
         System.out.println(sql);
-        try(PreparedStatement pstmt = conn.prepareStatement(sql))
-        {
-            pstmt.setString(1,username);
-            pstmt.setString(2,password);
-            pstmt.setString(3,dob);
-            pstmt.setString(4,email);
-            pstmt.setString(5,joinDate);
-
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            for (int i = 0; i < values.size(); i++) {
+                pstmt.setObject(i+1  ,  values.get(i));
+            }
 
             pstmt.execute();
-        }
-        catch(SQLException e){
-            System.out.println(e);
-        }
-    }
-    // make a function which can be used to with an array
-    @Override
-    public void insertFood(String [] foodAttributes){
 
-
-        //going to need to crate a select funciton
-        //add the users information to the database
-
-        String sql = "INSERT INTO food(name,calories,protein,carbs,fats,sugar,track_date,user_id) VALUES(?,?,?,?,?,?,?,?)";
-
-        try(
-            PreparedStatement pstmt = conn.prepareStatement(sql))
-        {
-
-            pstmt.setString(1,foodAttributes[0]);
-            pstmt.setFloat(2, Float.parseFloat(foodAttributes[1]));
-            pstmt.setFloat(3,Float.parseFloat(foodAttributes[2]));
-            pstmt.setFloat(4,Float.parseFloat(foodAttributes[3]));
-            pstmt.setFloat(5,Float.parseFloat(foodAttributes[4]));
-            pstmt.setFloat(6,Float.parseFloat(foodAttributes[5]));
-            pstmt.setString(7,foodAttributes[6]);
-            pstmt.setInt(8, Integer.valueOf(foodAttributes[7]));
-
-
-            pstmt.execute();
         }
         catch(SQLException e){
             System.out.println(e.getMessage());
         }
-        catch(NullPointerException e){
-
-//           System.out.println("a");
-            e.printStackTrace();
-        }
     }
-   //used so i can use this insert function for to insert any table i want
 
 
-    //updates the data from the table
-    @Override
-    public void edit(String table,String[] columns,String[] values , String unique , String uniquevalue){
 
-        String sql = "UPDATE " + table + " SET ";
-        for (int i = 0; i < columns.length; i++) {
-            if (i == columns.length - 1) {
-               sql += columns[i] +  "=?";
-            }
-            else {
 
-                sql += columns[i] +  "=?, ";
-            }
-
-        }
-        sql+= "WHERE "+unique+"="+uniquevalue ;
-        System.out.println(sql);
-        try(
-            PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            for (int i =1; i < values.length-1; i++) {
-               pstmt.setString(i ,   values[i-1]);
-
-            }
-            pstmt.executeUpdate();
-        }
-        catch(SQLException e){
-            System.out.println(e.getMessage());
-        }
-
-    }
-    //edits the data
+    //edits the data for the food
     @Override
     public void editData(String [] data,int id,String user){
 
 
         //edits the data in the database
+        System.out.println(Arrays.toString(data));
+        System.out.println(id);
         String sql ="UPDATE food SET name=?,calories=?,protein=?,carbs=?,fats=?,sugar=? WHERE id=?";
 
         try(PreparedStatement pstmt = conn.prepareStatement(sql))
@@ -300,7 +285,7 @@ public class DatabaseManager implements  DatabaseFunctions {
     {
 
         String sql ="SELECT * FROM food WHERE " + identifer +" = ? AND " + andId + " = ? " ;
-       System.out.println(sql+idValue+andValue);
+//       System.out.println(sql+idValue+andValue);
         ArrayList <Food>foodView = new ArrayList<>();//stores all the inseted food into an array of food
         try(PreparedStatement pstm  =conn.prepareStatement(sql)
         ){

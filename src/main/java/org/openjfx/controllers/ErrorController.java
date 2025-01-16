@@ -5,7 +5,7 @@ import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.scene.control.ButtonType;
 
-public abstract class OldPage {
+public abstract class ErrorController {
     protected String title;
     protected Scene scene;
 
@@ -13,7 +13,7 @@ public abstract class OldPage {
     public abstract void initialize();
 
     //used when user clicks on tab to go to another page
-    public void goToTab(OldPage page){
+    public void goToTab(ErrorController page){
         Stage stage = (Stage) scene.getWindow();
         stage.setScene(page.getScene());
     }

@@ -33,11 +33,10 @@ public class UserService {
     }
     //saves the users information to the database
     public void saveUser(User user){
-        String []columns = {"username","password","email","dob","join_date"}; //login table columsn
 
-        String []values = {user.getUsername(),user.getPasswordHash(),user.getDob().toString(),user.getEmail(),LocalDate.now().toString()};
         dbm= new DatabaseManager();
-        dbm.insertUser(user.getUsername(),user.getPasswordHash(),user.getDob().toString(),user.getEmail(),LocalDate.now().toString());
+
+        dbm.insertOb("login",user);
 
 
     }
@@ -58,5 +57,7 @@ public class UserService {
 
 
     }
+
+
 
 }

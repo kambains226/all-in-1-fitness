@@ -1,6 +1,8 @@
 package org.openjfx.controllers;
 
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -21,12 +23,12 @@ public class BmiController extends PageController {
 
     @FXML
     private VBox bmiLayout;
-    private int count =0;
     private TextField[] data ;
     // for the bmi chart
     private VBox chart; // bmi chart;
     private boolean imperial;
-
+    @FXML
+    private Label calcLabel;
     private Label bmiLabel, blueLabel, greenLabel, yellowLabel, redLabel;
     // imperial to metric converstion data
     private static final  double INCH_CM = 2.54;
@@ -38,8 +40,10 @@ public class BmiController extends PageController {
     @Override
     public void initialize() {
 
+        //resizes the text depending on the size of the display
 
         bmiChart = new BmiChart();
+
 
 
 
@@ -80,8 +84,11 @@ public class BmiController extends PageController {
         {
             heightInput.setPromptText("feet");
             inches.setVisible(true);
+            //applies margin to the height input
+            HBox.setMargin(heightInput, new Insets(0,0,0,0));
             //adds a new input box for the pounds
             weightInput.setPromptText("stone");
+            HBox.setMargin(weightInput, new Insets(0,0,0,0));
             pounds.setVisible(true);
 
         }
@@ -92,6 +99,9 @@ public class BmiController extends PageController {
             heightInput.setPromptText("cm");
             weightInput.setPromptText("kg");
             unit.setText("Imperial");
+            //adjusts the margin for hte imperial or metric
+            HBox.setMargin(heightInput, new Insets(0,0,0,150));
+            HBox.setMargin(weightInput, new Insets(0,0,0,150));
         }
         clearUnits();
     }

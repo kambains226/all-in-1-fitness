@@ -107,11 +107,6 @@
                   <Insets />
                </opaqueInsets>
             </GridPane>
-            <Label fx:id="feedback" maxWidth="-Infinity" prefHeight="22.0" prefWidth="500.0">
-               <VBox.margin>
-                  <Insets top="100.0" />
-               </VBox.margin>
-            </Label>
          </children>
          <styleClass>
             <String fx:value="login-heading" />

@@ -66,7 +66,7 @@ public abstract class BaseController {
         alert.showAndWait();
     }protected boolean validUsername(TextField username){
         //makes sure the username is above 5 characters
-        if(username.getText().length()>5){
+        if(username.getText().length()>=5){
             username.getStyleClass().remove("error"); //adds the error class which adds red background
 
             return true;

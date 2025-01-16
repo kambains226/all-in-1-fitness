@@ -18,7 +18,7 @@ public class DialogService {
     public Dialog<String[]> createFoodDialog(String[] labels, String[] results, LocalDate dateSelected, String title, Object[] editData) {
         Dialog<String[]> dialog = new Dialog<>();
         dialog.setTitle(title);
-
+        System.out.println(Arrays.toString(editData));
         boolean edit = false;
         //seeing if the edit data has anything inside it to check if edit mode or insert
         if(editData.length>0 ) {
@@ -29,7 +29,6 @@ public class DialogService {
         dialog.getDialogPane().getButtonTypes().addAll(submit, ButtonType.CANCEL);
 
 
-//        String[] data
 
         VBox content = new VBox();
         TextField[] input = new TextField[labels.length];
@@ -53,12 +52,13 @@ public class DialogService {
             if(edit) {
                 String value=""; //assign it with a temp value
                 //makes it so the value can be added to the textfield
-                if(editData[i] instanceof SimpleStringProperty){
-                    value =((StringProperty)editData[i]).get();
+                if(editData[i] instanceof String){
+                    value =((String)editData[i]);
                 }
-                else if(editData[i] instanceof SimpleFloatProperty){
-                    float x = ((SimpleFloatProperty)editData[i]).get();
+                else if(editData[i] instanceof Number){
+                    float x = ((Number)(editData[i])).floatValue();
                     value = String.valueOf(x); //turns the int value into a string
+
                 }
                 input[i].setText(value);
 
@@ -87,7 +87,6 @@ public class DialogService {
 
 
                 }
-
                 return results;
 
             }
