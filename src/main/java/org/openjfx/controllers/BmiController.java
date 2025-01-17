@@ -154,7 +154,6 @@ public class BmiController extends PageController {
         double inch = inches.getText().isEmpty() ? 0 : Double.parseDouble(inches.getText());
         double height = feet * 12 +inch;
 
-        System.out.println(height * INCH_CM);
         return height *INCH_CM/100;
 
     }

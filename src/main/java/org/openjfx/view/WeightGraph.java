@@ -25,7 +25,6 @@ public class WeightGraph {
 
         //y axis
         double upperYLimit =0 ;
-        int count =0;
         //keeps track of whats the bigger number
         for (double x : weightData){
             //gets the biggest number in the array
@@ -66,25 +65,34 @@ public class WeightGraph {
             goalSeries.getData().add(new XYChart.Data<>(i+1,goal[i]));
         }
 
-            lineChart.getData().addAll(series,goalSeries);
-
-//width of the shart
-        lineChart.setMinWidth(weightData.length*20);
-        //adds a scrollpane so if the chart gets to much data it can be scrolled
+        lineChart.getData().addAll(series,goalSeries);
 
         ScrollPane scrollPane = new ScrollPane(lineChart);
-        scrollPane.setFitToHeight(true);
+        //sets a min and max width for little data
+        if(weightData.length < 10){
+            lineChart.setMinWidth(10*30);
+            scrollPane.setMaxWidth(600);
+            scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+        }//if there is more then 10 parts of data
+        else{
+
+            lineChart.setMinWidth(weightData.length*30);
+            scrollPane.setMaxWidth(600);
+        }
+        //adds a scrollpane so if the chart gets to much data it can be scrolled
+
         scrollPane.setPannable(true);
         //when the chart becomes scrollable
         if(weightData.length >30){
             scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setMaxWidth(weightData.length*30);
         }
         else{
             scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         }
 
 
-        scrollPane.setMaxWidth(weightData.length*30);
         scrollPane.setId("scroll");
         lineChart.setId("weightChart");
         return scrollPane;
