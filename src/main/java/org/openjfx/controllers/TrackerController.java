@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.openjfx.database.DatabaseManager;
 import org.openjfx.models.Food;
@@ -25,7 +26,10 @@ public class TrackerController extends PageController
     @FXML
     private DatePicker track_date;
     private GridPane grid;
-    private Scene scene;
+    @FXML
+    private ScrollPane scroll;
+    @FXML
+    private HBox scrollLayout;
     private ArrayList<String> foods; //used to display the foods that are saved in the select
     private Object[] values;
     private int currentId;
@@ -42,9 +46,11 @@ public class TrackerController extends PageController
         trackLabel.styleProperty().bind(Bindings.format("-fx-font-size: %.2fpx;",trackLabel.widthProperty().multiply(0.02)));
         trackLabel.setMaxWidth(Double.MAX_VALUE);
         foodbtn.prefWidthProperty().bind(content.widthProperty().multiply(0.2));
-        content.setAlignment(javafx.geometry.Pos.CENTER); //puts the button in the middle
+//        content.setAlignment(javafx.geometry.Pos.CENTER); //puts the button in the middle
 
-         //sets the datepicker value to todays value
+        scrollLayout.setAlignment(javafx.geometry.Pos.CENTER); //puts the button in the middle
+
+        //sets the datepicker value to todays value
          track_date.setValue(LocalDate.now());
          userId =getUserId();
          loadData(track_date.getValue());
@@ -64,14 +70,16 @@ public class TrackerController extends PageController
     private void loadData(LocalDate date){
 
          //make sure the date can be taken
-        ArrayList <Food> foodArr = dbm.selectFoodAnd("track_date",track_date.getValue().format(formatter),"user_id",userId);
-//        ArrayList <Food> foodArr = DatabaseManager.Select("track_date",track_date.toString());
+        ArrayList <Food> foodArr = dbm.selectFood("track_date",track_date.getValue().format(formatter),"user_id",userId);
+
         setGrid(foodArr);
 
     }
     private void setGrid(ArrayList<Food> arr){
         grid = new GridPane();
         grid.setId("grid");
+//        grid.setStyle("-fx-background-color: #dcdcdc;");
+        grid.setAlignment(javafx.geometry.Pos.CENTER); //puts the button in the middle
         String[] columns ={"name"};
         comboBox = new ComboBox<>();
         //adds all the food to the combniation box
@@ -188,11 +196,11 @@ public class TrackerController extends PageController
                 }
             }
             //values object where all the data gets added to
-            System.out.println(Arrays.toString(values));
            editMeal(values);
             reloadUi();
         });
         grid.add(editButton,col,row);
+        scroll.setContent(grid);
     }
 
     //if the combox is changed
@@ -200,7 +208,6 @@ public class TrackerController extends PageController
        String [] foodItems = dbm.selectOrder("food","name",newValue,"1");
 
         foodItems[foodItems.length-2] = track_date.getValue().format(formatter);
-
         foodItems[foodItems.length-1] = userId;
 
         //inserts into the database
@@ -212,7 +219,9 @@ public class TrackerController extends PageController
          //stores all the values
 
         String []dupes =dbm.selectAll(arr,"food");
-        Set<String> remove = new HashSet<>(Arrays.asList(dupes)); //removes dupes so foods with same name wont appear
+//        Object[] whereParams ={};
+//        ArrayList<String[]> dupes= dbm.select("food",arr,"",whereParams,null,null);
+        HashSet<String> remove = new HashSet<>(Arrays.asList(dupes)); //removes dupes so foods with same name wont appear
         return remove.toArray(new String[0]);
     }
 //    gets only the food names

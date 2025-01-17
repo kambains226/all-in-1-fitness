@@ -81,6 +81,8 @@ public class LoginController extends BaseController {
     }
     public int getId(){
         dbm = new DatabaseManager();
+        String where = "user = ?";
+
         return dbm.getsId("login","username",usernameText);
     }
 

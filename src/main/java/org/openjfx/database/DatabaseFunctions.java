@@ -18,18 +18,23 @@ public interface DatabaseFunctions  {
      * @param object the object getting inserted
      */
     //used for the insert and login
-    void insertOb(String table,Object object);
+    boolean insertOb(String table,Object object);
 
     default void editData(String [] data,int id,String user) {
         throw new UnsupportedOperationException("editing is not been implemeneted ");
     }
     void deleteData(String table,int id);
-    ArrayList<Food> selectFoodAnd(String identifer, String idValue, String andId , String andValue);
-    ArrayList<String> Select(String table,String column,String column_value);
+
+    //general select
+    ArrayList <String[]> select(String table, String[] columns , String whereClause,Object [] whereParams,String orderBy,String limit);
+    //selects the particular food
+    ArrayList<Food> selectFood(String identifer, String idValue, String andId , String andValue);
+    //for the quick add for making it so quick add can store all the food
     String[] selectAll(String[] columns, String table);
+    //gets the id for the user making it so the user id can be gathered
     int getsId(String table,String identifer,String idValue);
+    //orders the food
     String[]  selectOrder(String table,String identifer,String idValue,String limit);
-    String[]  selectSpecific(String table,String column,String identifer,String idValue);
     String check(String username);
 
 

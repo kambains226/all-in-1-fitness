@@ -43,7 +43,7 @@ public class SignupController extends BaseController{
     private VBox errorBox;
 
     //displays the error labels
-    private Label usernameError,passwordError,dateError,emailError;
+    private Label dupeError,usernameError,passwordError,dateError,emailError;
     private UserService userService = new UserService();
 
 
@@ -52,11 +52,22 @@ public class SignupController extends BaseController{
         User newUser = new User(username.getText(),userService.hashPassword(password.getText()),email.getText(),birthday.getValue());
 
         userService.saveUser(newUser);
-        showAlert("Account Created","Account Created Successfully Press ok to proceed");
-        switchScene("/org/openjfx/login.fxml");
-        Stage stage = (Stage) signbtn.getScene().getWindow();
-        stage.setResizable(false);
-        stage.close();
+        if(userService.getDupe()){
+            removeError(dupeError);
+            showAlert("Account Created","Account Created Successfully Press ok to proceed");
+            switchScene("/org/openjfx/login.fxml");
+            Stage stage = (Stage) signbtn.getScene().getWindow();
+            stage.setResizable(false);
+            stage.close();
+        }
+        else{
+            removeError(dupeError);
+            dupeError = new Label("-Username is taken");
+            errorBox.getChildren().add(dupeError);
+
+
+        }
+
     }
     @Override
     protected boolean informationValidation (){

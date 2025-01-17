@@ -33,7 +33,7 @@ public class Main extends Application {
 
 
 
-        primaryStage.setTitle("Login - All-In-1Fitness");
+        primaryStage.setTitle("Login");
 
         // going to be a welcome page to welcome the user with tabs to the other pages
     }

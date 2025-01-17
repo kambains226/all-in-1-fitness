@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.openjfx.database.DatabaseManager;
@@ -24,7 +25,7 @@ public class HomeController extends PageController{
     private String user_id;
     private String username;
     private VBox graphLayout;
-    private String []goalWeight;
+    private ArrayList<String []>goalWeight;
 
 
     @Override
@@ -57,7 +58,8 @@ public class HomeController extends PageController{
         goalWeight = getGoalWeight();
         WeightGraph graph = new WeightGraph();
 
-        String[] weights = dbm.selectSpecific("weight","weight", "user_id", user_id );
+        ArrayList<String[]> weights = dbm.select("weight", new String[]{"weight"},"user_id = ?", new String[]{user_id},null,null);
+//        String[] weights = dbm.selectSpecific("weight","weight", "user_id", user_id );
         double [] convertedWeights =convertStringToDouble(weights); // the convertedweights array
         double []convertedGoalWeight = convertStringToDouble(goalWeight);
         graphLayout = new VBox();
@@ -70,11 +72,11 @@ public class HomeController extends PageController{
 
 
     // convert the string array to double
-    private double[] convertStringToDouble(String[] arr) {
-        double [] convert = new double[arr.length];
-        for (int i = 0; i < arr.length; i++) {
+    private double[] convertStringToDouble(ArrayList<String[]> arr) {
+        double [] convert = new double[arr.size()];
+        for (int i = 0; i < arr.size(); i++) {
             try {
-               convert[i] = Double.parseDouble(arr[i]);
+               convert[i] = Double.parseDouble(arr.get(i)[0]);
 
             } catch (NumberFormatException e) {
                 convert[i] = 0.0;
@@ -83,6 +85,7 @@ public class HomeController extends PageController{
 
 
         }
+        System.out.println(Arrays.toString(convert));
         return convert;
     }
     private void goalButton(){
@@ -98,8 +101,8 @@ public class HomeController extends PageController{
         loadChart();
         super.reloadUi();
     }
-        public  String [] getGoalWeight(){
+        public  ArrayList<String []> getGoalWeight(){
 
-        return dbm.selectSpecific("weight","goal","user_id",String.valueOf(user_id));
+        return  dbm.select("weight", new String[]{"goal"},"user_id = ?", new String[]{user_id},null,null);
     }
 }

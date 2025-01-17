@@ -1,5 +1,6 @@
 package org.openjfx.view;
 
+import javafx.geometry.Insets;
 import javafx.scene.layout.VBox;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -20,6 +21,8 @@ public class BmiChart {
         //draws the marked Bmi
        draw(gc,width,height,bmi);
         VBox vbox = new VBox(canvas);
+        vbox.setSpacing(50);
+        vbox.setPadding(new Insets(80,0,0,700));
         return vbox;
     }
     private void draw(GraphicsContext gc,double width,double height,double bmi){

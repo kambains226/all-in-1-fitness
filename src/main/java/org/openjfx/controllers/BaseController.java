@@ -1,55 +1,60 @@
 package org.openjfx.controllers;
 
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.mindrot.jbcrypt.BCrypt;
 import org.openjfx.database.DatabaseManager;
 
 import java.io.IOException;
 
+//abstract class for the login and sign up page to inherit from
 public abstract class BaseController {
     protected Stage stage;
     protected Scene scene;
 
+    //used to access the database
     protected DatabaseManager dbm;
 
     public BaseController() {
         this.dbm = new DatabaseManager();
     }
+    //switches the scene by the FXML path
     protected void switchScene(String fxmlPath) {
 
         try{
+            // loads the fxml file
             FXMLLoader load = new FXMLLoader(getClass().getResource(fxmlPath));
 
-            Parent signupRoot = load.load();
-            Scene scene = new Scene(signupRoot);
+            Parent root = load.load();
+
+            Scene scene = new Scene(root);
            stage = new Stage();
            stage.setScene(scene);
            //makes the signup page none resizable
+
             if(fxmlPath == "/org/openjfx/signup.fxml"){
 
                 stage.setResizable(false);
+                stage.setTitle("Sign up");
             }
+            //any other page can be resizable
             else{
 
                 stage.setResizable(true);
+                stage.setTitle("All-In-1Fitness");
+                stage.setMaximized(true);
             }
+            //applies the style sheet
            scene.getStylesheets().add(getClass().getResource("/org/openjfx/style.css").toExternalForm());
            stage.show();
+           //min width and height
            stage.setMinWidth(600);
            stage.setMinHeight(400);
-           double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
-            double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
-            //sets the maxvalue to the max height of display
-            stage.setMaxWidth(screenWidth);
-            stage.setMaxHeight(screenHeight);
 
         }
         catch(IOException e){
@@ -65,7 +70,7 @@ public abstract class BaseController {
     protected abstract boolean informationValidation();
 
 
-    //used https://claude.ai for this function
+    //creates a pop up window with a message and title
     protected  void showAlert(String title, String message)
     {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -73,16 +78,19 @@ public abstract class BaseController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
-    }protected boolean validUsername(TextField username){
+
+    }
+    //checks for a valid usernaem
+    protected boolean validUsername(TextField username){
         //makes sure the username is above 5 characters
         if(username.getText().length()>=5){
             username.getStyleClass().remove("error"); //adds the error class which adds red background
 
             return true;
         }
-        username.getStyleClass().add("error");
         return false;
     }
+    //checks for a valid password
     protected boolean validPassword(PasswordField password) {
         // make sure the password includes at least one of these
         boolean upper = false;
@@ -96,20 +104,10 @@ public abstract class BaseController {
             if(Character.isDigit(c)) number = true;
             if(!Character.isLetterOrDigit(c)) special = true;
         }
-        //adds error class if doesnt contain one of the following
         // could override this part
-        if(!(upper &lower & number & special)){
-            password.getStyleClass().add("error");
-            return false;
-        }
-        //removes the class if the user has corrected
-        password.getStyleClass().remove("error");
-
-
-
-
-        return true;
+        return upper & lower & number & special;
     }
+    //returns the  current stage
    public Stage getSignupStage(){
         return stage;
    }

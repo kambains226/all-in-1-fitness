@@ -1,6 +1,5 @@
 package org.openjfx.controllers;
 
-import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -10,7 +9,7 @@ import javafx.scene.layout.VBox;
 import java.text.DecimalFormat;
 
 import org.openjfx.view.BmiChart;
-
+//class that creates the bmi calculator
 public class BmiController extends PageController {
     //gets the FXML contorls
     @FXML
@@ -26,9 +25,10 @@ public class BmiController extends PageController {
     private TextField[] data ;
     // for the bmi chart
     private VBox chart; // bmi chart;
+    //unit of messaurement boolean
     private boolean imperial;
+    //for the labels displaying the category
     @FXML
-    private Label calcLabel;
     private Label bmiLabel, blueLabel, greenLabel, yellowLabel, redLabel;
     // imperial to metric converstion data
     private static final  double INCH_CM = 2.54;
@@ -36,17 +36,16 @@ public class BmiController extends PageController {
     private static final  double POUND_KG= 0.453592;
     //instand of the bmi chart
 
+    //bmiChart class
     private BmiChart bmiChart;
     @Override
     public void initialize() {
 
-        //resizes the text depending on the size of the display
 
+        //create an instance of the bmi chart
         bmiChart = new BmiChart();
 
-
-
-
+        //data textfield to get user input
         data = new TextField[4];
 
         this.data[0]=heightInput;
@@ -55,6 +54,7 @@ public class BmiController extends PageController {
         this.data[3]=pounds;
         inputControl();
         //starts the caluclation
+        //when the button is pressed caluclate the bmi
         bmiSubmit.setOnAction(actionEvent -> submitCheck());
 
         //keeps track of which unit type can be selected
@@ -62,11 +62,13 @@ public class BmiController extends PageController {
 
     }
 
+   //checks for input validation
     private void submitCheck(){
         if(inputValid()){
             //checks which function to call dependening on if imperial is true or false
             double bmi =  imperial ? calculateBmiImperial() :calculateBmiMetric();
 
+            //displayes the bmi
             display(bmi);
 
         }
@@ -103,6 +105,7 @@ public class BmiController extends PageController {
             HBox.setMargin(heightInput, new Insets(0,0,0,150));
             HBox.setMargin(weightInput, new Insets(0,0,0,150));
         }
+        //make sure numbers aren't left in the textfields
         clearUnits();
     }
     //clears the units when swithcing between them
@@ -122,6 +125,7 @@ public class BmiController extends PageController {
             tf.textProperty().addListener((observable, oldValue, newValue) -> {
                 if(!newValue.matches("\\d*(\\.\\d*)?")) //regex to check if input is a number
                 {
+                    //sets to the old text if its not an number
                    tf.setText(oldValue);
                 }
             });
@@ -184,7 +188,7 @@ public class BmiController extends PageController {
         bmiLayout.getChildren().remove(yellowLabel);
         bmiLayout.getChildren().remove(redLabel);
 
-
+        //label for displaying bmi
         bmiLabel = new Label("your bmi is "+bmi);
         bmiLayout.getChildren().add(bmiLabel);
         chart =bmiChart.createChart(bmi);

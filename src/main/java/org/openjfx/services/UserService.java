@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 public class UserService {
     private DatabaseManager dbm;
+    private boolean dupe ;
     //reference https://uibakery.io/regex-library/email-regex-java for the regex and matching for the email
     public boolean validEmail(TextField email ) {
         boolean match = Pattern.compile("\\S+@\\S+\\.\\S+$")
@@ -35,10 +36,14 @@ public class UserService {
     public void saveUser(User user){
 
         dbm= new DatabaseManager();
+        //ses if there is someone else with that username
+        dupe = dbm.insertOb("login",user);
 
-        dbm.insertOb("login",user);
 
 
+    }
+    public boolean getDupe(){
+       return dupe;
     }
     //https://stackoverflow.com/questions/54609663/how-to-use-password-hashing-with-bcrypt-in-android-java
     public String hashPassword(String password){
@@ -50,6 +55,7 @@ public class UserService {
     public boolean valid( String username, String password) {
         dbm = new DatabaseManager();
         String hash =dbm.check(username);
+
         return hash != null && BCrypt.checkpw(password,hash);
 
 

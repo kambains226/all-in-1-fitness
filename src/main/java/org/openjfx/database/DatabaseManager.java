@@ -112,14 +112,15 @@ public class DatabaseManager implements  DatabaseFunctions {
 
         }
         catch(SQLException e){
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
 
     }
 
     //gets the object to determine the fields
+@Override
+    public boolean insertOb(String table,Object object){
 
-    public void insertOb(String table,Object object){
         Class <?> clas = object.getClass();
         //gets the fields with annotations
         Field[] fields = clas.getDeclaredFields();
@@ -165,8 +166,6 @@ public class DatabaseManager implements  DatabaseFunctions {
             values.add(food.getUser_id());
 
         }
-        System.out.println(columnsNames);
-        System.out.println(values);
         String columns= String.join(",", columnsNames);
         String[] questionMarks = new String [values.size()];
         //files the array with question marks
@@ -174,7 +173,6 @@ public class DatabaseManager implements  DatabaseFunctions {
         String placeholders = String.join(",", questionMarks);
 
         String sql = "INSERT INTO " + table + "(" + columns+ ") VALUES (" + placeholders + ")";
-        System.out.println(sql);
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             for (int i = 0; i < values.size(); i++) {
                 pstmt.setObject(i+1  ,  values.get(i));
@@ -182,10 +180,13 @@ public class DatabaseManager implements  DatabaseFunctions {
 
             pstmt.execute();
 
+            return true;
         }
         catch(SQLException e){
             System.out.println(e.getMessage());
+            System.out.println("we");
         }
+        return false;
     }
 
 
@@ -234,41 +235,73 @@ public class DatabaseManager implements  DatabaseFunctions {
         }
 
     }
-
     @Override
-    //limiting the data  by 1
-    public ArrayList<String> Select(String table,String column,String column_value){
 
-        String sql = "SELECT * FROM "+table+" WHERE "+ column+" = ? Limit 1" ;
-        ArrayList <String>result= new ArrayList<>();//stores all the inseted food into an array of food
-        try(PreparedStatement pstm  =conn.prepareStatement(sql)
-        ){
-            pstm.setString(1,column_value);
-            ResultSet rs = pstm.executeQuery();
+    public ArrayList <String[]> select(String table, String[] columns , String whereClause,Object [] whereParams,String orderBy,String limit){
+        String sql = "SELECT ";
 
-            //stores the data where the columns match
-            String[] test = new String[rs.getMetaData().getColumnCount()];
+        //add the columns to the query
+        if(columns.length == 0){
+            sql+= "*";
 
-
-            while(rs.next()){
-                //need to make the data get looped through
-
-                for (int i =0; i <rs.getMetaData().getColumnCount(); i++){
-                    String data = rs.getString(i+1);
-                    test[i] =data;
+        }
+        else{
+            for(int i =0; i < columns.length; i++){
+                sql+=columns[i];
+                //makes sure no extra comma is added
+                if(i != columns.length-1){
+                    sql+= ", ";
                 }
-
             }
+        }
+        sql += " FROM " +table ;
+        //check if there is a whereClause
+        if(whereClause != null && !whereClause.isEmpty()){
+           sql += " WHERE "+whereClause;
+
+        }
+        if(orderBy != null && !orderBy.isEmpty()){
+            sql+=" ORDER BY "+orderBy;
+        }
+        if( limit!= null && !limit.isEmpty()){
+            sql+=" LIMIT ? ";
+        }
+        ArrayList <String[]> result = new ArrayList<>();
+        System.out.println(sql);
+        System.out.println(whereParams[0]);
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+            //if there are where parameters loop through them
+           if(whereParams != null){
+               for(int i =0; i < whereParams.length; i++){
+                   pstmt.setObject(i+1, whereParams[i]);
+               }
+           }
+
+           if(limit != null && !limit.isEmpty()){
+               //if there are where params make the index after or 1 if there arent any
+               pstmt.setInt(whereParams != null ? whereParams.length +1 : 1, Integer.parseInt(limit));
+           }
+           ResultSet rs = pstmt.executeQuery();
+
+           int count = rs.getMetaData().getColumnCount();
+           while(rs.next()){
+               String []row = new String[count];
+               for(int i =0; i < count; i++){
+                   row[i] = rs.getString(i + 1);
+               }
+               result.add(row);
+           }
         }
         catch(SQLException e){
             System.out.println(e.getMessage());
         }
-
+        System.out.println(Arrays.toString(result.getFirst()));
         return result;
     }
+
     @Override
     //when you need multiple where clauses
-    public ArrayList<Food>  selectFoodAnd(String identifer,String idValue,String andId ,String andValue)
+    public ArrayList<Food>  selectFood(String identifer,String idValue,String andId ,String andValue)
 
     {
 
@@ -410,36 +443,7 @@ public class DatabaseManager implements  DatabaseFunctions {
         }
         return data.toArray(new String[data.size()]);
     }
-    @Override
-    //selects the specific value
-    public String[]  selectSpecific(String table,String column,String identifer,String idValue)
-    {
 
-        String sql ="SELECT "+column+" FROM "+table+" WHERE " + identifer +" = "+idValue;
-        //if limit is 0 ther will be no limit applied
-        ArrayList<String> data=new ArrayList<>() ;
-        try(
-            PreparedStatement pstmt =conn.prepareStatement(sql)){
-
-
-            // used to store the values of the data to add to the arraylist
-
-
-            ResultSet rs = pstmt.executeQuery();
-
-            while(rs.next()){
-                data.add(rs.getString(1));
-                for (int i =0; i <rs.getMetaData().getColumnCount()-1; i++){
-                    String value= rs.getString(i+2);
-                    data.add(value);
-                }
-            }
-        }
-        catch(SQLException e){
-            e.printStackTrace();
-        }        //converts data to an array
-        return data.toArray(new String[data.size()]);
-    }
 
     //checks if the username is exists
     @Override
