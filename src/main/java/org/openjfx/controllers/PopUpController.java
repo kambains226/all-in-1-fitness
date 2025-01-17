@@ -7,7 +7,6 @@ import org.openjfx.services.DialogService;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.Objects;
 //class for creating the pop up for food and weight extends dialog service which returns the result
 public class PopUpController extends DialogService {
