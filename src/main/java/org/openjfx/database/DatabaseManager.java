@@ -1,5 +1,4 @@
 package org.openjfx.database;
-import javafx.scene.control.TextField;
 import org.openjfx.models.Food;
 
 import java.lang.reflect.Field;
@@ -8,21 +7,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.function.IntToDoubleFunction;
 
 
 //sqllite documentation https://www.sqlite.org/docs.html
+//manages database operations
 public class DatabaseManager implements  DatabaseFunctions {
     private Connection conn;
     private static final String DB_URL= "jdbc:sqlite:gym.db";
 
 
+    //call the constructor to connect to the database
     public DatabaseManager() {
         connect();
 
     }
 
     @Override
+    //connects to the database
     public void connect(){
         try{
             conn = DriverManager.getConnection(DB_URL);
@@ -32,6 +33,7 @@ public class DatabaseManager implements  DatabaseFunctions {
         }
     }
 
+    //closes the database connnection
     @Override
     public void close(){
         try{
@@ -47,6 +49,7 @@ public class DatabaseManager implements  DatabaseFunctions {
     //creates the tables
     @Override
     public void create(){
+        //login table
         String createLogin = """
                CREATE TABLE IF NOT EXISTS login (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -56,6 +59,7 @@ public class DatabaseManager implements  DatabaseFunctions {
                 dob DATE
                ); 
                 """;
+        //food table
         String createFood = """
                CREATE TABLE IF NOT EXISTS food (
                id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -69,7 +73,7 @@ public class DatabaseManager implements  DatabaseFunctions {
                user_id INTEGER
                ); 
                 """;
-        ;
+       //weight table
         String createWeight = """
                 CREATE TABLE IF NOT EXISTS weight (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -79,7 +83,6 @@ public class DatabaseManager implements  DatabaseFunctions {
                 goal_date DATE
                 );
                 """;
-        //membership will be used to decided if it is a trainer or a member
         try{
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(createLogin);
@@ -94,7 +97,7 @@ public class DatabaseManager implements  DatabaseFunctions {
         }
     }
     @Override
-    //inserts the data
+    //inserts data into the database
     public void insert(String table ,String[] columns,String[] values) {
         String columnsNames = String.join(",", columns);
         String[] questionMarks = new String [values.length];
@@ -102,6 +105,7 @@ public class DatabaseManager implements  DatabaseFunctions {
         Arrays.fill(questionMarks, "?");
         String placeholders = String.join(",", questionMarks);
 
+        //using join to create a sql string to use to insert
         String insertSql = "INSERT INTO " + table + "(" + columnsNames + ") VALUES (" + placeholders + ")";
         try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {
             for (int i = 0; i < values.length; i++) {
@@ -129,6 +133,7 @@ public class DatabaseManager implements  DatabaseFunctions {
         //gets the values
         List<Object> values = new ArrayList<>();
 
+        //uses annotations to get the fields from the database
         for(Field f : fields){
             //checks if there is annotation
            if(f.isAnnotationPresent(Column.class)){
@@ -148,6 +153,7 @@ public class DatabaseManager implements  DatabaseFunctions {
         }
 //        https://docs.oracle.com/javase/8/docs/api/java/util/Map.html
         //map documenation
+    //if its a food object , create a map to insert the keys into
         if(object instanceof  Food){
             Food food = (Food) object;
             Map<String, Float> macros= food.getMacros();
@@ -155,6 +161,7 @@ public class DatabaseManager implements  DatabaseFunctions {
            values = new ArrayList<>();
            values.add(food.NameProperty());
             columnsNames.add("name");
+            //adds name column so it matches order of database columns
             for(Map.Entry<String, Float> entry : macros.entrySet()){
                 columnsNames.add(entry.getKey());
                 values.add(entry.getValue());
@@ -184,7 +191,6 @@ public class DatabaseManager implements  DatabaseFunctions {
         }
         catch(SQLException e){
             System.out.println(e.getMessage());
-            System.out.println("we");
         }
         return false;
     }
@@ -198,8 +204,6 @@ public class DatabaseManager implements  DatabaseFunctions {
 
 
         //edits the data in the database
-        System.out.println(Arrays.toString(data));
-        System.out.println(id);
         String sql ="UPDATE food SET name=?,calories=?,protein=?,carbs=?,fats=?,sugar=? WHERE id=?";
 
         try(PreparedStatement pstmt = conn.prepareStatement(sql))
@@ -235,6 +239,7 @@ public class DatabaseManager implements  DatabaseFunctions {
         }
 
     }
+    //general select to select data from the database
     @Override
 
     public ArrayList <String[]> select(String table, String[] columns , String whereClause,Object [] whereParams,String orderBy,String limit){
@@ -245,6 +250,7 @@ public class DatabaseManager implements  DatabaseFunctions {
             sql+= "*";
 
         }
+        //checks for collumns
         else{
             for(int i =0; i < columns.length; i++){
                 sql+=columns[i];
@@ -260,15 +266,15 @@ public class DatabaseManager implements  DatabaseFunctions {
            sql += " WHERE "+whereClause;
 
         }
+        //checks if there is an order by
         if(orderBy != null && !orderBy.isEmpty()){
             sql+=" ORDER BY "+orderBy;
         }
+        //checks if there is a limit
         if( limit!= null && !limit.isEmpty()){
             sql+=" LIMIT ? ";
         }
         ArrayList <String[]> result = new ArrayList<>();
-        System.out.println(sql);
-        System.out.println(whereParams[0]);
         try(PreparedStatement pstmt = conn.prepareStatement(sql)){
             //if there are where parameters loop through them
            if(whereParams != null){
@@ -295,10 +301,9 @@ public class DatabaseManager implements  DatabaseFunctions {
         catch(SQLException e){
             System.out.println(e.getMessage());
         }
-        System.out.println(Arrays.toString(result.getFirst()));
         return result;
     }
-
+        //selects food from the database
     @Override
     //when you need multiple where clauses
     public ArrayList<Food>  selectFood(String identifer,String idValue,String andId ,String andValue)
@@ -306,7 +311,6 @@ public class DatabaseManager implements  DatabaseFunctions {
     {
 
         String sql ="SELECT * FROM food WHERE " + identifer +" = ? AND " + andId + " = ? " ;
-//       System.out.println(sql+idValue+andValue);
         ArrayList <Food>foodView = new ArrayList<>();//stores all the inseted food into an array of food
         try(PreparedStatement pstm  =conn.prepareStatement(sql)
         ){
@@ -334,8 +338,10 @@ public class DatabaseManager implements  DatabaseFunctions {
         catch(SQLException e){
             System.out.println(e.getMessage());
         }
+        //returns an array of food with the food objects inside
         return foodView;
     }
+
     //selects all the data in  a specified table
 
     @Override
@@ -372,14 +378,13 @@ public class DatabaseManager implements  DatabaseFunctions {
             e.printStackTrace();
         }
 
+        //returns the new array with the data inside
         return data.toArray(new String[data.size()]);
 
 
 
     }
-    // overloads the selectAll to take a limit
     //selects the login id
-
     @Override
     public int getsId(String table,String identifer,String idValue)
     {
@@ -394,7 +399,6 @@ public class DatabaseManager implements  DatabaseFunctions {
             ResultSet rs = pstmt.executeQuery();
             int id = rs.getInt("id");
             return id;
-
 
 
 
@@ -435,6 +439,7 @@ public class DatabaseManager implements  DatabaseFunctions {
                    String value= rs.getString(i+2);
                    temp[i] =value;
                }
+               //adds the temp values to the data array
                data.addAll(Arrays.asList(temp));
            }
         }
@@ -473,6 +478,7 @@ public class DatabaseManager implements  DatabaseFunctions {
         return null;
     }
     public static void main(String[] args){
+        //creates the tables
         DatabaseManager dbm = new DatabaseManager();
     dbm.create();
 }

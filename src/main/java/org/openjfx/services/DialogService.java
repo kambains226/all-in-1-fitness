@@ -1,30 +1,29 @@
 package org.openjfx.services;
 
-import javafx.beans.property.SimpleFloatProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import org.openjfx.database.DatabaseManager;
 
 import java.time.LocalDate;
 import java.util.Arrays;
-
+//dialog service for the pop up window
 public class DialogService {
 
 
     private boolean exitCheck ;
+    //checks if the user wants to exit
     private DatabaseManager dbm;
+    //creates the food pop up
     public Dialog<String[]> createFoodDialog(String[] labels, String[] results, LocalDate dateSelected, String title, Object[] editData) {
         Dialog<String[]> dialog = new Dialog<>();
         dialog.setTitle(title);
-        System.out.println(Arrays.toString(editData));
         boolean edit = false;
         //seeing if the edit data has anything inside it to check if edit mode or insert
         if(editData.length>0 ) {
             edit = true;
         }
 
+        //make sure the user clicks the submit butto n
         ButtonType submit = new ButtonType("Submit", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(submit, ButtonType.CANCEL);
 
@@ -38,8 +37,6 @@ public class DialogService {
             input[i] = new TextField();
 
             final int index = i;
-
-
             if (index != 0) {
                 input[i].textProperty().addListener((observable, oldValue, newValue) -> {
 
@@ -49,12 +46,15 @@ public class DialogService {
                     }
                 });
             }
+            //if edit is true add the data to the textFields
             if(edit) {
                 String value=""; //assign it with a temp value
                 //makes it so the value can be added to the textfield
+                //check if the data is a string
                 if(editData[i] instanceof String){
                     value =((String)editData[i]);
                 }
+                //checks if the data is an number
                 else if(editData[i] instanceof Number){
                     float x = ((Number)(editData[i])).floatValue();
                     value = String.valueOf(x); //turns the int value into a string
@@ -72,11 +72,12 @@ public class DialogService {
             content.getChildren().addAll(label, input[i]);
         }
 
+        //checks the result that has been submitted
         dialog.setResultConverter(dialogButton -> {
+            //checks it was the submit button pressed and that there is a name for the food
             if (dialogButton == submit && !input[0].getText().isEmpty()) {
                 for (int i = 0; i < input.length; i++) {
-                    //if input is empty set it to0
-                    results[i] = input[i].getText().isEmpty() ? "0" : input[i].getText();
+                    //checks if input is empty
                     if (input[i].getText().isEmpty()) {
 
                         input[i].setText("0");
@@ -85,10 +86,9 @@ public class DialogService {
 
                     results[i] = input[i].getText();
 
-
                 }
+                //returns  the data that has been inputted
                 return results;
-
             }
             return null;
 
@@ -99,14 +99,17 @@ public class DialogService {
 
         return dialog;
     }
+    //weight dialog
     public Dialog<String[]> createWeightDialog(String[] labels, String[] results, LocalDate dateSelected, String title, String user) {
         Dialog<String[]> dialog = new Dialog<>();
         dialog.setTitle(title);
 
 
+        //checks if the user wants to exit
         exitCheck = true;
         boolean goalSet ; //checks if a weight goal has been set
         String[] weightValues = getValue(user);
+        //checks if there is a goal that has be3en set
         if (weightValues.length >0)
         {
             goalSet = true;
@@ -121,6 +124,7 @@ public class DialogService {
 
         VBox content = new VBox();
         TextField[] input = new TextField[labels.length];
+        //creates the labels for the pop up window
         for (int i = 0; i < labels.length; i++) {
             // need to make it so they are all displayed
             Label label = new Label(labels[i]);
@@ -143,6 +147,7 @@ public class DialogService {
         if(goalSet){
             input[labels.length-1].setText(weightValues[1]);//sets the weightgoal with the weight goal values
         }
+        //checks that there is a result
         dialog.setResultConverter(dialogButton -> {
                 if (dialogButton == submit ) {
 
@@ -159,6 +164,7 @@ public class DialogService {
                         return results;
                     }
 
+                    //allows the user to exit without displaying a new result
                     exitCheck  = false;
                     return null;
                 }
@@ -179,6 +185,7 @@ public class DialogService {
 
         return dialog;
     }
+    //checks the input of the weight
     private boolean weightInputCheck(TextField[] inputs){
         int count =0;
         for (TextField textField : inputs) {
@@ -190,6 +197,7 @@ public class DialogService {
         return count==inputs.length;
 
     }
+    //gets the weight of the user
     private String[] getValue(String user){
         dbm = new DatabaseManager();
         return dbm.selectOrder("weight","user_id",String.valueOf(user),"1");

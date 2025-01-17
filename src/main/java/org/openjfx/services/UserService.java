@@ -11,9 +11,10 @@ import java.util.regex.Pattern;
 
 public class UserService {
     private DatabaseManager dbm;
-    private boolean dupe ;
+    private boolean dupe ; //checks if there is another user with the same username
     //reference https://uibakery.io/regex-library/email-regex-java for the regex and matching for the email
     public boolean validEmail(TextField email ) {
+        //regex for valid email
         boolean match = Pattern.compile("\\S+@\\S+\\.\\S+$")
                 .matcher(email.getText())
                 .find();
@@ -35,8 +36,10 @@ public class UserService {
     //saves the users information to the database
     public void saveUser(User user){
 
+
         dbm= new DatabaseManager();
         //ses if there is someone else with that username
+        //if there isnt insert into the database
         dupe = dbm.insertOb("login",user);
 
 

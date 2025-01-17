@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 import org.openjfx.database.*;
 import org.openjfx.services.UserService;
 
+//class to manage the login screen
 public class LoginController extends BaseController {
 
     @FXML
@@ -28,6 +29,7 @@ public class LoginController extends BaseController {
     private UserService userService = new UserService();
     private DatabaseManager dbm;
     private static Stage stage;
+    //when the users clicks log in button
     private void handleLogin(){
         //checks if the information has been entered
         if(informationValidation()){
@@ -35,17 +37,21 @@ public class LoginController extends BaseController {
 
             if(success){
                 usernameText = username.getText();
+                //if access granted go to the main fxml file
                 switchScene("/org/openjfx/main.fxml");
-                stage =getSignupStage();
+                //gets the current stage
+                stage =getStage();
 
                password.getScene().getWindow().hide();
             }
         }
         else{
+            //give feedback to the user if wrong username or password
             Label  successLabel = new Label("Invalid Username or Password");
 
            if(count ==0){
 
+               //make sure the error message doesnt get displayed multiple times
                count++;
                loginLayout.getChildren().add( successLabel);
            }
@@ -56,6 +62,7 @@ public class LoginController extends BaseController {
 
 
     }
+    //if the sign up link is pressed
     private void switchSignup() {
 
         switchScene("/org/openjfx/signup.fxml");
@@ -64,7 +71,9 @@ public class LoginController extends BaseController {
         current.close();
 
 
+
     }
+    //checks if the is a valid password and username
     @Override
     protected boolean informationValidation(){
         return validUsername(username) && validPassword(password);
@@ -76,9 +85,11 @@ public class LoginController extends BaseController {
        loginbtn.setOnAction(event -> {handleLogin();});
     }
 
+    //gets the usernaem
     public String getusername(){
        return usernameText;
     }
+    //gets the id
     public int getId(){
         dbm = new DatabaseManager();
         String where = "user = ?";

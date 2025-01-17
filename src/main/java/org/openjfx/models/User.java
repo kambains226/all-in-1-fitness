@@ -7,6 +7,7 @@ import java.time.LocalDate;
 //user class to get user information
 public class User {
 
+    //annotations to matche to the database
     @Column(name = "username")
     private String username;
     @Column(name = "password")
@@ -15,36 +16,13 @@ public class User {
     private String email;
     @Column(name = "dob")
     private LocalDate dob;
+    //constctuor for the user
    public  User (String username,String passwordHash,String email,LocalDate dob){
        this.username = username;
        this.passwordHash = passwordHash;
        this.email = email;
        this.dob = dob;
 
-    }
-    public String getUsername() {
-       return username;
-    }
-    public String getPasswordHash() {
-       return passwordHash;
-    }
-    public String getEmail() {
-       return email;
-    }
-    public LocalDate getDob() {
-       return dob;
-    }
-    public void setUsername(String username) {
-       this.username = username;
-    }
-    public void setPasswordHash(String passwordHash) {
-       this.passwordHash = passwordHash;
-    }
-    public void setEmail(String email) {
-       this.email = email;
-    }
-    public void setDob(LocalDate dob) {
-       this.dob = dob;
     }
 }
 

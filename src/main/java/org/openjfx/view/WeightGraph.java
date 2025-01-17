@@ -5,8 +5,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.Pane;
-
+//creates teh weight graph with the users weight
 public class WeightGraph {
 
 
@@ -15,10 +14,13 @@ public class WeightGraph {
        // xaxis
         NumberAxis xAxis = new NumberAxis();
 
+        //axis label
         xAxis.setLabel("Days");
         xAxis.setTickUnit(1);
+        //makes it so it doesnt go to a value automatically
         xAxis.setAutoRanging(false);
         xAxis.setLowerBound(1);
+        //starts AT 1
         xAxis.setUpperBound(weightData.length+1);
 
         //y axis
@@ -30,6 +32,7 @@ public class WeightGraph {
            upperYLimit = Math.max(upperYLimit, x);
 
         }
+        //sets what is bigger the goal or the weigh and that will be the upper limit
         for (double y:goal){
 
             upperYLimit = Math.max(upperYLimit, y);
@@ -40,6 +43,7 @@ public class WeightGraph {
         yAxis.setTickUnit(5);
         yAxis.setAutoRanging(false);
         yAxis.setLowerBound(0);
+        //the lowest weight
         yAxis.setUpperBound(Math.round(upperYLimit+10)); //+10 for viewing
 
         LineChart <Number ,Number> lineChart = new LineChart<>(xAxis,yAxis);
@@ -55,26 +59,23 @@ public class WeightGraph {
             series.getData().add(new XYChart.Data<>(i+1 ,weightData[i]));
         }
         //goal weight constant line
-//        lineChart.getData().add(series);
 
         XYChart.Series<Number ,Number> goalSeries= new XYChart.Series<>();
         goalSeries.setName("goal");
         for (int i =0; i < goal.length; i++){
-            System.out.println("ta");
-            System.out.println(goal[i]);
             goalSeries.getData().add(new XYChart.Data<>(i+1,goal[i]));
         }
 
             lineChart.getData().addAll(series,goalSeries);
 
-//        lineChart.setMinWidth(weightData.length);
-
+//width of the shart
         lineChart.setMinWidth(weightData.length*20);
         //adds a scrollpane so if the chart gets to much data it can be scrolled
+
         ScrollPane scrollPane = new ScrollPane(lineChart);
-//        scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
         scrollPane.setPannable(true);
+        //when the chart becomes scrollable
         if(weightData.length >30){
             scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         }

@@ -7,5 +7,4 @@ import java.lang.annotation.RetentionPolicy;
 @Retention (RetentionPolicy.RUNTIME) //makes it used at runtime
 public @interface Column {
     String name();//for the column name in the database
-    boolean nullable() default true; //if it can be null
 }

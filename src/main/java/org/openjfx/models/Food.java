@@ -1,9 +1,5 @@
 package org.openjfx.models;
 
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-
-import javafx.beans.property.SimpleFloatProperty;
 import org.openjfx.database.Column;
 
 import java.util.HashMap;
@@ -11,9 +7,9 @@ import java.util.Map;
 
 
 public class Food {
+    //creates an annotation to match to the database
     @Column(name = "name")
     private  String name;
-//    @Column(name = "id")
     private int id;
     @Column (name ="user_id")
     private int user_id;
@@ -38,38 +34,42 @@ public class Food {
     public  String  NameProperty() {
         return name;
     }
+    //gets the id
     public  int idProperty() {
 
         return id;
     }
-    //gets thge keys of macros
+    //gets the keys of macros
     public  float getMacro(String key) {
         return macros.getOrDefault(key,0.0f);
     }
-
+    //gets the user Id
     public void setUser_id(int user_id) {
         this.user_id = user_id;
     }
+    //sets the data
     public void setDate(String date) {
         this.date = date;
     }
+    //get the user Id
     public int getUser_id(){
         return  user_id;
     }
+    //gets the data
     public String getDate(){
         return date;
     }
 
 
+    //return the map for the macros
     public Map<String,Float> getMacros() {
        return macros;
     }
+    //food column names to display
     public static String[] getColumnNames(){
         return new String[]{"Name","Calories","Protein","Carbs","Fats","Sugar"};
     }
-    public static String[] getDbnames(){
-        return new String[]{"calories","protein","carbs","fats","sugar"};
-    }
+
 
 
 

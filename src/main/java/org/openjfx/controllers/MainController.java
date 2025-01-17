@@ -11,17 +11,16 @@ import javafx.scene.layout.StackPane;
 
 import java.io.IOException;
 import java.util.Objects;
-
+//main controller login
 public class MainController {
 
     @FXML
     private TabPane tabPane; // The TabPane containing all tabs
-    @FXML
-    private StackPane mainLayout;
 
 
     public void initialize() {
         // Load content for the initially selected tab
+        //sees which tab is clicked
         Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
         loadContent(selectedTab);
 
@@ -35,11 +34,9 @@ public class MainController {
         try {
             // Determine the FXML to load based on the tab
             String fxmlPath = null;
-            boolean check ;
             //if the tab is sign out go clear the current stage and open the log in page
             if (Objects.equals(tab.getText(), "Sign out")) {
-                    check = false;
-                if (ErrorController.showError("Are you sure ") )
+                if (PageController.showError("Are you sure ","sign out") )
                 {
                     LoginController loginController = new LoginController();
 
@@ -56,7 +53,7 @@ public class MainController {
 
             }
             else{
-                System.out.println(tab.getText());
+                //go to the fxml file for that tab
                 fxmlPath="/org/openjfx/"+tab.getText()+".fxml";
             }
 
@@ -72,6 +69,7 @@ public class MainController {
                 // Wrap the root node in a StackPane and set it as the tab content
                 StackPane container = new StackPane();
                 container.getChildren().add(root);
+                //sets the content as the fxml file content
                 tab.setContent(container);
             }
         } catch (IOException e) {

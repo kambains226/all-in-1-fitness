@@ -1,9 +1,5 @@
 package org.openjfx.view;
 
-import javafx.fxml.FXML;
-import org.openjfx.controllers.*;
-import org.openjfx.models.*; //imports the classes from the correct folders
-//import org.openjfx.services.*;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -12,13 +8,14 @@ import java.io.IOException;
 import javafx.scene.Parent;
 
 
+//where the application begins
 public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
 
 
-        //login in page
+        //login in page to start wit h
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/org/openjfx/login.fxml"));
 
@@ -35,7 +32,6 @@ public class Main extends Application {
 
         primaryStage.setTitle("Login");
 
-        // going to be a welcome page to welcome the user with tabs to the other pages
     }
 
     public static void main(String[] args) {

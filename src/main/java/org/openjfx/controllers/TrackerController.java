@@ -4,18 +4,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import org.openjfx.database.DatabaseManager;
 import org.openjfx.models.Food;
-import javafx.beans.property.SimpleFloatProperty;
 
+//food tracking class
 public class TrackerController extends PageController
 {
     @FXML
@@ -41,23 +37,20 @@ public class TrackerController extends PageController
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); //make sure the date can be taken
     @Override
      public void initialize(){
-//        scene = trackLabel.getScene();
-
+        //makes the lables bigger depending on screen size
         trackLabel.styleProperty().bind(Bindings.format("-fx-font-size: %.2fpx;",trackLabel.widthProperty().multiply(0.02)));
         trackLabel.setMaxWidth(Double.MAX_VALUE);
         foodbtn.prefWidthProperty().bind(content.widthProperty().multiply(0.2));
-//        content.setAlignment(javafx.geometry.Pos.CENTER); //puts the button in the middle
 
         scrollLayout.setAlignment(javafx.geometry.Pos.CENTER); //puts the button in the middle
 
         //sets the datepicker value to todays value
          track_date.setValue(LocalDate.now());
          userId =getUserId();
-         loadData(track_date.getValue());
+         loadData();
 
 
          //event listner for when the date is changed
-         //documenation https://docs.oracle.com/javase/8/docs/api/java/time/LocalDate.html
         track_date.valueProperty().addListener((observable, oldValue, newValue) -> reloadUi());
 
         //checks to see if the add food button as been clicked
@@ -67,7 +60,8 @@ public class TrackerController extends PageController
         });
         //coverts the restult to string from the inputbox
     }
-    private void loadData(LocalDate date){
+    //loads the data from the database
+    private void loadData(){
 
          //make sure the date can be taken
         ArrayList <Food> foodArr = dbm.selectFood("track_date",track_date.getValue().format(formatter),"user_id",userId);
@@ -75,10 +69,10 @@ public class TrackerController extends PageController
         setGrid(foodArr);
 
     }
+    //sets the grid for the food nutrtion label
     private void setGrid(ArrayList<Food> arr){
         grid = new GridPane();
         grid.setId("grid");
-//        grid.setStyle("-fx-background-color: #dcdcdc;");
         grid.setAlignment(javafx.geometry.Pos.CENTER); //puts the button in the middle
         String[] columns ={"name"};
         comboBox = new ComboBox<>();
@@ -86,7 +80,6 @@ public class TrackerController extends PageController
         comboBox.getItems().addAll(getFood(columns));
 
 
-        // loads the check box to select foods already  been added
 
         comboBox.valueProperty().addListener((observable, oldValue, newValue) -> comboBoxChange(newValue) );
         // create the grid to display the data
@@ -150,13 +143,14 @@ public class TrackerController extends PageController
     //function that creates the label for the number to match the column
     private Label getFoodLabel(Food food,String columnName){
         if("Name".equals(columnName)){
+            //gets the name of the food
             return new Label(food.NameProperty());
         }
         else
         {
-
+            //gets the marco for the column name
             float macro = food.getMacro(columnName);
-
+            //create the new food label
             return new Label(Float.toString(macro));
         }
 
@@ -166,6 +160,7 @@ public class TrackerController extends PageController
         Button deleteButton = new Button("Delete");
         deleteButton.setOnAction(actionEvent ->
                     {
+                        //gets the current id so it deletes the right food
                         currentId=currentDelete.idProperty();
                         deleteMeal();
                         reloadUi();
@@ -180,8 +175,6 @@ public class TrackerController extends PageController
         {
             //sets the current id to which row is clicked
             currentId= currentEdit.idProperty();
-            System.out.println(currentId);
-//            currentId=Integer.toString(currentEdit.idProperty());
             values = new Object[currentEdit.getMacros().size()+1];
 
             for(int i =0; i < currentEdit.getMacros().size()+1; i++){
@@ -200,6 +193,7 @@ public class TrackerController extends PageController
             reloadUi();
         });
         grid.add(editButton,col,row);
+        //adds the grid to the scroll pane
         scroll.setContent(grid);
     }
 
@@ -219,20 +213,19 @@ public class TrackerController extends PageController
          //stores all the values
 
         String []dupes =dbm.selectAll(arr,"food");
-//        Object[] whereParams ={};
-//        ArrayList<String[]> dupes= dbm.select("food",arr,"",whereParams,null,null);
         HashSet<String> remove = new HashSet<>(Arrays.asList(dupes)); //removes dupes so foods with same name wont appear
         return remove.toArray(new String[0]);
     }
-//    gets only the food names
+    //reloads the ui so update foods are dislayed
     @Override
     protected void reloadUi(){
          content.getChildren().removeAll(comboBox,quickAdd);
          grid.getChildren().clear();
-         loadData(track_date.getValue());//calls the method to update the layout once a new date is selected
+         loadData();//calls the method to update the layout once a new date is selected
          values =null; //unset the value of values so it doesnt display when clicking to add a value
 
         super.reloadUi();
+        //calls the parent reloadUi
     }
     //creates the insert pop uP
     private void addMeal(){

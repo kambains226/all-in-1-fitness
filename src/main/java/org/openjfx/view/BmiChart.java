@@ -6,15 +6,17 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-import java.awt.*;
-
+//creates the bmi chart
 public class BmiChart {
     public VBox createChart(double bmi)
     {
+        //size
         double width =500;
         double height =50;
 
 
+        //creates the canvas
+//        https://docs.oracle.com/javase/8/javafx/api/javafx/scene/canvas/Canvas.html
         Canvas canvas = new Canvas(width,height); //where the graph is drawn
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
@@ -22,6 +24,7 @@ public class BmiChart {
        draw(gc,width,height,bmi);
         VBox vbox = new VBox(canvas);
         vbox.setSpacing(50);
+        //sets the padding
         vbox.setPadding(new Insets(80,0,0,700));
         return vbox;
     }
@@ -30,8 +33,10 @@ public class BmiChart {
         if(bmi >30){
             bmi =30;
         }
+        //what each categopry means
         double []range ={18.5,24.9,27.5,30};
 
+        //colours for the cateogry
         Color[] colours ={Color.LIGHTBLUE,Color.GREEN,Color.YELLOW,Color.RED};
 
         //draws the chart
@@ -43,6 +48,7 @@ public class BmiChart {
                chartWidth = (range[i] / 30.0) * width;
            }
            else{
+               //calculate the size of each category
                chartWidth = ((range[i] - range[i - 1]) / 30.0) * width;
            }
            gc.setFill(colours[i]);

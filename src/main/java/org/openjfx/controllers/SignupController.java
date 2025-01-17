@@ -1,30 +1,20 @@
 package org.openjfx.controllers;
-import javafx.geometry.Insets;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.openjfx.database.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.DatePicker;
 
-import java.time.Period;
-import java.time.format.DateTimeFormatter;
-import java.time.LocalDateTime;  //https://www.javatpoint.com/java-get-current-date
-import java.time.LocalDate;
-
-import org.mindrot.jbcrypt.BCrypt;
 import org.openjfx.models.User;
 import org.openjfx.services.UserService;
 
-import java.util.regex.Pattern;
-import java.util.regex.MatchResult;
-//import javax.swing.*;
 
+//class responsible for the sign up page , extends the base controller for shared functionality
 public class SignupController extends BaseController{
+    //FXML attributes
     @FXML
     private TextField username;
 
@@ -38,20 +28,23 @@ public class SignupController extends BaseController{
     @FXML
     private DatePicker birthday;
     @FXML
-    private VBox signupLayout;
-    @FXML
     private VBox errorBox;
 
     //displays the error labels
     private Label dupeError,usernameError,passwordError,dateError,emailError;
+    //gives acces to the userService class
     private UserService userService = new UserService();
 
 
 
+
+    //handles the signup operations
     private void handleSignup(){
         User newUser = new User(username.getText(),userService.hashPassword(password.getText()),email.getText(),birthday.getValue());
 
+
         userService.saveUser(newUser);
+        //sees if there someone else with that username
         if(userService.getDupe()){
             removeError(dupeError);
             showAlert("Account Created","Account Created Successfully Press ok to proceed");
@@ -61,6 +54,7 @@ public class SignupController extends BaseController{
             stage.close();
         }
         else{
+            //removes the errors
             removeError(dupeError);
             dupeError = new Label("-Username is taken");
             errorBox.getChildren().add(dupeError);
@@ -69,6 +63,7 @@ public class SignupController extends BaseController{
         }
 
     }
+    //checks if valid information
     @Override
     protected boolean informationValidation (){
         //makes it so the erorr checking doesnt it for all of them not one by one
@@ -89,6 +84,7 @@ public class SignupController extends BaseController{
          passwordError = new Label("-Password must have upper, lower, digit, and special a character.");
          emailError = new Label("-invalid email format");
          dateError = new Label("-Must be over 18 to signup");
+         //adds the error depending on which attributes is not valid
         if(!usernameValid ){
 
            errorBox.getChildren().add(usernameError);
@@ -126,6 +122,7 @@ public class SignupController extends BaseController{
     private void removeError(Label label){
         errorBox.getChildren().remove(label);
     }
+    //remove all errors
     private void removeErrors(){
         errorBox.getChildren().removeAll(usernameError,passwordError,emailError,dateError);
     }

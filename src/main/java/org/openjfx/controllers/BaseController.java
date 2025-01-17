@@ -41,6 +41,9 @@ public abstract class BaseController {
 
                 stage.setResizable(false);
                 stage.setTitle("Sign up");
+            } else if (fxmlPath == "/org/openjfx/login.fxml") {
+
+                stage.setResizable(false);
             }
             //any other page can be resizable
             else{
@@ -62,16 +65,13 @@ public abstract class BaseController {
         }
 
     }
-    protected static boolean matchPassword(String password, String hash){
 
-        return BCrypt.checkpw(password,hash);
-    }
     //checks if the users information entered is valid
     protected abstract boolean informationValidation();
 
 
     //creates a pop up window with a message and title
-    protected  void showAlert(String title, String message)
+    protected  static  void showAlert(String title, String message)
     {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -108,7 +108,7 @@ public abstract class BaseController {
         return upper & lower & number & special;
     }
     //returns the  current stage
-   public Stage getSignupStage(){
+   public Stage getStage(){
         return stage;
    }
     public abstract void initialize();
